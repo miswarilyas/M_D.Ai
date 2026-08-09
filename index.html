@@ -107,13 +107,13 @@
 
     <div class="header-box">
         <h1>🚀 Malik Miswar</h1>
-        <p>Multilingual Smart AI Assistant</p>
+        <p>Multilingual Universal AI Assistant</p>
     </div>
 
     <div class="chat-container">
-        <div class="chat-header">⚡ Miswar's AI Assistant</div>
+        <div class="chat-header">🤖 Miswar's AI Assistant</div>
         <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! Ask me any question in any language!</div>
+            <div class="msg bot-msg">Hello! Main Malik Miswar ka AI Assistant hoon. Aap kisi bhi zaban mein koi bhi sawal pooch sakte hain!</div>
         </div>
         <div class="chat-input">
             <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
@@ -143,23 +143,19 @@
             chatBody.appendChild(botDiv);
             chatBody.scrollTop = chatBody.scrollHeight;
 
-            try {
-                // Free AI Engine Integration
-                let response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(text)}&format=json`);
-                let data = await response.json();
-
-                if (data.AbstractText) {
-                    botDiv.innerText = data.AbstractText;
-                } else if (data.Heading && data.RelatedTopics && data.RelatedTopics.length > 0) {
-                    botDiv.innerText = data.RelatedTopics[0].Text;
+            setTimeout(() => {
+                let txt = text.toLowerCase();
+                if (txt.includes("hello") || txt.includes("hi") || txt.includes("hey")) {
+                    botDiv.innerText = "Hello! How can I assist you today?";
+                } else if (txt.includes("salam") || txt.includes("kaise") || txt.includes("kya")) {
+                    botDiv.innerText = "Walaikum Assalam! Main bilkul theek hoon. Aap batayein main aapki kya madad karoon?";
+                } else if (txt.includes("who are you") || txt.includes("kaun")) {
+                    botDiv.innerText = "Main Malik Miswar ka Official Smart AI Assistant hoon!";
                 } else {
-                    botDiv.innerText = "Shukriya aapke message ka! Main Miswar ka AI Assistant hoon. Main har language samajhta hoon. Aapka sawal save ho gaya hai!";
+                    botDiv.innerText = "Shukriya! Aapka paigham mil gaya hai. Main aapki har baat samajh sakta hoon!";
                 }
-            } catch (error) {
-                botDiv.innerText = "Main Malik Miswar ka Smart AI Assistant hoon. Main aap ki madad ke liye yahan hoon!";
-            }
-
-            chatBody.scrollTop = chatBody.scrollHeight;
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 600);
         }
 
         function handleKey(e) {
