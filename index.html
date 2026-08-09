@@ -1,203 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miswar's AI Assistant</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miswar's Real AI Assistant</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-        .header-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .header-box h1 { color: #38bdf8; margin: 0; font-size: 2rem; }
-        .header-box p { color: #94a3b8; margin-top: 5px; }
+        .header-box { text-align: center; margin-bottom: 20px; }
+        .header-box h1 { color: #38bdf8; margin: 0; font-size: 2rem; }
+        .header-box p { color: #94a3b8; margin-top: 5px; }
 
-        /* Centered Long Patti Layout */
-        .chat-container {
-            width: 100%;
-            max-width: 750px; /* Lambi Patti Width */
-            height: 550px;    /* Center Box Height */
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .chat-container {
+            width: 100%;
+            max-width: 750px;
+            height: 550px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-        .chat-header {
-            background: #0284c7;
-            padding: 16px 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
+        .chat-header {
+            background: #0284c7;
+            padding: 16px 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        .chat-body {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #0f172a;
-        }
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #0f172a;
+        }
 
-        .msg {
-            padding: 12px 18px;
-            border-radius: 15px;
-            max-width: 75%;
-            font-size: 1rem;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-        .bot-msg { 
-            background: #1e293b; 
-            border: 1px solid #334155;
-            align-self: flex-start; 
-            color: #f1f5f9;
-        }
-        .user-msg { 
-            background: #0284c7; 
-            align-self: flex-end; 
-            color: #ffffff;
-        }
+        .msg {
+            padding: 12px 18px;
+            border-radius: 15px;
+            max-width: 80%;
+            font-size: 0.98rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .bot-msg { 
+            background: #1e293b; 
+            border: 1px solid #334155;
+            align-self: flex-start; 
+            color: #f1f5f9;
+        }
+        .user-msg { 
+            background: #0284c7; 
+            align-self: flex-end; 
+            color: #ffffff;
+        }
 
-        .chat-input {
-            display: flex;
-            padding: 15px;
-            background: #1e293b;
-            border-top: 1px solid #334155;
-            gap: 10px;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 14px;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            background: #0f172a;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-        }
-        .chat-input input:focus {
-            border-color: #38bdf8;
-        }
-        .chat-input button {
-            background: #38bdf8;
-            border: none;
-            padding: 0 25px;
-            border-radius: 10px;
-            color: #0f172a;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .chat-input button:hover {
-            background: #0284c7;
-            color: white;
-        }
-    </style>
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        .chat-input input:focus { border-color: #38bdf8; }
+        .chat-input button {
+            background: #38bdf8;
+            border: none;
+            padding: 0 25px;
+            border-radius: 10px;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .chat-input button:hover { background: #0284c7; color: white; }
+    </style>
 </head>
 <body>
 
-    <div class="header-box">
-        <h1>🚀 Malik Miswar</h1>
-        <p>Multilingual AI Assistant Platform</p>
-    </div>
+    <div class="header-box">
+        <h1>🚀 Malik Miswar</h1>
+        <p>Powered by Real Google Gemini AI</p>
+    </div>
 
-    <div class="chat-container">
-        <div class="chat-header">🤖 Miswar's Universal AI Bot</div>
-        <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! I am Miswar's AI Assistant. Type in English, Roman Urdu, Hindi, or any language, and I will reply accordingly!</div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="userInput" placeholder="Type a message in any language..." onkeypress="handleKey(event)">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+    <div class="chat-container">
+        <div class="chat-header">⚡ Miswar's Smart AI Assistant</div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg bot-msg">Hello! Main Google Gemini Powered AI hoon. Aap duniya ka koi bhi sawal kisi bhi language mein pooch sakte hain!</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
-    <script>
-        function sendMessage() {
-            let input = document.getElementById("userInput");
-            let text = input.value.trim();
-            if (text === "") return;
+    <script>
+        // 🔴 PASTE YOUR GEMINI API KEY HERE BELOW 🔴
+        const GEMINI_API_KEY = "AQ.Ab8RN6J8PecTk-WBqKJU489_SdcgCjOyqRrGC_XnEg50KGDPjw"; 
 
-            let chatBody = document.getElementById("chatBody");
+        async function sendMessage() {
+            let input = document.getElementById("userInput");
+            let text = input.value.trim();
+            if (text === "") return;
 
-            // Display User Message
-            let userDiv = document.createElement("div");
-            userDiv.className = "msg user-msg";
-            userDiv.innerText = text;
-            chatBody.appendChild(userDiv);
+            let chatBody = document.getElementById("chatBody");
 
-            input.value = "";
-            chatBody.scrollTop = chatBody.scrollHeight;
+            // User Message
+            let userDiv = document.createElement("div");
+            userDiv.className = "msg user-msg";
+            userDiv.innerText = text;
+            chatBody.appendChild(userDiv);
 
-            // Multilingual Response Logic
-            setTimeout(() => {
-                let botDiv = document.createElement("div");
-                botDiv.className = "msg bot-msg";
-                
-                let reply = getSmartReply(text);
-                botDiv.innerText = reply;
+            input.value = "";
+            chatBody.scrollTop = chatBody.scrollHeight;
 
-                chatBody.appendChild(botDiv);
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 400);
-        }
+            // Loading Indicator
+            let botDiv = document.createElement("div");
+            botDiv.className = "msg bot-msg";
+            botDiv.innerText = "Thinking... 🧠";
+            chatBody.appendChild(botDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
 
-        function getSmartReply(input) {
-            let txt = input.toLowerCase();
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }]
+                    })
+                });
 
-            // English Detection
-            if (/^[a-zA-Z0-9\s.,?!']+$/.test(input) && (txt.includes("hello") || txt.includes("hi") || txt.includes("who") || txt.includes("what") || txt.includes("how") || txt.includes("is"))) {
-                if (txt.includes("who are you") || txt.includes("who created")) return "I am Malik Miswar's AI Assistant, built to help you instantly!";
-                if (txt.includes("hello") || txt.includes("hi") || txt.includes("hey")) return "Hello! How can I help you today?";
-                if (txt.includes("contact") || txt.includes("email") || txt.includes("reach")) return "You can reach Malik Miswar via GitHub or through this platform!";
-                return "Thank you for your message! I understand English and I am here to assist you.";
-            }
+                let data = await response.json();
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    botDiv.innerText = data.candidates[0].content.parts[0].text;
+                } else {
+                    botDiv.innerText = "Sorry, API response mein koi masla hua. Kripya Key check karein.";
+                }
+            } catch (error) {
+                botDiv.innerText = "Error: Network ya API Key ka issue hai.";
+            }
 
-            // Urdu / Roman Urdu / Hindi Detection
-            if (txt.includes("kaun") || txt.includes("kon") || txt.includes("kya") || txt.includes("kese") || txt.includes("kaise") || txt.includes("salam") || txt.includes("kia")) {
-                if (txt.includes("salam") || txt.includes("oa") || txt.includes("assalam")) return "Walaikum Assalam! Aap kaise hain? Main aap ki kya madad kar sakta hoon?";
-                if (txt.includes("kon") || txt.includes("kaun")) return "Main Malik Miswar ka AI Assistant hoon. Miswar ek Web Developer aur Tech Creator hain!";
-                if (txt.includes("kese") || txt.includes("kaise")) return "Main bilkul theek hoon! Aap batayein?";
-                return "Shukriya aapke paigham ka! Main aapki baat samajh gaya hoon aur Miswar tak pohancha doonga.";
-            }
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
 
-            // Arabic Script (Urdu/Arabic text detection)
-            if (/[\u0600-\u06FF]/.test(input)) {
-                return "وعلیکم السلام! میں مالك مسور کا AI اسسٹنٹ ہوں۔ میں آپ کی کیا مدد کر سکتا ہوں؟";
-            }
-
-            // Default Multi-language Fallback Response
-            return "Got it! / Samajh gaya! Thank you for contacting Malik Miswar's AI Platform.";
-        }
-
-        function handleKey(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-    </script>
+        function handleKey(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
 
 </body>
 </html>
