@@ -113,7 +113,7 @@
     <div class="chat-container">
         <div class="chat-header">🤖 Miswar's AI Assistant</div>
         <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! Main Malik Miswar ka AI Assistant hoon. Aap kisi bhi zaban mein koi bhi sawal pooch sakte hain!</div>
+            <div class="msg bot-msg">Hello! Main Google Gemini Powered AI hoon. Aap duniya ka koi bhi sawal kisi bhi language mein pooch sakte hain!</div>
         </div>
         <div class="chat-input">
             <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
@@ -122,6 +122,9 @@
     </div>
 
     <script>
+        // Paste your Gemini API key below
+        const GEMINI_API_KEY = "AQ.Ab8RN6J8PecTk-WBqKJU489_SdcgCjOyqRrGC_XnEg50KGDPjw"; 
+
         async function sendMessage() {
             let input = document.getElementById("userInput");
             let text = input.value.trim();
@@ -143,19 +146,26 @@
             chatBody.appendChild(botDiv);
             chatBody.scrollTop = chatBody.scrollHeight;
 
-            setTimeout(() => {
-                let txt = text.toLowerCase();
-                if (txt.includes("hello") || txt.includes("hi") || txt.includes("hey")) {
-                    botDiv.innerText = "Hello! How can I assist you today?";
-                } else if (txt.includes("salam") || txt.includes("kaise") || txt.includes("kya")) {
-                    botDiv.innerText = "Walaikum Assalam! Main bilkul theek hoon. Aap batayein main aapki kya madad karoon?";
-                } else if (txt.includes("who are you") || txt.includes("kaun")) {
-                    botDiv.innerText = "Main Malik Miswar ka Official Smart AI Assistant hoon!";
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }]
+                    })
+                });
+
+                let data = await response.json();
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    botDiv.innerText = data.candidates[0].content.parts[0].text;
                 } else {
-                    botDiv.innerText = "Shukriya! Aapka paigham mil gaya hai. Main aapki har baat samajh sakta hoon!";
+                    botDiv.innerText = "API Response error. Key check karein.";
                 }
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 600);
+            } catch (error) {
+                botDiv.innerText = "Connection Error!";
+            }
+
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
 
         function handleKey(e) {
