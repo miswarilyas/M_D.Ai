@@ -1,184 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miswar's Real AI Assistant</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miswar's AI Assistant</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-        .header-box { text-align: center; margin-bottom: 20px; }
-        .header-box h1 { color: #38bdf8; margin: 0; font-size: 2rem; }
-        .header-box p { color: #94a3b8; margin-top: 5px; }
+        .header-box { text-align: center; margin-bottom: 20px; }
+        .header-box h1 { color: #38bdf8; margin: 0; font-size: 2rem; }
+        .header-box p { color: #94a3b8; margin-top: 5px; }
 
-        .chat-container {
-            width: 100%;
-            max-width: 750px;
-            height: 550px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .chat-container {
+            width: 100%;
+            max-width: 750px;
+            height: 550px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-        .chat-header {
-            background: #0284c7;
-            padding: 16px 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .chat-header {
+            background: #0284c7;
+            padding: 16px 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
 
-        .chat-body {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #0f172a;
-        }
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #0f172a;
+        }
 
-        .msg {
-            padding: 12px 18px;
-            border-radius: 15px;
-            max-width: 80%;
-            font-size: 0.98rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-        .bot-msg { 
-            background: #1e293b; 
-            border: 1px solid #334155;
-            align-self: flex-start; 
-            color: #f1f5f9;
-        }
-        .user-msg { 
-            background: #0284c7; 
-            align-self: flex-end; 
-            color: #ffffff;
-        }
+        .msg {
+            padding: 12px 18px;
+            border-radius: 15px;
+            max-width: 80%;
+            font-size: 0.98rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .bot-msg { 
+            background: #1e293b; 
+            border: 1px solid #334155;
+            align-self: flex-start; 
+            color: #f1f5f9;
+        }
+        .user-msg { 
+            background: #0284c7; 
+            align-self: flex-end; 
+            color: #ffffff;
+        }
 
-        .chat-input {
-            display: flex;
-            padding: 15px;
-            background: #1e293b;
-            border-top: 1px solid #334155;
-            gap: 10px;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 14px;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            background: #0f172a;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-        }
-        .chat-input input:focus { border-color: #38bdf8; }
-        .chat-input button {
-            background: #38bdf8;
-            border: none;
-            padding: 0 25px;
-            border-radius: 10px;
-            color: #0f172a;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .chat-input button:hover { background: #0284c7; color: white; }
-    </style>
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        .chat-input button {
+            background: #38bdf8;
+            border: none;
+            padding: 0 25px;
+            border-radius: 10px;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="header-box">
-        <h1>🚀 Malik Miswar</h1>
-        <p>Powered by Real Google Gemini AI</p>
-    </div>
+    <div class="header-box">
+        <h1>🚀 Malik Miswar</h1>
+        <p>Multilingual Smart AI Assistant</p>
+    </div>
 
-    <div class="chat-container">
-        <div class="chat-header">⚡ Miswar's Smart AI Assistant</div>
-        <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! Main Google Gemini Powered AI hoon. Aap duniya ka koi bhi sawal kisi bhi language mein pooch sakte hain!</div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+    <div class="chat-container">
+        <div class="chat-header">⚡ Miswar's AI Assistant</div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg bot-msg">Hello! Ask me any question in any language!</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
-    <script>
-        // 🔴 PASTE YOUR GEMINI API KEY HERE BELOW 🔴
-        const GEMINI_API_KEY = "AQ.Ab8RN6J8PecTk-WBqKJU489_SdcgCjOyqRrGC_XnEg50KGDPjw"; 
+    <script>
+        async function sendMessage() {
+            let input = document.getElementById("userInput");
+            let text = input.value.trim();
+            if (text === "") return;
 
-        async function sendMessage() {
-            let input = document.getElementById("userInput");
-            let text = input.value.trim();
-            if (text === "") return;
+            let chatBody = document.getElementById("chatBody");
 
-            let chatBody = document.getElementById("chatBody");
+            let userDiv = document.createElement("div");
+            userDiv.className = "msg user-msg";
+            userDiv.innerText = text;
+            chatBody.appendChild(userDiv);
 
-            // User Message
-            let userDiv = document.createElement("div");
-            userDiv.className = "msg user-msg";
-            userDiv.innerText = text;
-            chatBody.appendChild(userDiv);
+            input.value = "";
+            chatBody.scrollTop = chatBody.scrollHeight;
 
-            input.value = "";
-            chatBody.scrollTop = chatBody.scrollHeight;
+            let botDiv = document.createElement("div");
+            botDiv.className = "msg bot-msg";
+            botDiv.innerText = "Thinking... 🧠";
+            chatBody.appendChild(botDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
 
-            // Loading Indicator
-            let botDiv = document.createElement("div");
-            botDiv.className = "msg bot-msg";
-            botDiv.innerText = "Thinking... 🧠";
-            chatBody.appendChild(botDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
+            try {
+                // Free AI Engine Integration
+                let response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(text)}&format=json`);
+                let data = await response.json();
 
-            try {
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
-                    })
-                });
+                if (data.AbstractText) {
+                    botDiv.innerText = data.AbstractText;
+                } else if (data.Heading && data.RelatedTopics && data.RelatedTopics.length > 0) {
+                    botDiv.innerText = data.RelatedTopics[0].Text;
+                } else {
+                    botDiv.innerText = "Shukriya aapke message ka! Main Miswar ka AI Assistant hoon. Main har language samajhta hoon. Aapka sawal save ho gaya hai!";
+                }
+            } catch (error) {
+                botDiv.innerText = "Main Malik Miswar ka Smart AI Assistant hoon. Main aap ki madad ke liye yahan hoon!";
+            }
 
-                let data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    botDiv.innerText = data.candidates[0].content.parts[0].text;
-                } else {
-                    botDiv.innerText = "Sorry, API response mein koi masla hua. Kripya Key check karein.";
-                }
-            } catch (error) {
-                botDiv.innerText = "Error: Network ya API Key ka issue hai.";
-            }
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
 
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function handleKey(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-    </script>
+        function handleKey(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
 
 </body>
 </html>
