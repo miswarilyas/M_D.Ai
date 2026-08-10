@@ -296,7 +296,7 @@
             margin: 12px 0;
         }
         .msg-bubble code { font-family: monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
-        .msg-bubble img { max-width: 100%; width: 450px; border-radius: 16px; margin-top: 12px; border: 1px solid rgba(255, 215, 0, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        .msg-bubble img { max-width: 100%; width: 500px; border-radius: 16px; margin-top: 12px; border: 1px solid rgba(255, 215, 0, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.6); display: block; }
 
         .input-container-wrapper { padding: 20px 20% 32px; background: rgba(9, 9, 11, 0.4); backdrop-filter: blur(10px); }
         
@@ -468,7 +468,7 @@
                 </button>
                 <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
 
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or type 'generate image of...'" onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or type 'create a BMW car pic'..." onkeypress="handleKeyPress(event)">
                 
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
@@ -622,10 +622,21 @@ Act like ChatGPT:
 
         async function generateImage(promptText) {
             const seed = Math.floor(Math.random() * 999999);
-            const encodedPrompt = encodeURIComponent(promptText + ", highly detailed, 8k resolution, ultra realistic, professional quality");
-            const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=1024&height=1024&seed=${seed}&model=flux`;
+            const cleanPrompt = encodeURIComponent(promptText.trim() + ", 8k resolution, photorealistic, highly detailed, professional quality");
+            const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1024&height=1024&seed=${seed}&model=flux&nologo=true`;
             
             return `Here is your generated image:\n\n![Generated Image](${imageUrl})`;
+        }
+
+        function checkIsImageRequest(str) {
+            const lower = str.toLowerCase();
+            const keywords = [
+                '/image', 'generate image', 'create image', 'draw', 'picture of', 
+                'photo of', 'make a pic', 'create a pic', 'car pic', 'car image', 
+                'image of', 'generate a', 'create a', 'make an image', 'make a picture'
+            ];
+            
+            return keywords.some(key => lower.includes(key));
         }
 
         async function sendMessage() {
@@ -673,19 +684,18 @@ Act like ChatGPT:
 
             try {
                 let rawReply = "";
-                const lowerText = text.toLowerCase();
-                const isImageRequest = lowerText.startsWith('/image') || 
-                                       lowerText.includes('generate image') || 
-                                       lowerText.includes('draw a') || 
-                                       lowerText.includes('make a picture') ||
-                                       lowerText.includes('create an image');
+                const isImageReq = checkIsImageRequest(text);
 
-                if (isImageRequest) {
+                if (isImageReq) {
                     let cleanPrompt = text.replace(/\/image/i, '')
                                          .replace(/generate image of/i, '')
-                                         .replace(/draw a/i, '')
+                                         .replace(/create an image of/i, '')
+                                         .replace(/create a/i, '')
+                                         .replace(/make a pic of/i, '')
                                          .replace(/make a picture of/i, '')
-                                         .replace(/create an image of/i, '').trim();
+                                         .replace(/draw a/i, '')
+                                         .replace(/pic/i, '')
+                                         .replace(/image/i, '').trim();
 
                     if (currentImg) {
                         const ocrResult = await Tesseract.recognize(currentImg, 'eng');
@@ -693,7 +703,7 @@ Act like ChatGPT:
                         if (extractedText) cleanPrompt += " " + extractedText;
                     }
 
-                    if (!cleanPrompt) cleanPrompt = "Futuristic high-tech artwork, gold aesthetics, ultra realistic";
+                    if (!cleanPrompt || cleanPrompt.length < 2) cleanPrompt = text;
                     rawReply = await generateImage(cleanPrompt);
 
                 } else if (currentImg) {
