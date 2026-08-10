@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malik Miswar | AI Assistant</title>
+    <title>Malik Miswar | Smart AI Assistant</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -54,7 +54,7 @@
         }
 
         .message {
-            max-width: 80%;
+            max-width: 85%;
             padding: 10px 14px;
             border-radius: 12px;
             font-size: 0.95rem;
@@ -112,16 +112,16 @@
 
     <div class="header-box">
         <h1>🚀 Malik Miswar</h1>
-        <p>Smart Portfolio & Assistant</p>
+        <p>Smart AI Portfolio Assistant</p>
     </div>
 
     <div class="chat-card">
-        <div class="chat-header">🤖 Miswar's Assistant</div>
+        <div class="chat-header">🤖 Miswar's Smart Assistant</div>
         <div class="chat-messages" id="chatBox">
-            <div class="message bot-msg">Hello! Main Malik Miswar ka assistant hoon. Aap mujh se unke baaray mein kuch bhi pooch saktay hain!</div>
+            <div class="message bot-msg">Hello! Main Malik Miswar ka Smart AI Assistant hoon. Aap mujh se koi bhi sawal pooch sakte hain!</div>
         </div>
         <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Ask something (e.g. hello, contact, skills)..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInput" placeholder="Kuch bhi poochein..." onkeypress="handleKeyPress(event)">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
@@ -134,7 +134,7 @@
 
             if (!text) return;
 
-            // Display User Message
+            // User msg display
             const userDiv = document.createElement('div');
             userDiv.className = 'message user-msg';
             userDiv.innerText = text;
@@ -143,32 +143,47 @@
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Generate Smart Response
+            // Bot Response
             setTimeout(() => {
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot-msg';
-                botDiv.innerText = getBotResponse(text.toLowerCase());
+                botDiv.innerText = getSmartReply(text.toLowerCase());
                 chatBox.appendChild(botDiv);
                 chatBox.scrollTop = chatBox.scrollHeight;
-            }, 500);
+            }, 400);
         }
 
         function handleKeyPress(e) {
             if (e.key === 'Enter') sendMessage();
         }
 
-        function getBotResponse(input) {
-            if (input.includes('hello') || input.includes('hi') || input.includes('hey') || input.includes('kia hal')) {
-                return "Walaikum Assalam! Kaisay hain aap? Main aapki kya madad kar sakta hoon?";
-            } else if (input.includes('who') || input.includes('kon') || input.includes('miswar')) {
-                return "Malik Miswar ek passionate Web Developer aur Tech Enthusiast hain!";
-            } else if (input.includes('contact') || input.includes('email') || input.includes('number')) {
-                return "Aap Malik Miswar se unke social links ya direct website ke zariye rabta kar sakte hain!";
-            } else if (input.includes('skill') || input.includes('work') || input.includes('project')) {
-                return "Malik Miswar Web Development, HTML/CSS/JS, aur AI Integration par kaam karte hain.";
-            } else {
-                return "Shukriya aapke message ka! Main ne aapka paigham note kar liya hai.";
+        function getSmartReply(q) {
+            // Pakistan related
+            if (q.includes('pakistan') && (q.includes('founder') || q.includes('banaya') || q.includes('baap') || q.includes('kon'))) {
+                return "Pakistan ke founder Quaid-e-Azam Muhammad Ali Jinnah hain! 🇵🇰";
             }
+            if (q.includes('capital') || (q.includes('pakistan') && q.includes('darul hukumat'))) {
+                return "Pakistan ka darul hukumat (capital) Islamabad hai.";
+            }
+
+            // Miswar info
+            if (q.includes('miswar') || (q.includes('who') && q.includes('you'))) {
+                return "Malik Miswar ek Web Developer aur Tech Enthusiast hain jo modern websites aur AI solutions banate hain.";
+            }
+            if (q.includes('skills') || q.includes('skill') || q.includes('kaam')) {
+                return "Malik Miswar Web Development, HTML, CSS, JavaScript, aur AI Tools Integration mein expert hain.";
+            }
+            if (q.includes('contact') || q.includes('rabta') || q.includes('email') || q.includes('number')) {
+                return "Aap Malik Miswar se website ya social links ke zariye rabta kar sakte hain.";
+            }
+
+            // Greetings
+            if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('kia hal') || q.includes('kya haal')) {
+                return "Walaikum Assalam! Main bilkul theek hoon. Aap batayein, main aapki kya madad kar sakta hoon?";
+            }
+
+            // Fallback
+            return "Aapka message mil gaya hai! Malik Miswar boht jald aap ke is sawal ka jawab dein ge.";
         }
     </script>
 
