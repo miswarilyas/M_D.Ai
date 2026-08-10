@@ -4,11 +4,15 @@
     <meta name="google-site-verification" content="GcTCxUjAgdM7zGlZBCGO9RsRFxV-db5bqoDvH-NA09s" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai - VIP AI Studio</title>
+    <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
     <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio.">
+    <meta name="keywords" content="M&D.Ai, VIP AI Studio, Malik Miswar AI, Free AI Chatbot">
+    
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -299,8 +303,40 @@
             margin: 12px 0;
         }
         .msg-bubble code { font-family: monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        .msg-bubble img { max-width: 280px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255, 215, 0, 0.4); }
 
         .input-container-wrapper { padding: 20px 20% 32px; background: rgba(9, 9, 11, 0.4); backdrop-filter: blur(10px); }
+        
+        .preview-box {
+            display: none;
+            position: relative;
+            margin-bottom: 10px;
+            width: fit-content;
+        }
+        .preview-box img {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 12px;
+            border: 1px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .preview-box .remove-img-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .input-bar {
             background: rgba(18, 18, 21, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -312,7 +348,7 @@
             transition: all 0.2s;
         }
         .input-bar:focus-within { border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
-        .input-bar input {
+        .input-bar input[type="text"] {
             flex: 1;
             background: transparent;
             border: none;
@@ -428,8 +464,19 @@
         </div>
 
         <div class="input-container-wrapper">
+            <div class="preview-box" id="previewBox">
+                <img id="imgPreview" src="" alt="Selected Image">
+                <button class="remove-img-btn" onclick="removeImage()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
             <div class="input-bar">
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP..." onkeypress="handleKeyPress(event)">
+                <button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="Attach Image">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or attach an image..." onkeypress="handleKeyPress(event)">
+                
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
@@ -442,16 +489,18 @@
 
     <script>
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
+        let selectedBase64Image = "";
 
         let conversationHistory = [
             { 
                 role: "system", 
-                content: `You are 'M&D.Ai VIP', an elite, sophisticated, warm, and highly smart AI assistant. Maintain an elite persona but remain very friendly and helpful. 
+                content: `You are 'M&D.Ai VIP', an elite, highly intelligent, friendly AI studio assistant. 
 
-IMPORTANT RULES FOR RESPONDING:
-1. FOR CASUAL CHAT / GREETINGS: Respond like a polished human friend in a short, warm, 1 or 2 line sentence with exactly 1 relevant emoji.
-2. FOR INFORMATIVE / TECHNICAL QUESTIONS: Provide a deep, clear, well-structured, Gemini-style answer with Markdown headings, bullet points, and code blocks.
-3. Always reply in the same language as the user.` 
+RULES:
+1. Short greetings: 1-2 friendly lines with 1 emoji.
+2. Technical / detailed queries: Structured markdown with bold headers and clear code blocks.
+3. Image analysis: Analyze attached images accurately with high precision.
+4. Always respond in the user's language.` 
             }
         ];
 
@@ -471,7 +520,8 @@ IMPORTANT RULES FOR RESPONDING:
                         const row = document.createElement('div');
                         if (msg.role === 'user') {
                             row.className = 'message-row user';
-                            row.innerHTML = `<div class="msg-bubble">${msg.content}</div>`;
+                            let textHtml = typeof msg.content === 'string' ? msg.content : (msg.content[0]?.text || '');
+                            row.innerHTML = `<div class="msg-bubble">${textHtml}</div>`;
                         } else {
                             row.className = 'message-row bot';
                             row.innerHTML = `
@@ -493,6 +543,25 @@ IMPORTANT RULES FOR RESPONDING:
         function saveToLocalStorage() {
             localStorage.setItem('md_ai_chat_history', JSON.stringify(conversationHistory));
             localStorage.setItem('md_ai_recent_titles', document.getElementById('recentList').innerHTML);
+        }
+
+        function handleImageSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    selectedBase64Image = event.target.result;
+                    document.getElementById('imgPreview').src = selectedBase64Image;
+                    document.getElementById('previewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            selectedBase64Image = "";
+            document.getElementById('imageInput').value = "";
+            document.getElementById('previewBox').style.display = 'none';
         }
 
         function handleAccountLogin() {
@@ -517,6 +586,7 @@ IMPORTANT RULES FOR RESPONDING:
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
                     <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
                 </div>`;
+            removeImage();
         }
 
         function clearAllChatHistory() {
@@ -558,27 +628,48 @@ IMPORTANT RULES FOR RESPONDING:
             const aiLoadingRow = document.getElementById('aiLoadingRow');
             const text = input.value.trim();
 
-            if (!text) return;
+            if (!text && !selectedBase64Image) return;
 
             const welcome = document.getElementById('welcomeScreen');
             if (welcome) welcome.remove();
 
+            // Render User Bubble
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            userRow.innerHTML = `<div class="msg-bubble">${text}</div>`;
+            let userHtml = `<div class="msg-bubble">${text}`;
+            if (selectedBase64Image) {
+                userHtml += `<br><img src="${selectedBase64Image}">`;
+            }
+            userHtml += `</div>`;
+            userRow.innerHTML = userHtml;
             chatContainer.appendChild(userRow);
 
             input.value = '';
+            const currentImg = selectedBase64Image;
+            removeImage();
+
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            conversationHistory.push({ role: "user", content: text });
+            // Construct payload for Vision or Text
+            let userPayloadContent;
+            if (currentImg) {
+                userPayloadContent = [
+                    { type: "text", text: text || "Please analyze this image accurately and explain its contents." },
+                    { type: "image_url", image_url: { url: currentImg } }
+                ];
+            } else {
+                userPayloadContent = text;
+            }
+
+            conversationHistory.push({ role: "user", content: userPayloadContent });
 
             if (conversationHistory.filter(m => m.role === 'user').length === 1) {
                 const recentList = document.getElementById('recentList');
                 const newRecent = document.createElement('li');
                 newRecent.className = 'recent-item';
+                const labelText = text || "Image Analysis";
                 newRecent.innerHTML = `
-                    <div class="recent-text"><i class="fa-solid fa-gem" style="color: #ffd700; font-size: 0.7rem;"></i> ${text.substring(0, 16)}...</div>
+                    <div class="recent-text"><i class="fa-solid fa-gem" style="color: #ffd700; font-size: 0.7rem;"></i> ${labelText.substring(0, 16)}...</div>
                     <button class="chat-menu-btn" onclick="deleteSpecificChat(this)" title="Delete Chat"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                 `;
                 recentList.prepend(newRecent);
@@ -589,6 +680,9 @@ IMPORTANT RULES FOR RESPONDING:
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
+                // Pick vision model if image is attached
+                const modelToUse = currentImg ? "llama-3.2-11b-vision-preview" : "llama-3.3-70b-versatile";
+
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
                     headers: {
@@ -596,14 +690,14 @@ IMPORTANT RULES FOR RESPONDING:
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile",
+                        model: modelToUse,
                         messages: conversationHistory,
-                        temperature: 0.7
+                        temperature: 0.5
                     })
                 });
 
                 const data = await response.json();
-                const rawReply = data.choices[0].message.content;
+                const rawReply = data.choices ? data.choices[0].message.content : "Sorry, could not process request.";
                 
                 conversationHistory.push({ role: "assistant", content: rawReply });
 
@@ -623,7 +717,7 @@ IMPORTANT RULES FOR RESPONDING:
             } catch (err) {
                 aiLoadingRow.classList.add('hidden');
                 document.body.appendChild(aiLoadingRow);
-                alert("Network Error or API key error. Please check your credentials.");
+                alert("Error connecting to AI service. Please try again.");
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
