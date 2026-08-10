@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
-    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio.">
+    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with HD Image Generation.">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -296,7 +296,7 @@
             margin: 12px 0;
         }
         .msg-bubble code { font-family: monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
-        .msg-bubble img { max-width: 280px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255, 215, 0, 0.4); }
+        .msg-bubble img { max-width: 100%; width: 450px; border-radius: 16px; margin-top: 12px; border: 1px solid rgba(255, 215, 0, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
 
         .input-container-wrapper { padding: 20px 20% 32px; background: rgba(9, 9, 11, 0.4); backdrop-filter: blur(10px); }
         
@@ -441,14 +441,14 @@
         <div class="top-navbar">
             <div class="app-logo">
                 <i class="fa-solid fa-gem" style="color: #ffd700;"></i>
-                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">VIP</small></span>
+                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">VIP Studio</small></span>
             </div>
         </div>
 
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1 id="welcomeTitle">Hello, <span>Malik Miswar</span></h1>
-                <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
+                <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate HD images directly!</p>
             </div>
         </div>
 
@@ -463,12 +463,12 @@
             </div>
 
             <div class="input-bar">
-                <button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="Attach Image">
+                <button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="Attach Reference Image">
                     <i class="fa-solid fa-plus"></i>
                 </button>
                 <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
 
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or attach an image..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or type 'generate image of...'" onkeypress="handleKeyPress(event)">
                 
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
@@ -487,8 +487,6 @@
         const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
 Act like ChatGPT:
 - Match the response length to the user's query naturally.
-- If the user asks a simple question or engages in casual talk, give a direct, natural response.
-- If the user asks for detailed explanations, topics, code, or history, give a nicely structured answer with markdown headings and points.
 - Always match the user's language (Roman Urdu, Urdu, or English).`;
 
         let conversationHistory = [];
@@ -584,7 +582,7 @@ Act like ChatGPT:
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
-                    <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
+                    <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate HD images directly!</p>
                 </div>`;
             removeImage();
         }
@@ -622,6 +620,14 @@ Act like ChatGPT:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
+        async function generateImage(promptText) {
+            const seed = Math.floor(Math.random() * 999999);
+            const encodedPrompt = encodeURIComponent(promptText + ", highly detailed, 8k resolution, ultra realistic, professional quality");
+            const imageUrl = `https://pollinations.ai/p/${encodedPrompt}?width=1024&height=1024&seed=${seed}&model=flux`;
+            
+            return `Here is your generated image:\n\n![Generated Image](${imageUrl})`;
+        }
+
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const chatContainer = document.getElementById('chatContainer');
@@ -635,7 +641,7 @@ Act like ChatGPT:
 
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            let userHtml = `<div class="msg-bubble">${text || "Analyzing Attached Image..."}`;
+            let userHtml = `<div class="msg-bubble">${text || "Processing..."}`;
             if (selectedBase64Image) {
                 userHtml += `<br><img src="${selectedBase64Image}">`;
             }
@@ -653,7 +659,7 @@ Act like ChatGPT:
                 const recentList = document.getElementById('recentList');
                 const newRecent = document.createElement('li');
                 newRecent.className = 'recent-item';
-                const labelText = text || "Image Analysis";
+                const labelText = text || "Image Task";
                 newRecent.innerHTML = `
                     <div class="recent-text"><i class="fa-solid fa-gem" style="color: #ffd700; font-size: 0.7rem;"></i> ${labelText.substring(0, 16)}...</div>
                     <button class="chat-menu-btn" onclick="deleteSpecificChat(this)" title="Delete Chat"><i class="fa-solid fa-ellipsis-vertical"></i></button>
@@ -667,17 +673,33 @@ Act like ChatGPT:
 
             try {
                 let rawReply = "";
+                const lowerText = text.toLowerCase();
+                const isImageRequest = lowerText.startsWith('/image') || 
+                                       lowerText.includes('generate image') || 
+                                       lowerText.includes('draw a') || 
+                                       lowerText.includes('make a picture') ||
+                                       lowerText.includes('create an image');
 
-                if (currentImg) {
-                    // Extract text via client-side OCR for guaranteed error-free response
+                if (isImageRequest) {
+                    let cleanPrompt = text.replace(/\/image/i, '')
+                                         .replace(/generate image of/i, '')
+                                         .replace(/draw a/i, '')
+                                         .replace(/make a picture of/i, '')
+                                         .replace(/create an image of/i, '').trim();
+
+                    if (currentImg) {
+                        const ocrResult = await Tesseract.recognize(currentImg, 'eng');
+                        const extractedText = ocrResult.data.text.trim();
+                        if (extractedText) cleanPrompt += " " + extractedText;
+                    }
+
+                    if (!cleanPrompt) cleanPrompt = "Futuristic high-tech artwork, gold aesthetics, ultra realistic";
+                    rawReply = await generateImage(cleanPrompt);
+
+                } else if (currentImg) {
                     const ocrResult = await Tesseract.recognize(currentImg, 'eng');
                     const extractedText = ocrResult.data.text.trim();
-
-                    let promptQuery = text ? `${text}\n\n[Extracted Text from Image]: ${extractedText}` : `Explain and solve this image/screenshot content:\n${extractedText}`;
-                    
-                    if (!extractedText && !text) {
-                        promptQuery = "User uploaded an image. Provide a general friendly response asking how you can help them with this file.";
-                    }
+                    let promptQuery = text ? `${text}\n\n[Reference Image Content]: ${extractedText}` : `Analyze and explain this reference image content:\n${extractedText}`;
 
                     conversationHistory.push({ role: "user", content: promptQuery });
 
@@ -746,7 +768,7 @@ Act like ChatGPT:
                 errorRow.className = 'message-row bot';
                 errorRow.innerHTML = `
                     <div class="ai-avatar-circle">M&D</div>
-                    <div class="msg-bubble">Something went wrong. Please try again! Error: ${err.message || 'Unknown Error'}</div>
+                    <div class="msg-bubble">Error: ${err.message || "Execution failed."}</div>
                 `;
                 chatContainer.appendChild(errorRow);
             }
