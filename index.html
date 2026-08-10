@@ -18,7 +18,7 @@
 
         /* LEFT SIDEBAR */
         .sidebar {
-            width: 260px;
+            width: 280px;
             background: #1e1f20;
             display: flex;
             flex-direction: column;
@@ -61,7 +61,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            max-height: 55vh;
+            max-height: 50vh;
             overflow-y: auto;
         }
 
@@ -80,22 +80,27 @@
         }
         .recent-item:hover { background: #282a2c; color: #fff; }
 
-        /* USER ACCOUNT PROFILE (BOTTOM LEFT) */
+        /* USER ACCOUNT PROFILE WITH LOGIN BUTTON */
+        .user-profile-card {
+            background: #282a2c;
+            border: 1px solid #3c4043;
+            border-radius: 18px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 25px;
-            background: #282a2c;
-            cursor: pointer;
-            border: 1px solid #3c4043;
+            gap: 10px;
         }
         .user-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: #0284c7;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -103,8 +108,26 @@
             font-size: 0.85rem;
             color: #fff;
         }
-        .user-info h4 { font-size: 0.85rem; color: #e3e3e3; }
-        .user-info p { font-size: 0.7rem; color: #8e918f; }
+        .user-info { flex: 1; overflow: hidden; }
+        .user-info h4 { font-size: 0.85rem; color: #e3e3e3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-info p { font-size: 0.72rem; color: #4ade80; }
+
+        .login-btn {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .login-btn:hover { background: #0284c7; color: #fff; }
 
         /* RIGHT MAIN CHAT AREA */
         .main-chat {
@@ -243,12 +266,17 @@
             </div>
         </div>
 
-        <div class="user-profile">
-            <div class="user-avatar">MM</div>
-            <div class="user-info">
-                <h4>Malik Miswar</h4>
-                <p>Free Plan</p>
+        <div class="user-profile-card">
+            <div class="user-profile">
+                <div class="user-avatar" id="avatarText">MM</div>
+                <div class="user-info">
+                    <h4 id="userName">Malik Miswar</h4>
+                    <p id="userStatus">● Logged In</p>
+                </div>
             </div>
+            <button class="login-btn" onclick="handleAccountLogin()">
+                <i class="fa-solid fa-right-to-bracket"></i> Login / Switch Account
+            </button>
         </div>
     </div>
 
@@ -261,14 +289,14 @@
 
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
-                <h1>Hello, Malik Miswar</h1>
+                <h1 id="welcomeTitle">Hello, Malik Miswar</h1>
                 <p>How can I help you today?</p>
             </div>
         </div>
 
         <div class="input-container-wrapper">
             <div class="input-bar">
-                <input type="text" id="userInput" placeholder="Ask Gemini..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask Miswars..." onkeypress="handleKeyPress(event)">
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
@@ -282,10 +310,26 @@
     <script>
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
 
+        function handleAccountLogin() {
+            const name = prompt("Enter your Name to Login:", "Malik Miswar");
+            if (name && name.trim() !== "") {
+                const cleanName = name.trim();
+                document.getElementById('userName').innerText = cleanName;
+                document.getElementById('avatarText').innerText = cleanName.substring(0, 2).toUpperCase();
+                
+                const welcomeTitle = document.getElementById('welcomeTitle');
+                if (welcomeTitle) {
+                    welcomeTitle.innerText = `Hello, ${cleanName}`;
+                }
+                alert(`Welcome ${cleanName}! Account updated successfully.`);
+            }
+        }
+
         function startNewChat() {
+            const currentName = document.getElementById('userName').innerText;
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
-                    <h1>Hello, Malik Miswar</h1>
+                    <h1 id="welcomeTitle">Hello, ${currentName}</h1>
                     <p>How can I help you today?</p>
                 </div>`;
         }
