@@ -487,18 +487,17 @@
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         let selectedBase64Image = "";
 
-        // PERFECT BALANCED SYSTEM PROMPT
-        let conversationHistory = [
-            { 
-                role: "system", 
-                content: `You are 'M&D.Ai VIP', an elite AI assistant created by Malik Miswar.
+        // STRICT COMPREHENSIVE SYSTEM PROMPT
+        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', an advanced AI assistant created by Malik Miswar.
 
-PROMPT RESPONSE GUIDELINES:
-1. FAMOUS PEOPLE, HISTORY, ISLAMIC TOPICS & SCIENCE: When asked about a person (like Albert Einstein, Scientists, Leaders), Historical events, Islamic history, Science, or Technical concepts, ALWAYS provide a comprehensive, fully detailed, step-by-step explanation covering their life, key achievements, impact, and history. Use markdown headings and bullet points.
-2. CASUAL CHAT & GREETINGS: For basic questions or casual hellos, give a natural, polite, and direct response.
-3. ACCURACY: Always ensure 100% accurate, verified, and true facts.
-4. LANGUAGE: Match the user's language (Roman Urdu, Urdu, or English) exactly.` 
-            }
+CRITICAL INSTRUCTIONS FOR ALL RESPONSES:
+1. ALWAYS PROVIDE DETAILED AND COMPREHENSIVE RESPONSES: Whenever asked about any topic, person, history, Islamic concept, science, or general question (e.g., Einstein, Quaid-e-Azam, Islamic history, inventions), NEVER give short 1-2 sentence replies.
+2. STRUCTURE YOUR ANSWER: Use clear markdown subheadings (##), bullet points (*), bold text, and numbered steps to provide a thorough biography, historical context, key achievements, and detailed explanations.
+3. CASUAL GREETINGS: Respond politely to simple 'Hello' or 'How are you', but if any topic or entity is mentioned, immediately switch to providing deep, accurate, and structured information.
+4. ACCURACY & LANGUAGE: Always match the user's input language (Roman Urdu, Urdu, or English) with 100% factual accuracy.`;
+
+        let conversationHistory = [
+            { role: "system", content: SYSTEM_PROMPT }
         ];
 
         window.onload = function() {
@@ -507,7 +506,13 @@ PROMPT RESPONSE GUIDELINES:
             
             if (savedHistory) {
                 try {
-                    conversationHistory = JSON.parse(savedHistory);
+                    const parsed = JSON.parse(savedHistory);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        conversationHistory = parsed;
+                        // Guarantee system prompt is updated
+                        conversationHistory[0] = { role: "system", content: SYSTEM_PROMPT };
+                    }
+                    
                     const chatContainer = document.getElementById('chatContainer');
                     const welcome = document.getElementById('welcomeScreen');
                     if (welcome) welcome.remove();
@@ -574,7 +579,7 @@ PROMPT RESPONSE GUIDELINES:
 
         function startNewChat() {
             const currentName = document.getElementById('userName').innerText;
-            conversationHistory = [conversationHistory[0]];
+            conversationHistory = [{ role: "system", content: SYSTEM_PROMPT }];
             localStorage.removeItem('md_ai_chat_history');
             localStorage.removeItem('md_ai_recent_titles');
             document.getElementById('recentList').innerHTML = '';
