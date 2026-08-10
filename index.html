@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio</title>
     <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio.">
-    <link rel="icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/gem.svg">
+    <link rel="icon" type="image/svg+xml" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/gem.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -71,7 +71,7 @@
             box-shadow: inset -5px 0 15px -5px rgba(255, 215, 0, 0.08);
         }
 
-        .sidebar-top { display: flex; flex-direction: column; gap: 15px; }
+        .sidebar-top { display: flex; flex-direction: column; gap: 12px; }
 
         .new-chat-btn {
             background: rgba(24, 24, 27, 0.8);
@@ -89,10 +89,27 @@
         }
         .new-chat-btn:hover { background: #27272a; border-color: #ffd700; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
 
+        .clear-chat-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .clear-chat-btn:hover { background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+
         .recent-section h5 {
             color: #71717a;
             font-size: 0.75rem;
-            margin: 18px 0 10px 10px;
+            margin: 12px 0 8px 10px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
@@ -102,7 +119,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            max-height: 52vh;
+            max-height: 45vh;
             overflow-y: auto;
         }
 
@@ -346,6 +363,9 @@
             <button class="new-chat-btn" onclick="startNewChat()">
                 <i class="fa-solid fa-plus"></i> New VIP Chat
             </button>
+            <button class="clear-chat-btn" onclick="clearAllChatHistory()">
+                <i class="fa-solid fa-trash-can"></i> Clear History
+            </button>
             <div class="recent-section">
                 <h5>Recent VIP Chats</h5>
                 <ul class="recent-list" id="recentList"></ul>
@@ -413,6 +433,48 @@ IMPORTANT RULES FOR RESPONDING:
             }
         ];
 
+        // Load saved chat history on page load
+        window.onload = function() {
+            const savedHistory = localStorage.getItem('md_ai_chat_history');
+            const savedTitles = localStorage.getItem('md_ai_recent_titles');
+            
+            if (savedHistory) {
+                try {
+                    conversationHistory = JSON.parse(savedHistory);
+                    const chatContainer = document.getElementById('chatContainer');
+                    const welcome = document.getElementById('welcomeScreen');
+                    if (welcome) welcome.remove();
+
+                    // Rebuild messages on screen
+                    for (let i = 1; i < conversationHistory.length; i++) {
+                        const msg = conversationHistory[i];
+                        const row = document.createElement('div');
+                        if (msg.role === 'user') {
+                            row.className = 'message-row user';
+                            row.innerHTML = `<div class="msg-bubble">${msg.content}</div>`;
+                        } else {
+                            row.className = 'message-row bot';
+                            row.innerHTML = `
+                                <div class="ai-avatar-circle">M&D</div>
+                                <div class="msg-bubble">${marked.parse(msg.content)}</div>
+                            `;
+                        }
+                        chatContainer.appendChild(row);
+                    }
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } catch(e) { console.log(e); }
+            }
+
+            if (savedTitles) {
+                document.getElementById('recentList').innerHTML = savedTitles;
+            }
+        };
+
+        function saveToLocalStorage() {
+            localStorage.setItem('md_ai_chat_history', JSON.stringify(conversationHistory));
+            localStorage.setItem('md_ai_recent_titles', document.getElementById('recentList').innerHTML);
+        }
+
         function handleAccountLogin() {
             const name = prompt("Enter your Name for VIP Access:", "Malik Miswar");
             if (name && name.trim() !== "") {
@@ -427,11 +489,20 @@ IMPORTANT RULES FOR RESPONDING:
         function startNewChat() {
             const currentName = document.getElementById('userName').innerText;
             conversationHistory = [conversationHistory[0]];
+            localStorage.removeItem('md_ai_chat_history');
+            localStorage.removeItem('md_ai_recent_titles');
+            document.getElementById('recentList').innerHTML = '';
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
                     <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
                 </div>`;
+        }
+
+        function clearAllChatHistory() {
+            if (confirm("Are you sure you want to delete all chat history?")) {
+                startNewChat();
+            }
         }
 
         function startVoiceInput() {
@@ -473,7 +544,7 @@ IMPORTANT RULES FOR RESPONDING:
 
             conversationHistory.push({ role: "user", content: text });
 
-            if (conversationHistory.length === 2) {
+            if (conversationHistory.filter(m => m.role === 'user').length === 1) {
                 const recentList = document.getElementById('recentList');
                 const newRecent = document.createElement('li');
                 newRecent.className = 'recent-item';
@@ -514,6 +585,8 @@ IMPORTANT RULES FOR RESPONDING:
                     <div class="msg-bubble">${marked.parse(rawReply)}</div>
                 `;
                 chatContainer.appendChild(botRow);
+
+                saveToLocalStorage();
 
             } catch (err) {
                 aiLoadingRow.classList.add('hidden');
