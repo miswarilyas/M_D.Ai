@@ -487,11 +487,13 @@
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         let selectedBase64Image = "";
 
-        // FORCE FULL DETAIL SYSTEM PROMPT
+        // CHATGPT LIKE BALANCED BEHAVIOR
         const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
-CRITICAL MANDATE:
-- Whenever a user asks about ANY personality, historical figure, science, Islamic topic, or general question (e.g., Quaid-e-Azam, Einstein, etc.), ALWAYS write a highly comprehensive, detailed, step-by-step full explanation using markdown headers (##), bold text, and bullet points.
-- NEVER give short or 1-line answers for knowledge-based queries. Always give a complete history and key points.`;
+Act like ChatGPT:
+- Match the response length to the user's query naturally.
+- If the user asks a simple question or engages in casual talk, give a direct, natural response.
+- If the user asks for detailed explanations, topics, code, or history, give a nicely structured answer with markdown headings and points.
+- Always match the user's language (Roman Urdu, Urdu, or English).`;
 
         let conversationHistory = [];
 
@@ -500,9 +502,46 @@ CRITICAL MANDATE:
         }
 
         window.onload = function() {
-            // Force Clear Old Stale Cache System Prompt
-            localStorage.removeItem('md_ai_chat_history');
-            resetSystemPrompt();
+            const savedHistory = localStorage.getItem('md_ai_chat_history');
+            const savedTitles = localStorage.getItem('md_ai_recent_titles');
+            
+            if (savedHistory) {
+                try {
+                    const parsed = JSON.parse(savedHistory);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        conversationHistory = parsed;
+                        conversationHistory[0] = { role: "system", content: SYSTEM_PROMPT };
+                    }
+                    
+                    const chatContainer = document.getElementById('chatContainer');
+                    const welcome = document.getElementById('welcomeScreen');
+                    if (welcome) welcome.remove();
+
+                    for (let i = 1; i < conversationHistory.length; i++) {
+                        const msg = conversationHistory[i];
+                        const row = document.createElement('div');
+                        if (msg.role === 'user') {
+                            row.className = 'message-row user';
+                            let textHtml = typeof msg.content === 'string' ? msg.content : (msg.content[0]?.text || '');
+                            row.innerHTML = `<div class="msg-bubble">${textHtml}</div>`;
+                        } else {
+                            row.className = 'message-row bot';
+                            row.innerHTML = `
+                                <div class="ai-avatar-circle">M&D</div>
+                                <div class="msg-bubble">${marked.parse(msg.content)}</div>
+                            `;
+                        }
+                        chatContainer.appendChild(row);
+                    }
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } catch(e) { console.log(e); }
+            } else {
+                resetSystemPrompt();
+            }
+
+            if (savedTitles) {
+                document.getElementById('recentList').innerHTML = savedTitles;
+            }
         };
 
         function saveToLocalStorage() {
@@ -617,11 +656,11 @@ CRITICAL MANDATE:
             let userPayloadContent;
             if (currentImg) {
                 userPayloadContent = [
-                    { type: "text", text: text || "Please analyze this image in detail and explain everything accurately." },
+                    { type: "text", text: text || "Please analyze this image." },
                     { type: "image_url", image_url: { url: currentImg } }
                 ];
             } else {
-                userPayloadContent = text + " (Note: Provide full, thorough details with markdown headings and bullet points)";
+                userPayloadContent = text;
             }
 
             if(conversationHistory.length === 0) resetSystemPrompt();
@@ -655,8 +694,8 @@ CRITICAL MANDATE:
                     body: JSON.stringify({
                         model: modelToUse,
                         messages: conversationHistory,
-                        temperature: 0.6,
-                        max_tokens: 4096
+                        temperature: 0.7,
+                        max_tokens: 2048
                     })
                 });
 
