@@ -113,7 +113,7 @@
     <div class="chat-container">
         <div class="chat-header">🤖 Miswar's AI Assistant</div>
         <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! Main Google Gemini Powered AI Assistant hoon. Aap koi bhi sawaal pooch sakte hain!</div>
+            <div class="msg bot-msg">Hello! Main AI Assistant hoon. Aap koi bhi sawal pooch sakte hain!</div>
         </div>
         <div class="chat-input">
             <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
@@ -122,8 +122,6 @@
     </div>
 
     <script>
-        const API_KEY = "AQ.Ab8RN6J8PecTk-WBqKJU489_SdcgCjOyqRrGC_XnEg50KGDPjw";
-
         async function sendMessage() {
             let input = document.getElementById("userInput");
             let text = input.value.trim();
@@ -146,23 +144,16 @@
             chatBody.scrollTop = chatBody.scrollHeight;
 
             try {
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
-                    })
-                });
-
-                let data = await response.json();
+                let response = await fetch("https://text.pollinations.ai/" + encodeURIComponent(text) + "?model=openai");
+                let reply = await response.text();
                 
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    botDiv.innerText = data.candidates[0].content.parts[0].text;
+                if (reply) {
+                    botDiv.innerText = reply;
                 } else {
-                    botDiv.innerText = "API Response error. Key check karein.";
+                    botDiv.innerText = "Error! Please try again.";
                 }
             } catch (error) {
-                botDiv.innerText = "Connection Error! Try again.";
+                botDiv.innerText = "Connection Error!";
             }
 
             chatBody.scrollTop = chatBody.scrollHeight;
