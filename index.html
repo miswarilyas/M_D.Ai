@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malik Miswar | Gemini AI Studio</title>
+    <title>Miswar AI Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -36,7 +36,7 @@
         }
 
         .new-chat-btn {
-            background: #282a2c;
+            background: #1a1a1c;
             border: 1px solid #3c4043;
             color: #e3e3e3;
             padding: 10px 16px;
@@ -48,7 +48,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .new-chat-btn:hover { background: #37393b; }
+        .new-chat-btn:hover { background: #282a2c; }
 
         .recent-section h5 {
             color: #8e918f;
@@ -62,7 +62,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            max-height: 50vh;
+            max-height: 52vh;
             overflow-y: auto;
         }
 
@@ -207,10 +207,7 @@
         }
 
         /* Markdown Styles for Gemini Output */
-        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 {
-            margin: 12px 0 8px;
-            color: #38bdf8;
-        }
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 12px 0 8px; color: #38bdf8; }
         .msg-bubble p { margin-bottom: 10px; }
         .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
         .msg-bubble li { margin-bottom: 6px; }
@@ -222,10 +219,7 @@
             border: 1px solid #3c4043;
             margin: 10px 0;
         }
-        .msg-bubble code {
-            font-family: monospace;
-            color: #38bdf8;
-        }
+        .msg-bubble code { font-family: monospace; color: #38bdf8; }
 
         /* FLOATING INPUT BAR AT BOTTOM */
         .input-container-wrapper {
@@ -283,8 +277,7 @@
             <div class="recent-section">
                 <h5>Recent</h5>
                 <ul class="recent-list" id="recentList">
-                    <li class="recent-item"><i class="fa-regular fa-message"></i> General Query</li>
-                </ul>
+                    </ul>
             </div>
         </div>
 
@@ -332,6 +325,14 @@
     <script>
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
 
+        // GEMINI CONVERSATION MEMORY ARRAY
+        let conversationHistory = [
+            { 
+                role: "system", 
+                content: "You are 'Miswar AI', an intelligent, warm, helpful, and highly versatile AI assistant (just like Google Gemini). STRICT DIRECTIVE: Respond directly to the user query with deep details and rich Markdown formatting. Maintain conversation context naturally. Do NOT promote yourself or Malik Miswar unless specifically asked." 
+            }
+        ];
+
         function handleAccountLogin() {
             const name = prompt("Enter your Name to Login:", "Malik Miswar");
             if (name && name.trim() !== "") {
@@ -341,12 +342,14 @@
                 
                 const welcomeTitle = document.getElementById('welcomeTitle');
                 if (welcomeTitle) welcomeTitle.innerText = `Hello, ${cleanName}`;
-                alert(`Welcome ${cleanName}! Account updated successfully.`);
             }
         }
 
         function startNewChat() {
             const currentName = document.getElementById('userName').innerText;
+            // Reset history except system prompt
+            conversationHistory = [conversationHistory[0]];
+            
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, ${currentName}</h1>
@@ -391,18 +394,23 @@
             input.value = '';
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
+            // Save user msg to memory
+            conversationHistory.push({ role: "user", content: text });
+
+            // Update Recent Sidebar Title on first message
+            if (conversationHistory.length === 2) {
+                const recentList = document.getElementById('recentList');
+                const newRecent = document.createElement('li');
+                newRecent.className = 'recent-item';
+                newRecent.innerHTML = `<i class="fa-regular fa-message"></i> ${text.substring(0, 20)}...`;
+                recentList.prepend(newRecent);
+            }
+
             // Append Bot Message Placeholder
             const botRow = document.createElement('div');
             botRow.className = 'message-row bot';
             botRow.innerHTML = `<div class="msg-bubble">Thinking... 🧠</div>`;
             chatContainer.appendChild(botRow);
-
-            // Add to recent list
-            const recentList = document.getElementById('recentList');
-            const newRecent = document.createElement('li');
-            newRecent.className = 'recent-item';
-            newRecent.innerHTML = `<i class="fa-regular fa-message"></i> ${text.substring(0, 18)}...`;
-            recentList.prepend(newRecent);
 
             try {
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -413,18 +421,16 @@
                     },
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
-                        messages: [
-                            { 
-                                role: "system", 
-                                content: "You are 'Miswar AI', a friendly, highly capable, versatile AI assistant (just like Google Gemini). STRICT DIRECTIVE: Focus ONLY on answering the user's specific query. Do NOT talk about yourself, Malik Miswar, or your origin unless explicitly asked. Always answer in the SAME LANGUAGE as the user (English, Roman Urdu, Urdu script, etc.). Respond in a warm, friendly, detailed, and highly structured manner using rich Markdown formatting (headings, bullet points, bold text, code snippets)." 
-                            },
-                            { role: "user", content: text }
-                        ]
+                        messages: conversationHistory
                     })
                 });
+
                 const data = await response.json();
                 const rawReply = data.choices[0].message.content;
                 
+                // Save AI response to Memory
+                conversationHistory.push({ role: "assistant", content: rawReply });
+
                 // Render with Markdown formatting
                 botRow.querySelector('.msg-bubble').innerHTML = marked.parse(rawReply);
             } catch (err) {
