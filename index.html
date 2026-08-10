@@ -18,7 +18,6 @@
             align-items: center;
         }
 
-        /* Portfolio Hero Section */
         .hero {
             text-align: center;
             padding: 20px;
@@ -84,7 +83,7 @@
             opacity: 1;
         }
 
-        /* Widget Header */
+        /* Header */
         .chat-header {
             background: #0f172a;
             padding: 15px 20px;
@@ -116,15 +115,21 @@
             font-size: 0.75rem;
             color: #4ade80;
         }
-        .close-btn {
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .action-btn {
             background: none;
             border: none;
             color: #94a3b8;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             transition: 0.2s;
         }
-        .close-btn:hover { color: #fff; }
+        .action-btn:hover { color: #38bdf8; }
+        .action-btn.muted { color: #ef4444; }
 
         /* Messages Container */
         .chat-messages {
@@ -155,7 +160,7 @@
             border-bottom-right-radius: 2px;
         }
 
-        /* Input Box */
+        /* Input Area */
         .chat-input-area {
             display: flex;
             padding: 12px;
@@ -211,7 +216,12 @@
                     <p>● Online</p>
                 </div>
             </div>
-            <button class="close-btn" onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="header-controls">
+                <button class="action-btn" id="voiceToggle" onclick="toggleVoice()" title="Toggle Voice Output">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+                <button class="action-btn" onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
         </div>
 
         <div class="chat-messages" id="chatBox">
@@ -227,10 +237,12 @@
     </div>
 
     <script>
-        // API Key split to prevent GitHub alert
+        // Key split logic
         const keyPart1 = "gsk_";
         const keyPart2 = "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         const GROQ_API_KEY = keyPart1 + keyPart2;
+
+        let voiceEnabled = true;
 
         function toggleChat() {
             const widget = document.getElementById('chatWidget');
@@ -241,7 +253,36 @@
                 icon.className = 'fa-solid fa-xmark';
             } else {
                 icon.className = 'fa-solid fa-robot';
+                window.speechSynthesis.cancel(); // Stop speech if chat closed
             }
+        }
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            const btn = document.getElementById('voiceToggle');
+            if (voiceEnabled) {
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                btn.classList.remove('muted');
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                btn.classList.add('muted');
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function speakText(text) {
+            if (!voiceEnabled || !('speechSynthesis' in window)) return;
+
+            window.speechSynthesis.cancel(); // Stop previous audio
+
+            // Clean text (remove emojis & special chars for smooth voice)
+            const cleanText = text.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            window.speechSynthesis.speak(utterance);
         }
 
         async function sendMessage() {
@@ -292,7 +333,9 @@
                 const data = await response.json();
                 
                 if (data && data.choices && data.choices[0] && data.choices[0].message) {
-                    botDiv.innerText = data.choices[0].message.content;
+                    const reply = data.choices[0].message.content;
+                    botDiv.innerText = reply;
+                    speakText(reply); // Voice Output Trigger
                 } else {
                     botDiv.innerText = "Arey, mujhe samajh nahi aaya! Ek baar phir se poochenge? 😊";
                 }
