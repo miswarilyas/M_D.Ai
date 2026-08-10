@@ -161,6 +161,7 @@
             transition: 0.2s;
         }
         .play-btn:hover { background: #38bdf8; color: #fff; }
+        .play-btn.loading { opacity: 0.5; cursor: wait; }
 
         /* Input Area */
         .chat-input-area {
@@ -234,9 +235,9 @@
         <div class="chat-messages" id="chatBox">
             <div class="message-wrapper bot">
                 <div class="message bot-msg">
-                    Hello! 👋 I am Malik Miswar's Professional AI Assistant. How can I assist you today? 😊
+                    Hello! 👋 I am Malik Miswar's Professional AI Assistant. How can I help you today? 😊
                 </div>
-                <button class="play-btn" onclick="speakMsg(this)"><i class="fa-solid fa-volume-high"></i></button>
+                <button class="play-btn" onclick="speakMsgElevenLabs(this)"><i class="fa-solid fa-volume-high"></i></button>
             </div>
         </div>
 
@@ -252,17 +253,16 @@
     </div>
 
     <script>
-        // Key split logic to bypass GitHub scan
+        // Groq API Key
         const keyPart1 = "gsk_";
         const keyPart2 = "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         const GROQ_API_KEY = keyPart1 + keyPart2;
 
-        let availableVoices = [];
+        // ElevenLabs API Key Integrated
+        const ELEVENLABS_API_KEY = "sk_50680cbc26fe1b7f53e2eb0bdd04dfb5e7591eae59262974"; 
+        const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Natural ChatGPT Style Voice (Rachel)
 
-        // Preload browser voices for professional output
-        window.speechSynthesis.onvoiceschanged = () => {
-            availableVoices = window.speechSynthesis.getVoices();
-        };
+        let currentAudio = null;
 
         function toggleChat() {
             const widget = document.getElementById('chatWidget');
@@ -273,54 +273,66 @@
                 icon.className = 'fa-solid fa-xmark';
             } else {
                 icon.className = 'fa-solid fa-robot';
-                window.speechSynthesis.cancel();
+                if (currentAudio) currentAudio.pause();
             }
         }
 
-        // Professional High-Quality Text-to-Speech
-        function speakMsg(btnElement) {
-            if (!('speechSynthesis' in window)) return;
-
-            window.speechSynthesis.cancel(); // Stop active speech
-
+        // ElevenLabs Ultra-Realistic AI Voice Trigger
+        async function speakMsgElevenLabs(btnElement) {
             const msgText = btnElement.previousElementSibling.innerText;
             const cleanText = msgText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
 
-            const utterance = new SpeechSynthesisUtterance(cleanText);
+            if (currentAudio) currentAudio.pause();
 
-            if (availableVoices.length === 0) {
-                availableVoices = window.speechSynthesis.getVoices();
+            btnElement.classList.add('loading');
+
+            try {
+                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'audio/mpeg',
+                        'xi-api-key': ELEVENLABS_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: cleanText,
+                        model_id: "eleven_multilingual_v2", // Supports 90+ languages
+                        voice_settings: {
+                            stability: 0.5,
+                            similarity_boost: 0.75
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const audioBlob = await response.blob();
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    currentAudio = new Audio(audioUrl);
+                    currentAudio.play();
+                } else {
+                    // Fallback to system voice if credits end
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    window.speechSynthesis.speak(utterance);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btnElement.classList.remove('loading');
             }
-
-            // Find best natural/professional voices (Google, Natural, or Premium voices)
-            const professionalVoice = availableVoices.find(v => 
-                (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Enhanced") || v.name.includes("Samantha") || v.name.includes("Victoria")) && 
-                (v.lang.startsWith("en") || v.lang.startsWith("hi") || v.lang.startsWith("ur"))
-            ) || availableVoices.find(v => v.lang.startsWith("en")) || availableVoices[0];
-
-            if (professionalVoice) utterance.voice = professionalVoice;
-
-            utterance.rate = 0.95;  // Calm, human speed
-            utterance.pitch = 1.0;   // Professional pitch
-
-            window.speechSynthesis.speak(utterance);
         }
 
-        // Multilingual Voice Input
         function startVoiceInput() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("Your browser does not support voice recognition. Please use Google Chrome.");
+                alert("Browser voice input not supported. Use Chrome!");
                 return;
             }
 
             const recognition = new SpeechRecognition();
-            recognition.lang = ''; // Auto-detect user language
             recognition.interimResults = false;
-
             const micBtn = document.getElementById('micBtn');
-            micBtn.classList.add('listening');
 
+            micBtn.classList.add('listening');
             recognition.start();
 
             recognition.onresult = function(event) {
@@ -341,7 +353,6 @@
 
             if (!text) return;
 
-            // Render User Message
             const userWrapper = document.createElement('div');
             userWrapper.className = 'message-wrapper user';
             userWrapper.innerHTML = `<div class="message user-msg">${text}</div>`;
@@ -350,7 +361,6 @@
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Render Loading Message
             const botWrapper = document.createElement('div');
             botWrapper.className = 'message-wrapper bot';
             botWrapper.innerHTML = `<div class="message bot-msg">Thinking... 🧠</div>`;
@@ -385,7 +395,7 @@
                     const reply = data.choices[0].message.content;
                     botWrapper.innerHTML = `
                         <div class="message bot-msg">${reply}</div>
-                        <button class="play-btn" onclick="speakMsg(this)" title="Listen"><i class="fa-solid fa-volume-high"></i></button>
+                        <button class="play-btn" onclick="speakMsgElevenLabs(this)" title="Listen"><i class="fa-solid fa-volume-high"></i></button>
                     `;
                 } else {
                     botWrapper.innerHTML = `<div class="message bot-msg">I couldn't process that. Could you please repeat? 😊</div>`;
