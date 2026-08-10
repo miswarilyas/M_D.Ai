@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai VIP Studio</title>
+    <title>M&D.Ai Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -19,7 +19,7 @@
             position: relative;
         }
 
-        /* VIP DYNAMIC BACKGROUND ANIMATED EFFECT (BLACK & WHITE GLOW) */
+        /* DYNAMIC BACKGROUND ANIMATED EFFECT */
         .bg-effects {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -36,26 +36,9 @@
             animation: floatGlow 12s infinite alternate ease-in-out;
         }
 
-        .ball-1 {
-            width: 450px; height: 450px;
-            background: #ffffff;
-            top: -10%; left: -10%;
-        }
-
-        .ball-2 {
-            width: 400px; height: 400px;
-            background: #a1a1aa;
-            bottom: -10%; right: -10%;
-            animation-delay: -4s;
-        }
-
-        .ball-3 {
-            width: 300px; height: 300px;
-            background: #ffd700;
-            top: 40%; left: 40%;
-            opacity: 0.08;
-            animation-delay: -8s;
-        }
+        .ball-1 { width: 450px; height: 450px; background: #ffffff; top: -10%; left: -10%; }
+        .ball-2 { width: 400px; height: 400px; background: #a1a1aa; bottom: -10%; right: -10%; animation-delay: -4s; }
+        .ball-3 { width: 300px; height: 300px; background: #ffd700; top: 40%; left: 40%; opacity: 0.08; animation-delay: -8s; }
 
         @keyframes floatGlow {
             0% { transform: translate(0, 0) scale(1); }
@@ -63,13 +46,11 @@
             100% { transform: translate(-40px, -50px) scale(0.9); }
         }
 
-        /* ENSURE APP CONTENT STAYS ABOVE BACKGROUND */
         .sidebar, .main-chat {
             position: relative;
             z-index: 1;
         }
 
-        /* CUSTOM SCROLLBAR */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
@@ -88,11 +69,7 @@
             box-shadow: inset -5px 0 15px -5px rgba(255, 215, 0, 0.08);
         }
 
-        .sidebar-top {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        .sidebar-top { display: flex; flex-direction: column; gap: 15px; }
 
         .new-chat-btn {
             background: rgba(24, 24, 27, 0.8);
@@ -143,7 +120,6 @@
         }
         .recent-item:hover { background: rgba(255, 255, 255, 0.05); color: #ffd700; }
 
-        /* USER ACCOUNT CARD */
         .user-profile-card {
             background: rgba(24, 24, 27, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -154,11 +130,7 @@
             gap: 10px;
         }
 
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
         .user-avatar {
             width: 36px;
             height: 36px;
@@ -236,10 +208,7 @@
             gap: 28px;
         }
 
-        .welcome-screen {
-            text-align: center;
-            margin-top: 14vh;
-        }
+        .welcome-screen { text-align: center; margin-top: 14vh; }
         .welcome-screen h1 {
             font-size: 3rem;
             color: #ffffff;
@@ -253,12 +222,7 @@
         }
         .welcome-screen p { color: #a1a1aa; font-size: 1.1rem; }
 
-        .message-row {
-            display: flex;
-            gap: 16px;
-            width: 100%;
-            animation: fadeIn 0.3s ease-in-out;
-        }
+        .message-row { display: flex; gap: 16px; width: 100%; animation: fadeIn 0.3s ease-in-out; }
         .message-row.user { justify-content: flex-end; }
 
         @keyframes fadeIn {
@@ -279,14 +243,8 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-bottom-right-radius: 4px;
         }
-        .bot .msg-bubble {
-            background: transparent;
-            color: #e4e4e7;
-            padding: 0;
-            flex: 1;
-        }
+        .bot .msg-bubble { background: transparent; color: #e4e4e7; padding: 0; flex: 1; }
 
-        /* Markdown Styles */
         .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffd700; font-weight: 600; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
         .msg-bubble p { margin-bottom: 10px; }
         .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
@@ -299,9 +257,8 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin: 12px 0;
         }
-        .msg-bubble code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        .msg-bubble code { font-family: monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
 
-        /* FLOATING INPUT BAR */
         .input-container-wrapper { padding: 20px 20% 32px; background: rgba(9, 9, 11, 0.4); backdrop-filter: blur(10px); }
         .input-bar {
             background: rgba(18, 18, 21, 0.9);
@@ -363,9 +320,7 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
-        .ai-avatar-circle.thinking {
-            animation: goldGlowPulse 1.4s infinite ease-in-out;
-        }
+        .ai-avatar-circle.thinking { animation: goldGlowPulse 1.4s infinite ease-in-out; }
 
         @keyframes goldGlowPulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); }
@@ -450,15 +405,9 @@
                 content: `You are 'M&D.Ai VIP', an elite, sophisticated, warm, and highly smart AI assistant. Maintain an elite persona but remain very friendly and helpful. 
 
 IMPORTANT RULES FOR RESPONDING:
-1. FOR CASUAL CHAT / GREETINGS (e.g. "kya haal hai", "hi", "kaise ho", "kya kar rahe ho"): 
-   - Respond like a polished human friend in a short, warm, 1 or 2 line sentence.
-   - ALWAYS include exactly 1 relevant emoji (e.g. 😊, 👍, 🌟).
-   - Do NOT give long detailed lectures unless asked.
-
-2. FOR INFORMATIVE / TECHNICAL / DETAILED QUESTIONS (e.g. coding, concepts, explanations, advice):
-   - Provide a deep, clear, well-structured, Gemini-style answer with Markdown headings, bullet points, and code blocks. Make the information deeply comprehensive.
-
-3. Always reply in the same language as the user (Urdu, Roman Urdu, English, etc.).` 
+1. FOR CASUAL CHAT / GREETINGS: Respond like a polished human friend in a short, warm, 1 or 2 line sentence with exactly 1 relevant emoji.
+2. FOR INFORMATIVE / TECHNICAL QUESTIONS: Provide a deep, clear, well-structured, Gemini-style answer with Markdown headings, bullet points, and code blocks.
+3. Always reply in the same language as the user.` 
             }
         ];
 
