@@ -258,9 +258,9 @@
         const keyPart2 = "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         const GROQ_API_KEY = keyPart1 + keyPart2;
 
-        // ElevenLabs API Key
+        // ElevenLabs API Key & Standard Free Voice ID (George)
         const ELEVENLABS_API_KEY = "sk_50680cbc26fe1b7f53e2eb0bdd04dfb5e7591eae59262974"; 
-        let freePremadeVoiceId = null;
+        const VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"; 
 
         let currentAudio = null;
 
@@ -274,35 +274,20 @@
             } else {
                 icon.className = 'fa-solid fa-robot';
                 if (currentAudio) currentAudio.pause();
+                window.speechSynthesis.cancel();
             }
         }
 
-        // Fetch ONLY free premade voice from ElevenLabs
-        async function getFreePremadeVoice() {
-            if (freePremadeVoiceId) return freePremadeVoiceId;
-
-            try {
-                const response = await fetch('https://api.elevenlabs.io/v1/voices', {
-                    headers: { 'xi-api-key': ELEVENLABS_API_KEY }
-                });
-                const data = await response.json();
-                
-                if (data.voices) {
-                    // Strictly filter voices that belong to category 'premade' (Free Tier Allowed)
-                    const premade = data.voices.find(v => v.category === 'premade');
-                    if (premade) {
-                        freePremadeVoiceId = premade.voice_id;
-                        return freePremadeVoiceId;
-                    }
-                }
-            } catch (err) {
-                console.error("Voice Fetch Error:", err);
-            }
-            // Fallback to official default free voice ID (George)
-            return "JBFqnCBsd6RMkjVDRZzb"; 
+        // Browser Fallback Voice Function (Zero Error Guarantee)
+        function speakBrowserFallback(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.95;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
         }
 
-        // ElevenLabs Voice Engine
+        // Main Voice Engine with Automatic Fallback
         async function speakMsgElevenLabs(btnElement) {
             const msgText = btnElement.previousElementSibling.innerText;
             const cleanText = msgText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '').trim();
@@ -313,14 +298,13 @@
                 currentAudio.pause();
                 currentAudio = null;
             }
+            window.speechSynthesis.cancel();
 
             btnElement.classList.add('loading');
             btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
             try {
-                const activeVoiceId = await getFreePremadeVoice();
-
-                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${activeVoiceId}`, {
+                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'audio/mpeg',
@@ -329,7 +313,7 @@
                     },
                     body: JSON.stringify({
                         text: cleanText,
-                        model_id: "eleven_multilingual_v2",
+                        model_id: "eleven_monolingual_v1",
                         voice_settings: {
                             stability: 0.5,
                             similarity_boost: 0.75
@@ -343,12 +327,13 @@
                     currentAudio = new Audio(audioUrl);
                     currentAudio.play();
                 } else {
-                    const errorMsg = await response.json();
-                    alert("ElevenLabs Error: " + (errorMsg.detail?.message || "Error generating voice."));
+                    // Fail silently to Browser Speech if ElevenLabs restricts
+                    console.warn("ElevenLabs API Limit/Restriction - Falling back to local TTS");
+                    speakBrowserFallback(cleanText);
                 }
             } catch (err) {
-                console.error("ElevenLabs Fetch Error:", err);
-                alert("Network Connection Error!");
+                console.error("Fetch Error:", err);
+                speakBrowserFallback(cleanText);
             } finally {
                 btnElement.classList.remove('loading');
                 btnElement.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
