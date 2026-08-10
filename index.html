@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio</title>
     <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio.">
-    <link rel="icon" type="image/svg+xml" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/gem.svg">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -89,6 +89,23 @@
         }
         .new-chat-btn:hover { background: #27272a; border-color: #ffd700; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
 
+        .clear-all-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .clear-all-btn:hover { background: rgba(239, 68, 68, 0.2); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+
         .recent-section h5 {
             color: #71717a;
             font-size: 0.75rem;
@@ -102,7 +119,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: 50vh;
+            max-height: 42vh;
             overflow-y: auto;
         }
 
@@ -114,11 +131,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             transition: 0.2s;
-            position: relative;
         }
-        .recent-item:hover { background: rgba(255, 255, 255, 0.05); color: #ffd700; }
+        .recent-item:hover { background: rgba(255, 255, 255, 0.06); color: #ffd700; border-color: rgba(255, 215, 0, 0.2); }
         
         .recent-text {
             display: flex;
@@ -141,7 +158,7 @@
             font-size: 0.85rem;
             transition: 0.2s;
         }
-        .chat-menu-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+        .chat-menu-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
 
         .user-profile-card {
             background: rgba(24, 24, 27, 0.8);
@@ -367,6 +384,9 @@
             <button class="new-chat-btn" onclick="startNewChat()">
                 <i class="fa-solid fa-plus"></i> New VIP Chat
             </button>
+            <button class="clear-all-btn" onclick="clearAllChatHistory()">
+                <i class="fa-solid fa-trash-can"></i> Clear All History
+            </button>
             <div class="recent-section">
                 <h5>Recent VIP Chats</h5>
                 <ul class="recent-list" id="recentList"></ul>
@@ -496,6 +516,12 @@ IMPORTANT RULES FOR RESPONDING:
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
                     <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
                 </div>`;
+        }
+
+        function clearAllChatHistory() {
+            if (confirm("Are you sure you want to delete all chat history?")) {
+                startNewChat();
+            }
         }
 
         function deleteSpecificChat(buttonElement) {
