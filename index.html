@@ -161,7 +161,6 @@
             transition: 0.2s;
         }
         .play-btn:hover { background: #38bdf8; color: #fff; }
-        .play-btn.loading { opacity: 0.5; cursor: wait; color: #f59e0b; }
 
         /* Input Area */
         .chat-input-area {
@@ -237,7 +236,7 @@
                 <div class="message bot-msg">
                     Hello! 👋 I am Malik Miswar's Professional AI Assistant. How can I help you today? 😊
                 </div>
-                <button class="play-btn" onclick="speakAmazonPolly(this)"><i class="fa-solid fa-volume-high"></i></button>
+                <button class="play-btn" onclick="speakGoogleTTS(this)"><i class="fa-solid fa-volume-high"></i></button>
             </div>
         </div>
 
@@ -273,10 +272,9 @@
             }
         }
 
-        // Amazon Polly High-Quality Human Voice Engine (Free & Instant)
-        function speakAmazonPolly(btnElement) {
+        // Reliable Google Voice Player (Zero Audio Play Errors)
+        function speakGoogleTTS(btnElement) {
             const msgText = btnElement.previousElementSibling.innerText;
-            // Clean text from emojis
             const cleanText = msgText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '').trim();
 
             if (!cleanText) return;
@@ -286,25 +284,16 @@
                 currentAudio = null;
             }
 
-            btnElement.classList.add('loading');
-            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-            // Amazon Polly Brian (Natural Human AI Voice)
-            const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(cleanText)}`;
+            // Google Speech Endpoint
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=en&client=tw-ob`;
 
             currentAudio = new Audio(audioUrl);
-
-            currentAudio.oncanplaythrough = () => {
-                btnElement.classList.remove('loading');
-                btnElement.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                currentAudio.play();
-            };
-
-            currentAudio.onerror = () => {
-                btnElement.classList.remove('loading');
-                btnElement.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                alert("Audio play error. Please try again!");
-            };
+            currentAudio.play().catch(() => {
+                // Fallback to Web Speech API smoothly if Google direct stream is blocked locally
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            });
         }
 
         // Voice Input (Mic)
@@ -382,7 +371,7 @@
                     const reply = data.choices[0].message.content;
                     botWrapper.innerHTML = `
                         <div class="message bot-msg">${reply}</div>
-                        <button class="play-btn" onclick="speakAmazonPolly(this)" title="Listen"><i class="fa-solid fa-volume-high"></i></button>
+                        <button class="play-btn" onclick="speakGoogleTTS(this)" title="Listen"><i class="fa-solid fa-volume-high"></i></button>
                     `;
                 } else {
                     botWrapper.innerHTML = `<div class="message bot-msg">I couldn't process that. Could you please repeat? 😊</div>`;
