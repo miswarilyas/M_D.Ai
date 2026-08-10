@@ -487,59 +487,22 @@
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         let selectedBase64Image = "";
 
-        // STRICT COMPREHENSIVE SYSTEM PROMPT
-        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', an advanced AI assistant created by Malik Miswar.
+        // FORCE FULL DETAIL SYSTEM PROMPT
+        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
+CRITICAL MANDATE:
+- Whenever a user asks about ANY personality, historical figure, science, Islamic topic, or general question (e.g., Quaid-e-Azam, Einstein, etc.), ALWAYS write a highly comprehensive, detailed, step-by-step full explanation using markdown headers (##), bold text, and bullet points.
+- NEVER give short or 1-line answers for knowledge-based queries. Always give a complete history and key points.`;
 
-CRITICAL INSTRUCTIONS FOR ALL RESPONSES:
-1. ALWAYS PROVIDE DETAILED AND COMPREHENSIVE RESPONSES: Whenever asked about any topic, person, history, Islamic concept, science, or general question (e.g., Einstein, Quaid-e-Azam, Islamic history, inventions), NEVER give short 1-2 sentence replies.
-2. STRUCTURE YOUR ANSWER: Use clear markdown subheadings (##), bullet points (*), bold text, and numbered steps to provide a thorough biography, historical context, key achievements, and detailed explanations.
-3. CASUAL GREETINGS: Respond politely to simple 'Hello' or 'How are you', but if any topic or entity is mentioned, immediately switch to providing deep, accurate, and structured information.
-4. ACCURACY & LANGUAGE: Always match the user's input language (Roman Urdu, Urdu, or English) with 100% factual accuracy.`;
+        let conversationHistory = [];
 
-        let conversationHistory = [
-            { role: "system", content: SYSTEM_PROMPT }
-        ];
+        function resetSystemPrompt() {
+            conversationHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+        }
 
         window.onload = function() {
-            const savedHistory = localStorage.getItem('md_ai_chat_history');
-            const savedTitles = localStorage.getItem('md_ai_recent_titles');
-            
-            if (savedHistory) {
-                try {
-                    const parsed = JSON.parse(savedHistory);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        conversationHistory = parsed;
-                        // Guarantee system prompt is updated
-                        conversationHistory[0] = { role: "system", content: SYSTEM_PROMPT };
-                    }
-                    
-                    const chatContainer = document.getElementById('chatContainer');
-                    const welcome = document.getElementById('welcomeScreen');
-                    if (welcome) welcome.remove();
-
-                    for (let i = 1; i < conversationHistory.length; i++) {
-                        const msg = conversationHistory[i];
-                        const row = document.createElement('div');
-                        if (msg.role === 'user') {
-                            row.className = 'message-row user';
-                            let textHtml = typeof msg.content === 'string' ? msg.content : (msg.content[0]?.text || '');
-                            row.innerHTML = `<div class="msg-bubble">${textHtml}</div>`;
-                        } else {
-                            row.className = 'message-row bot';
-                            row.innerHTML = `
-                                <div class="ai-avatar-circle">M&D</div>
-                                <div class="msg-bubble">${marked.parse(msg.content)}</div>
-                            `;
-                        }
-                        chatContainer.appendChild(row);
-                    }
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                } catch(e) { console.log(e); }
-            }
-
-            if (savedTitles) {
-                document.getElementById('recentList').innerHTML = savedTitles;
-            }
+            // Force Clear Old Stale Cache System Prompt
+            localStorage.removeItem('md_ai_chat_history');
+            resetSystemPrompt();
         };
 
         function saveToLocalStorage() {
@@ -579,7 +542,7 @@ CRITICAL INSTRUCTIONS FOR ALL RESPONSES:
 
         function startNewChat() {
             const currentName = document.getElementById('userName').innerText;
-            conversationHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+            resetSystemPrompt();
             localStorage.removeItem('md_ai_chat_history');
             localStorage.removeItem('md_ai_recent_titles');
             document.getElementById('recentList').innerHTML = '';
@@ -658,9 +621,10 @@ CRITICAL INSTRUCTIONS FOR ALL RESPONSES:
                     { type: "image_url", image_url: { url: currentImg } }
                 ];
             } else {
-                userPayloadContent = text;
+                userPayloadContent = text + " (Note: Provide full, thorough details with markdown headings and bullet points)";
             }
 
+            if(conversationHistory.length === 0) resetSystemPrompt();
             conversationHistory.push({ role: "user", content: userPayloadContent });
 
             if (conversationHistory.filter(m => m.role === 'user').length === 1) {
@@ -691,7 +655,7 @@ CRITICAL INSTRUCTIONS FOR ALL RESPONSES:
                     body: JSON.stringify({
                         model: modelToUse,
                         messages: conversationHistory,
-                        temperature: 0.5,
+                        temperature: 0.6,
                         max_tokens: 4096
                     })
                 });
