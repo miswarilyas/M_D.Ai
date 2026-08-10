@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Malik Miswar | Gemini AI Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -163,7 +164,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
 
         .welcome-screen {
@@ -187,11 +188,11 @@
         .message-row.user { justify-content: flex-end; }
 
         .msg-bubble {
-            max-width: 75%;
-            padding: 12px 18px;
+            max-width: 85%;
+            padding: 14px 20px;
             border-radius: 18px;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 0.98rem;
+            line-height: 1.6;
         }
         .user .msg-bubble {
             background: #282a2c;
@@ -202,6 +203,28 @@
             background: transparent;
             color: #e3e3e3;
             padding-left: 0;
+            width: 100%;
+        }
+
+        /* Markdown Styles for Gemini Output */
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 {
+            margin: 12px 0 8px;
+            color: #38bdf8;
+        }
+        .msg-bubble p { margin-bottom: 10px; }
+        .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
+        .msg-bubble li { margin-bottom: 6px; }
+        .msg-bubble pre {
+            background: #1e1f20;
+            padding: 12px;
+            border-radius: 10px;
+            overflow-x: auto;
+            border: 1px solid #3c4043;
+            margin: 10px 0;
+        }
+        .msg-bubble code {
+            font-family: monospace;
+            color: #38bdf8;
         }
 
         /* FLOATING INPUT BAR AT BOTTOM */
@@ -318,9 +341,7 @@
                 document.getElementById('avatarText').innerText = cleanName.substring(0, 2).toUpperCase();
                 
                 const welcomeTitle = document.getElementById('welcomeTitle');
-                if (welcomeTitle) {
-                    welcomeTitle.innerText = `Hello, ${cleanName}`;
-                }
+                if (welcomeTitle) welcomeTitle.innerText = `Hello, ${cleanName}`;
                 alert(`Welcome ${cleanName}! Account updated successfully.`);
             }
         }
@@ -377,7 +398,7 @@
             botRow.innerHTML = `<div class="msg-bubble">Thinking... 🧠</div>`;
             chatContainer.appendChild(botRow);
 
-            // Add to recent list sidebar
+            // Add to recent list
             const recentList = document.getElementById('recentList');
             const newRecent = document.createElement('li');
             newRecent.className = 'recent-item';
@@ -394,13 +415,18 @@
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
                         messages: [
-                            { role: "system", content: "You are a helpful AI assistant for Malik Miswar's app." },
+                            { 
+                                role: "system", 
+                                content: "You are 'Miswar AI', an ultra-intelligent, highly structured, and deeply detailed AI assistant just like Google Gemini. ALWAYS give highly comprehensive, well-explained, structured responses. Use Markdown heavily: bold text, bullet points, clear headings, subheadings, examples, and code blocks where applicable. NEVER give short or boring answers. Make your explanations engaging, deep, and complete." 
+                            },
                             { role: "user", content: text }
                         ]
                     })
                 });
                 const data = await response.json();
-                botRow.querySelector('.msg-bubble').innerText = data.choices[0].message.content;
+                const rawReply = data.choices[0].message.content;
+                // Render with Gemini-like Markdown formatting
+                botRow.querySelector('.msg-bubble').innerHTML = marked.parse(rawReply);
             } catch (err) {
                 botRow.querySelector('.msg-bubble').innerText = "Network Error. Please try again.";
             }
