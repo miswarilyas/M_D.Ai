@@ -8,25 +8,26 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* BLACK & WHITE MODERN THEME */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #131314;
-            color: #e3e3e3;
+            background: #000000; /* Pure Black Background */
+            color: #ffffff; /* Crisp White Text */
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
-        /* LEFT SIDEBAR */
+        /* LEFT SIDEBAR (DARK GREY & BLACK) */
         .sidebar {
             width: 280px;
-            background: #1e1f20;
+            background: #0d0d0d;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             padding: 16px;
-            border-right: 1px solid #2d2f31;
-            transition: all 0.3s ease;
+            border-right: 1px solid #222222;
         }
 
         .sidebar-top {
@@ -36,41 +37,43 @@
         }
 
         .new-chat-btn {
-            background: #1a1a1c;
-            border: 1px solid #3c4043;
-            color: #e3e3e3;
-            padding: 10px 16px;
-            border-radius: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            color: #ffffff;
+            padding: 12px 18px;
+            border-radius: 24px;
             font-size: 0.9rem;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
-        .new-chat-btn:hover { background: #282a2c; }
+        .new-chat-btn:hover { background: #2a2a2a; border-color: #555; }
 
         .recent-section h5 {
-            color: #8e918f;
-            font-size: 0.8rem;
-            margin: 15px 0 10px 10px;
+            color: #888888;
+            font-size: 0.78rem;
+            margin: 18px 0 10px 10px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .recent-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             max-height: 52vh;
             overflow-y: auto;
         }
 
         .recent-item {
-            padding: 10px 12px;
+            padding: 10px 14px;
             border-radius: 20px;
-            font-size: 0.85rem;
-            color: #c4c7c5;
+            font-size: 0.88rem;
+            color: #cccccc;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -78,13 +81,14 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: 0.2s;
         }
-        .recent-item:hover { background: #282a2c; color: #fff; }
+        .recent-item:hover { background: #1a1a1a; color: #ffffff; }
 
-        /* USER ACCOUNT PROFILE WITH LOGIN BUTTON */
+        /* USER ACCOUNT CARD AT BOTTOM */
         .user-profile-card {
-            background: #282a2c;
-            border: 1px solid #3c4043;
+            background: #141414;
+            border: 1px solid #262626;
             border-radius: 18px;
             padding: 12px;
             display: flex;
@@ -95,27 +99,27 @@
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            background: #ffffff;
+            color: #000000;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.85rem;
-            color: #fff;
+            font-size: 0.9rem;
         }
         .user-info { flex: 1; overflow: hidden; }
-        .user-info h4 { font-size: 0.85rem; color: #e3e3e3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-info p { font-size: 0.72rem; color: #4ade80; }
+        .user-info h4 { font-size: 0.88rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-info p { font-size: 0.72rem; color: #a3a3a3; }
 
         .login-btn {
-            background: #38bdf8;
-            color: #0f172a;
+            background: #ffffff;
+            color: #000000;
             border: none;
             padding: 8px 12px;
             border-radius: 12px;
@@ -128,7 +132,7 @@
             gap: 6px;
             transition: 0.2s;
         }
-        .login-btn:hover { background: #0284c7; color: #fff; }
+        .login-btn:hover { background: #e5e5e5; }
 
         /* RIGHT MAIN CHAT AREA */
         .main-chat {
@@ -136,31 +140,29 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
-            background: #131314;
+            background: #000000;
         }
 
-        /* HEADER */
         .top-navbar {
-            padding: 16px 24px;
+            padding: 18px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #111111;
         }
         .app-logo {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: #e3e3e3;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        .app-logo i { color: #38bdf8; }
+        .app-logo i { color: #ffffff; }
 
-        /* MESSAGES AREA */
         .chat-container {
             flex: 1;
-            padding: 20px 15%;
+            padding: 20px 18%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -169,16 +171,15 @@
 
         .welcome-screen {
             text-align: center;
-            margin-top: 10vh;
+            margin-top: 12vh;
         }
         .welcome-screen h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
-        .welcome-screen p { color: #8e918f; font-size: 1.1rem; }
+        .welcome-screen p { color: #888888; font-size: 1.15rem; }
 
         .message-row {
             display: flex;
@@ -195,43 +196,42 @@
             line-height: 1.6;
         }
         .user .msg-bubble {
-            background: #282a2c;
-            color: #e3e3e3;
+            background: #1f1f1f;
+            color: #ffffff;
+            border: 1px solid #333;
             border-bottom-right-radius: 4px;
         }
         .bot .msg-bubble {
             background: transparent;
-            color: #e3e3e3;
+            color: #e5e5e5;
             padding-left: 0;
             width: 100%;
         }
 
-        /* Markdown Styles for Gemini Output */
-        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 12px 0 8px; color: #38bdf8; }
+        /* Markdown Styles for Answers */
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffffff; }
         .msg-bubble p { margin-bottom: 10px; }
         .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
         .msg-bubble li { margin-bottom: 6px; }
         .msg-bubble pre {
-            background: #1e1f20;
-            padding: 12px;
-            border-radius: 10px;
+            background: #111111;
+            padding: 14px;
+            border-radius: 12px;
             overflow-x: auto;
-            border: 1px solid #3c4043;
-            margin: 10px 0;
+            border: 1px solid #222222;
+            margin: 12px 0;
         }
-        .msg-bubble code { font-family: monospace; color: #38bdf8; }
+        .msg-bubble code { font-family: monospace; color: #ffffff; background: #1a1a1a; padding: 2px 6px; border-radius: 4px; }
 
-        /* FLOATING INPUT BAR AT BOTTOM */
-        .input-container-wrapper {
-            padding: 20px 15% 30px;
-        }
+        /* FLOATING INPUT BAR */
+        .input-container-wrapper { padding: 20px 18% 30px; }
         .input-bar {
-            background: #1e1f20;
-            border: 1px solid #3c4043;
+            background: #0f0f0f;
+            border: 1px solid #262626;
             border-radius: 30px;
             display: flex;
             align-items: center;
-            padding: 8px 16px;
+            padding: 8px 18px;
             gap: 10px;
         }
         .input-bar input {
@@ -239,16 +239,16 @@
             background: transparent;
             border: none;
             outline: none;
-            color: #fff;
-            font-size: 0.95rem;
+            color: #ffffff;
+            font-size: 0.98rem;
             padding: 8px;
         }
         .icon-btn {
             background: transparent;
             border: none;
-            color: #c4c7c5;
-            width: 36px;
-            height: 36px;
+            color: #888888;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -257,7 +257,7 @@
             transition: 0.2s;
             font-size: 1.1rem;
         }
-        .icon-btn:hover { background: #282a2c; color: #fff; }
+        .icon-btn:hover { background: #222222; color: #ffffff; }
         .mic-btn.listening { color: #ef4444; animation: pulse 1s infinite; }
 
         @keyframes pulse {
@@ -275,9 +275,8 @@
                 <i class="fa-solid fa-plus"></i> New chat
             </button>
             <div class="recent-section">
-                <h5>Recent</h5>
-                <ul class="recent-list" id="recentList">
-                    </ul>
+                <h5>Recent Chats</h5>
+                <ul class="recent-list" id="recentList"></ul>
             </div>
         </div>
 
@@ -286,11 +285,11 @@
                 <div class="user-avatar" id="avatarText">MM</div>
                 <div class="user-info">
                     <h4 id="userName">Malik Miswar</h4>
-                    <p id="userStatus">● Logged In</p>
+                    <p id="userStatus">● Active</p>
                 </div>
             </div>
             <button class="login-btn" onclick="handleAccountLogin()">
-                <i class="fa-solid fa-right-to-bracket"></i> Login / Switch Account
+                <i class="fa-solid fa-right-to-bracket"></i> Switch Account
             </button>
         </div>
     </div>
@@ -325,16 +324,27 @@
     <script>
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
 
-        // GEMINI CONVERSATION MEMORY ARRAY
+        // FRIENDLY & INTELLIGENT CHAT MEMORY
         let conversationHistory = [
             { 
                 role: "system", 
-                content: "You are 'Miswar AI', an intelligent, warm, helpful, and highly versatile AI assistant (just like Google Gemini). STRICT DIRECTIVE: Respond directly to the user query with deep details and rich Markdown formatting. Maintain conversation context naturally. Do NOT promote yourself or Malik Miswar unless specifically asked." 
+                content: `You are 'Miswar AI', a friendly, natural, and highly smart AI assistant (like Gemini). 
+
+IMPORTANT RULES FOR RESPONDING:
+1. FOR CASUAL CHAT / GREETINGS (e.g. "kya haal hai", "hi", "kaise ho", "kya kar rahe ho"): 
+   - Respond like a natural human friend in a short, warm, 1 or 2 line sentence.
+   - ALWAYS include exactly 1 relevant emoji (e.g. 😊, 👍, 🌟).
+   - Do NOT give long lectures, system bios, or complex details for normal greetings!
+
+2. FOR INFORMATIVE / TECHNICAL / DETAILED QUESTIONS (e.g. coding, concepts, explanations, advice):
+   - Provide a deep, clear, well-structured, Gemini-style answer with Markdown headings, bullet points, and code blocks.
+
+3. Always reply in the same language as the user (Urdu, Roman Urdu, English, etc.).` 
             }
         ];
 
         function handleAccountLogin() {
-            const name = prompt("Enter your Name to Login:", "Malik Miswar");
+            const name = prompt("Enter your Name:", "Malik Miswar");
             if (name && name.trim() !== "") {
                 const cleanName = name.trim();
                 document.getElementById('userName').innerText = cleanName;
@@ -347,9 +357,7 @@
 
         function startNewChat() {
             const currentName = document.getElementById('userName').innerText;
-            // Reset history except system prompt
             conversationHistory = [conversationHistory[0]];
-            
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, ${currentName}</h1>
@@ -394,19 +402,18 @@
             input.value = '';
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Save user msg to memory
             conversationHistory.push({ role: "user", content: text });
 
-            // Update Recent Sidebar Title on first message
+            // Add to Recent List on First Message
             if (conversationHistory.length === 2) {
                 const recentList = document.getElementById('recentList');
                 const newRecent = document.createElement('li');
                 newRecent.className = 'recent-item';
-                newRecent.innerHTML = `<i class="fa-regular fa-message"></i> ${text.substring(0, 20)}...`;
+                newRecent.innerHTML = `<i class="fa-regular fa-message"></i> ${text.substring(0, 18)}...`;
                 recentList.prepend(newRecent);
             }
 
-            // Append Bot Message Placeholder
+            // Append Bot Loading Message
             const botRow = document.createElement('div');
             botRow.className = 'message-row bot';
             botRow.innerHTML = `<div class="msg-bubble">Thinking... 🧠</div>`;
@@ -421,17 +428,17 @@
                     },
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
-                        messages: conversationHistory
+                        messages: conversationHistory,
+                        temperature: 0.7
                     })
                 });
 
                 const data = await response.json();
                 const rawReply = data.choices[0].message.content;
                 
-                // Save AI response to Memory
                 conversationHistory.push({ role: "assistant", content: rawReply });
 
-                // Render with Markdown formatting
+                // Render with Markdown
                 botRow.querySelector('.msg-bubble').innerHTML = marked.parse(rawReply);
             } catch (err) {
                 botRow.querySelector('.msg-bubble').innerText = "Network Error. Please try again.";
