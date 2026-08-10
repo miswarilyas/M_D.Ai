@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miswar AI Studio</title>
+    <title>M&D.Ai Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -12,14 +12,14 @@
         /* BLACK & WHITE MODERN THEME */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000; /* Pure Black Background */
-            color: #ffffff; /* Crisp White Text */
+            background: #000000;
+            color: #ffffff;
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
-        /* LEFT SIDEBAR (DARK GREY & BLACK) */
+        /* LEFT SIDEBAR */
         .sidebar {
             width: 280px;
             background: #0d0d0d;
@@ -297,7 +297,7 @@
     <div class="main-chat">
         <div class="top-navbar">
             <div class="app-logo">
-                <i class="fa-solid fa-sparkles"></i> Miswar AI
+                <i class="fa-solid fa-sparkles"></i> M&D.Ai
             </div>
         </div>
 
@@ -310,7 +310,7 @@
 
         <div class="input-container-wrapper">
             <div class="input-bar">
-                <input type="text" id="userInput" placeholder="Ask Miswars..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai..." onkeypress="handleKeyPress(event)">
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
@@ -328,7 +328,7 @@
         let conversationHistory = [
             { 
                 role: "system", 
-                content: `You are 'Miswar AI', a friendly, natural, and highly smart AI assistant (like Gemini). 
+                content: `You are 'M&D.Ai', a friendly, natural, and highly smart AI assistant (like Gemini). 
 
 IMPORTANT RULES FOR RESPONDING:
 1. FOR CASUAL CHAT / GREETINGS (e.g. "kya haal hai", "hi", "kaise ho", "kya kar rahe ho"): 
