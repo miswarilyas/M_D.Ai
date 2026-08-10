@@ -265,6 +265,52 @@
             50% { transform: scale(1.15); }
             100% { transform: scale(1); }
         }
+
+        /* NEW CHAT LOADING ANIMATION (PREMIUM LOGO EFFECT) */
+        .ai-message-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .ai-logo-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.75rem;
+            color: #ffffff;
+            position: relative;
+            background: #000000;
+        }
+
+        .loading-lines {
+            display: flex;
+            gap: 3px;
+        }
+
+        .loading-lines span {
+            width: 3px;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 2px;
+            animation: line-grow 1s infinite ease-in-out;
+        }
+
+        .loading-lines span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-lines span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes line-grow {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(2); }
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -305,6 +351,17 @@
             <div class="welcome-screen" id="welcomeScreen">
                 <h1 id="welcomeTitle">Hello, Malik Miswar</h1>
                 <p>How can I help you today?</p>
+            </div>
+        </div>
+
+        <div id="aiLoadingMessage" class="hidden message-row bot">
+            <div class="ai-message-placeholder">
+                <div class="ai-logo-circle">M&D</div>
+                <div class="loading-lines">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
 
@@ -386,6 +443,7 @@ IMPORTANT RULES FOR RESPONDING:
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const chatContainer = document.getElementById('chatContainer');
+            const aiLoadingMsg = document.getElementById('aiLoadingMessage');
             const text = input.value.trim();
 
             if (!text) return;
@@ -413,11 +471,10 @@ IMPORTANT RULES FOR RESPONDING:
                 recentList.prepend(newRecent);
             }
 
-            // Append Bot Loading Message
-            const botRow = document.createElement('div');
-            botRow.className = 'message-row bot';
-            botRow.innerHTML = `<div class="msg-bubble">Thinking... 🧠</div>`;
-            chatContainer.appendChild(botRow);
+            // SHOW AI LOADING LOGO (CIRCLE & LINE EFFECT)
+            chatContainer.appendChild(aiLoadingMsg);
+            aiLoadingMsg.classList.remove('hidden');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -438,10 +495,22 @@ IMPORTANT RULES FOR RESPONDING:
                 
                 conversationHistory.push({ role: "assistant", content: rawReply });
 
-                // Render with Markdown
-                botRow.querySelector('.msg-bubble').innerHTML = marked.parse(rawReply);
+                // HIDE AI LOADING MESSAGE
+                aiLoadingMsg.classList.add('hidden');
+                document.body.appendChild(aiLoadingMsg); // Move back outside chat container
+
+                // Append Real AI Response (M&D.Ai Circle Logo shown once per response start)
+                const botRow = document.createElement('div');
+                botRow.className = 'message-row bot';
+                
+                // M&D Logo integrated before Markdown reply start
+                botRow.innerHTML = `<div class="ai-logo-circle">M&D</div><div class="msg-bubble">${marked.parse(rawReply)}</div>`;
+                chatContainer.appendChild(botRow);
+
             } catch (err) {
-                botRow.querySelector('.msg-bubble').innerText = "Network Error. Please try again.";
+                aiLoadingMsg.classList.add('hidden');
+                document.body.appendChild(aiLoadingMsg);
+                alert("Network Error. Please try again.");
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
