@@ -234,15 +234,15 @@
         <div class="chat-messages" id="chatBox">
             <div class="message-wrapper bot">
                 <div class="message bot-msg">
-                    Hey there! 👋 Main Malik Miswar ka AI Assistant hoon. Main aapki kya help karoon? 😊
+                    Hello! 👋 I am Malik Miswar's Professional AI Assistant. How can I assist you today? 😊
                 </div>
                 <button class="play-btn" onclick="speakMsg(this)"><i class="fa-solid fa-volume-high"></i></button>
             </div>
         </div>
 
         <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Bolne ya likhne ke liye..." onkeypress="handleKeyPress(event)">
-            <button class="input-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Bol kar poochain">
+            <input type="text" id="userInput" placeholder="Ask anything in any language..." onkeypress="handleKeyPress(event)">
+            <button class="input-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                 <i class="fa-solid fa-microphone"></i>
             </button>
             <button class="input-btn" onclick="sendMessage()" title="Send">
@@ -257,6 +257,13 @@
         const keyPart2 = "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         const GROQ_API_KEY = keyPart1 + keyPart2;
 
+        let availableVoices = [];
+
+        // Preload browser voices for professional output
+        window.speechSynthesis.onvoiceschanged = () => {
+            availableVoices = window.speechSynthesis.getVoices();
+        };
+
         function toggleChat() {
             const widget = document.getElementById('chatWidget');
             const icon = document.getElementById('chatIcon');
@@ -270,39 +277,45 @@
             }
         }
 
-        // Real Natural Text-to-Speech (Only when user clicks speaker button)
+        // Professional High-Quality Text-to-Speech
         function speakMsg(btnElement) {
             if (!('speechSynthesis' in window)) return;
 
-            window.speechSynthesis.cancel(); // Stop any active speech
+            window.speechSynthesis.cancel(); // Stop active speech
 
             const msgText = btnElement.previousElementSibling.innerText;
-            // Emojis mita kar clear pronunciation ke liye clean text
             const cleanText = msgText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
-            
-            // System Voices load karke natural pitch aur tone set karna
-            const voices = window.speechSynthesis.getVoices();
-            const naturalVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('ur') || v.lang.includes('en-IN')) || voices[0];
-            
-            if (naturalVoice) utterance.voice = naturalVoice;
-            utterance.rate = 0.95; // Human-like speed
-            utterance.pitch = 1.0;
+
+            if (availableVoices.length === 0) {
+                availableVoices = window.speechSynthesis.getVoices();
+            }
+
+            // Find best natural/professional voices (Google, Natural, or Premium voices)
+            const professionalVoice = availableVoices.find(v => 
+                (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Enhanced") || v.name.includes("Samantha") || v.name.includes("Victoria")) && 
+                (v.lang.startsWith("en") || v.lang.startsWith("hi") || v.lang.startsWith("ur"))
+            ) || availableVoices.find(v => v.lang.startsWith("en")) || availableVoices[0];
+
+            if (professionalVoice) utterance.voice = professionalVoice;
+
+            utterance.rate = 0.95;  // Calm, human speed
+            utterance.pitch = 1.0;   // Professional pitch
 
             window.speechSynthesis.speak(utterance);
         }
 
-        // Voice Input (Aap Bol Kar Sawal Pooch Sakain)
+        // Multilingual Voice Input
         function startVoiceInput() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("Aapka browser Speech Recognition support nahi karta. Google Chrome use karein!");
+                alert("Your browser does not support voice recognition. Please use Google Chrome.");
                 return;
             }
 
             const recognition = new SpeechRecognition();
-            recognition.lang = 'ur-PK'; // Supports Urdu & Roman Hindi/Urdu speech
+            recognition.lang = ''; // Auto-detect user language
             recognition.interimResults = false;
 
             const micBtn = document.getElementById('micBtn');
@@ -314,16 +327,11 @@
                 const transcript = event.results[0][0].transcript;
                 document.getElementById('userInput').value = transcript;
                 micBtn.classList.remove('listening');
-                sendMessage(); // Text fill ho kar auto send ho jaye
+                sendMessage();
             };
 
-            recognition.onerror = function() {
-                micBtn.classList.remove('listening');
-            };
-
-            recognition.onend = function() {
-                micBtn.classList.remove('listening');
-            };
+            recognition.onerror = function() { micBtn.classList.remove('listening'); };
+            recognition.onend = function() { micBtn.classList.remove('listening'); };
         }
 
         async function sendMessage() {
@@ -345,7 +353,7 @@
             // Render Loading Message
             const botWrapper = document.createElement('div');
             botWrapper.className = 'message-wrapper bot';
-            botWrapper.innerHTML = `<div class="message bot-msg">Soch raha hoon... 🧠</div>`;
+            botWrapper.innerHTML = `<div class="message bot-msg">Thinking... 🧠</div>`;
             chatBox.appendChild(botWrapper);
             chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -361,7 +369,7 @@
                         messages: [
                             {
                                 role: "system",
-                                content: "You are a friendly, smart AI assistant for Malik Miswar's website. Talk in Roman Urdu or English depending on the user. CRITICAL RULE: DO NOT start your response with greetings like 'Assalam-o-Alaikum', 'Hello', or 'Hi' in every message unless the user explicitly greets you first. Direct answer the question in a friendly, conversational, and natural tone with relevant emojis."
+                                content: "You are a professional, intelligent, and highly capable AI assistant for Malik Miswar's website. MANDATORY RULE: Always respond in the EXACT SAME LANGUAGE that the user uses to ask the question (e.g., if asked in English respond in English, if asked in Roman Urdu respond in Roman Urdu, if asked in Urdu script respond in Urdu, Spanish, Arabic, French, etc.). CRITICAL RULE: DO NOT start your response with greetings like 'Hello', 'Hi', or 'Assalam-o-Alaikum' in every message unless explicitly greeted first. Give concise, accurate, and professional answers."
                             },
                             {
                                 role: "user",
@@ -377,13 +385,13 @@
                     const reply = data.choices[0].message.content;
                     botWrapper.innerHTML = `
                         <div class="message bot-msg">${reply}</div>
-                        <button class="play-btn" onclick="speakMsg(this)" title="Sunein"><i class="fa-solid fa-volume-high"></i></button>
+                        <button class="play-btn" onclick="speakMsg(this)" title="Listen"><i class="fa-solid fa-volume-high"></i></button>
                     `;
                 } else {
-                    botWrapper.innerHTML = `<div class="message bot-msg">Arey, mujhe samajh nahi aaya! Ek baar phir se poochenge? 😊</div>`;
+                    botWrapper.innerHTML = `<div class="message bot-msg">I couldn't process that. Could you please repeat? 😊</div>`;
                 }
             } catch (error) {
-                botWrapper.innerHTML = `<div class="message bot-msg">Network issue ya API key check kar lein! 🙏</div>`;
+                botWrapper.innerHTML = `<div class="message bot-msg">Network error or API key issue. Please try again! 🙏</div>`;
             }
 
             chatBox.scrollTop = chatBox.scrollHeight;
