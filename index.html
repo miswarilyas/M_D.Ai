@@ -283,8 +283,7 @@
             <div class="recent-section">
                 <h5>Recent</h5>
                 <ul class="recent-list" id="recentList">
-                    <li class="recent-item"><i class="fa-regular fa-message"></i> Portfolio Help</li>
-                    <li class="recent-item"><i class="fa-regular fa-message"></i> Web Development</li>
+                    <li class="recent-item"><i class="fa-regular fa-message"></i> General Query</li>
                 </ul>
             </div>
         </div>
@@ -417,7 +416,7 @@
                         messages: [
                             { 
                                 role: "system", 
-                                content: "You are 'Miswar AI', an ultra-intelligent, highly structured, and deeply detailed AI assistant just like Google Gemini. ALWAYS give highly comprehensive, well-explained, structured responses. Use Markdown heavily: bold text, bullet points, clear headings, subheadings, examples, and code blocks where applicable. NEVER give short or boring answers. Make your explanations engaging, deep, and complete." 
+                                content: "You are 'Miswar AI', a friendly, highly capable, versatile AI assistant (just like Google Gemini). STRICT DIRECTIVE: Focus ONLY on answering the user's specific query. Do NOT talk about yourself, Malik Miswar, or your origin unless explicitly asked. Always answer in the SAME LANGUAGE as the user (English, Roman Urdu, Urdu script, etc.). Respond in a warm, friendly, detailed, and highly structured manner using rich Markdown formatting (headings, bullet points, bold text, code snippets)." 
                             },
                             { role: "user", content: text }
                         ]
@@ -425,7 +424,8 @@
                 });
                 const data = await response.json();
                 const rawReply = data.choices[0].message.content;
-                // Render with Gemini-like Markdown formatting
+                
+                // Render with Markdown formatting
                 botRow.querySelector('.msg-bubble').innerHTML = marked.parse(rawReply);
             } catch (err) {
                 botRow.querySelector('.msg-bubble').innerText = "Network Error. Please try again.";
