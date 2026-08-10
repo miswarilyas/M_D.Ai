@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai Studio</title>
+    <title>M&D.Ai VIP Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* SLEEK GEMINI-STYLE ULTRA-DARK THEME */
+        /* GEMINI-STYLE ULTRA-DARK THEME with GOLD ACCENTS */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: #09090b;
@@ -23,9 +23,9 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        ::-webkit-scrollbar-thumb:hover { background: #ffd700; }
 
-        /* LEFT SIDEBAR */
+        /* LEFT SIDEBAR with GOLD GLOW */
         .sidebar {
             width: 280px;
             background: #121215;
@@ -33,7 +33,8 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 16px;
-            border-right: 1px solid #27272a;
+            border-right: 1px solid #333333;
+            box-shadow: inset -5px 0 15px -5px rgba(255, 215, 0, 0.1);
         }
 
         .sidebar-top {
@@ -44,19 +45,19 @@
 
         .new-chat-btn {
             background: #18181b;
-            border: 1px solid #27272a;
-            color: #f4f4f5;
+            border: 1px solid #333333;
+            color: #ffd700;
             padding: 12px 18px;
             border-radius: 24px;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .new-chat-btn:hover { background: #27272a; border-color: #3f3f46; }
+        .new-chat-btn:hover { background: #27272a; border-color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 
         .recent-section h5 {
             color: #71717a;
@@ -89,12 +90,14 @@
             text-overflow: ellipsis;
             transition: 0.2s;
         }
-        .recent-item:hover { background: #18181b; color: #ffffff; }
+        .recent-item:hover { background: #18181b; color: #ffd700; }
+        .recent-item i { color: #555; transition: 0.2s; }
+        .recent-item:hover i { color: #ffd700; }
 
         /* USER ACCOUNT CARD */
         .user-profile-card {
             background: #18181b;
-            border: 1px solid #27272a;
+            border: 1px solid #333333;
             border-radius: 18px;
             padding: 12px;
             display: flex;
@@ -111,20 +114,21 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: #ffffff;
+            background: #ffd700;
             color: #09090b;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 0.85rem;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         .user-info { flex: 1; overflow: hidden; }
         .user-info h4 { font-size: 0.88rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-info p { font-size: 0.72rem; color: #22c55e; }
+        .user-info p { font-size: 0.72rem; color: #ffd700; }
 
         .login-btn {
-            background: #ffffff;
+            background: #ffd700;
             color: #09090b;
             border: none;
             padding: 8px 12px;
@@ -138,7 +142,7 @@
             gap: 6px;
             transition: 0.2s;
         }
-        .login-btn:hover { background: #e4e4e7; }
+        .login-btn:hover { background: #ffffff; color: #09090b; box-shadow: 0 0 15px rgba(255, 215, 0, 0.7); }
 
         /* RIGHT MAIN CHAT AREA */
         .main-chat {
@@ -154,16 +158,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #18181b;
+            border-bottom: 1px solid #222222;
         }
+        
+        /* GOLD VIP LOGO with GLOW */
         .app-logo {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.35rem;
+            font-weight: 700;
             color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 10px;
-            letter-spacing: -0.3px;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text {
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
         }
 
         .chat-container {
@@ -180,12 +191,18 @@
             margin-top: 14vh;
         }
         .welcome-screen h1 {
-            font-size: 2.8rem;
+            font-size: 3rem;
             color: #ffffff;
             font-weight: 600;
             margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.8px;
         }
+        
+        .welcome-screen h1 span {
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+        
         .welcome-screen p { color: #71717a; font-size: 1.1rem; }
 
         .message-row {
@@ -205,13 +222,13 @@
             max-width: 85%;
             padding: 14px 20px;
             border-radius: 18px;
-            font-size: 0.96rem;
+            font-size: 0.98rem;
             line-height: 1.65;
         }
         .user .msg-bubble {
             background: #18181b;
             color: #f4f4f5;
-            border: 1px solid #27272a;
+            border: 1px solid #333333;
             border-bottom-right-radius: 4px;
         }
         .bot .msg-bubble {
@@ -222,33 +239,34 @@
         }
 
         /* Markdown Styles */
-        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffffff; font-weight: 600; }
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffd700; font-weight: 600; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
         .msg-bubble p { margin-bottom: 10px; }
         .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
         .msg-bubble li { margin-bottom: 6px; }
+        .msg-bubble li strong { color: #ffd700; }
         .msg-bubble pre {
             background: #121215;
             padding: 16px;
             border-radius: 12px;
             overflow-x: auto;
-            border: 1px solid #27272a;
+            border: 1px solid #333333;
             margin: 12px 0;
         }
-        .msg-bubble code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #f4f4f5; background: #18181b; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        .msg-bubble code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #ffd700; background: #1a1a1a; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
 
         /* FLOATING INPUT BAR */
         .input-container-wrapper { padding: 20px 20% 32px; }
         .input-bar {
             background: #121215;
-            border: 1px solid #27272a;
+            border: 1px solid #333333;
             border-radius: 30px;
             display: flex;
             align-items: center;
             padding: 8px 18px;
             gap: 10px;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
-        .input-bar:focus-within { border-color: #3f3f46; }
+        .input-bar:focus-within { border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         .input-bar input {
             flex: 1;
             background: transparent;
@@ -272,7 +290,7 @@
             transition: 0.2s;
             font-size: 1.1rem;
         }
-        .icon-btn:hover { background: #18181b; color: #ffffff; }
+        .icon-btn:hover { background: #18181b; color: #ffd700; }
         .mic-btn.listening { color: #ef4444; animation: pulse 1s infinite; }
 
         @keyframes pulse {
@@ -281,33 +299,33 @@
             100% { transform: scale(1); }
         }
 
-        /* GEMINI-STYLE AI LOGO & PULSE LOADING */
+        /* GEMINI-STYLE AI LOGO & GOLD PULSE */
         .ai-avatar-circle {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            background: #18181b;
-            border: 1px solid #3f3f46;
+            background: #09090b;
+            border: 2px solid #ffd700;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 0.72rem;
-            color: #ffffff;
+            color: #ffd700;
             flex-shrink: 0;
             letter-spacing: -0.5px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
         /* PULSE GLOW ANIMATION WHEN THINKING */
         .ai-avatar-circle.thinking {
-            border-color: #ffffff;
-            animation: glowPulse 1.4s infinite ease-in-out;
+            animation: goldGlowPulse 1.4s infinite ease-in-out;
         }
 
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        @keyframes goldGlowPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
 
         .hidden { display: none !important; }
@@ -318,10 +336,10 @@
     <div class="sidebar">
         <div class="sidebar-top">
             <button class="new-chat-btn" onclick="startNewChat()">
-                <i class="fa-solid fa-plus"></i> New chat
+                <i class="fa-solid fa-plus"></i> New VIP Chat
             </button>
             <div class="recent-section">
-                <h5>Recent Chats</h5>
+                <h5>Recent VIP Chats</h5>
                 <ul class="recent-list" id="recentList"></ul>
             </div>
         </div>
@@ -331,11 +349,11 @@
                 <div class="user-avatar" id="avatarText">MM</div>
                 <div class="user-info">
                     <h4 id="userName">Malik Miswar</h4>
-                    <p id="userStatus">● Active</p>
+                    <p id="userStatus">● VIP Active</p>
                 </div>
             </div>
             <button class="login-btn" onclick="handleAccountLogin()">
-                <i class="fa-solid fa-right-to-bracket"></i> Switch Account
+                <i class="fa-solid fa-right-to-bracket"></i> Switch VIP Account
             </button>
         </div>
     </div>
@@ -343,14 +361,15 @@
     <div class="main-chat">
         <div class="top-navbar">
             <div class="app-logo">
-                <i class="fa-solid fa-sparkles"></i> M&D.Ai
+                <i class="fa-solid fa-gem" style="color: #ffd700;"></i>
+                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">VIP</small></span>
             </div>
         </div>
 
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
-                <h1 id="welcomeTitle">Hello, Malik Miswar</h1>
-                <p>How can I help you today?</p>
+                <h1 id="welcomeTitle">Hello, <span>Malik Miswar</span></h1>
+                <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
             </div>
         </div>
 
@@ -360,11 +379,11 @@
 
         <div class="input-container-wrapper">
             <div class="input-bar">
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP..." onkeypress="handleKeyPress(event)">
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
-                <button class="icon-btn" onclick="sendMessage()" title="Send">
+                <button class="icon-btn" onclick="sendMessage()" title="Send Premium">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -377,29 +396,29 @@
         let conversationHistory = [
             { 
                 role: "system", 
-                content: `You are 'M&D.Ai', a friendly, natural, and highly smart AI assistant (like Gemini). 
+                content: `You are 'M&D.Ai VIP', an elite, sophisticated, warm, and highly smart AI assistant. Maintain an elite persona but remain very friendly and helpful. 
 
 IMPORTANT RULES FOR RESPONDING:
 1. FOR CASUAL CHAT / GREETINGS (e.g. "kya haal hai", "hi", "kaise ho", "kya kar rahe ho"): 
-   - Respond like a natural human friend in a short, warm, 1 or 2 line sentence.
+   - Respond like a polished human friend in a short, warm, 1 or 2 line sentence.
    - ALWAYS include exactly 1 relevant emoji (e.g. 😊, 👍, 🌟).
-   - Do NOT give long lectures, system bios, or complex details for normal greetings!
+   - Do NOT give long detailed lectures unless asked.
 
 2. FOR INFORMATIVE / TECHNICAL / DETAILED QUESTIONS (e.g. coding, concepts, explanations, advice):
-   - Provide a deep, clear, well-structured, Gemini-style answer with Markdown headings, bullet points, and code blocks.
+   - Provide a deep, clear, well-structured, Gemini-style answer with Markdown headings, bullet points, and code blocks. Make the information deeply comprehensive.
 
 3. Always reply in the same language as the user (Urdu, Roman Urdu, English, etc.).` 
             }
         ];
 
         function handleAccountLogin() {
-            const name = prompt("Enter your Name:", "Malik Miswar");
+            const name = prompt("Enter your Name for VIP Access:", "Malik Miswar");
             if (name && name.trim() !== "") {
                 const cleanName = name.trim();
                 document.getElementById('userName').innerText = cleanName;
                 document.getElementById('avatarText').innerText = cleanName.substring(0, 2).toUpperCase();
-                const welcomeTitle = document.getElementById('welcomeTitle');
-                if (welcomeTitle) welcomeTitle.innerText = `Hello, ${cleanName}`;
+                const welcomeTitleSpan = document.querySelector('#welcomeTitle span');
+                if (welcomeTitleSpan) welcomeTitleSpan.innerText = cleanName;
             }
         }
 
@@ -408,8 +427,8 @@ IMPORTANT RULES FOR RESPONDING:
             conversationHistory = [conversationHistory[0]];
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
-                    <h1 id="welcomeTitle">Hello, ${currentName}</h1>
-                    <p>How can I help you today?</p>
+                    <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
+                    <p>Welcome to your premium M&D.Ai VIP Studio. How can I assist you today?</p>
                 </div>`;
         }
 
@@ -458,11 +477,11 @@ IMPORTANT RULES FOR RESPONDING:
                 const recentList = document.getElementById('recentList');
                 const newRecent = document.createElement('li');
                 newRecent.className = 'recent-item';
-                newRecent.innerHTML = `<i class="fa-regular fa-message"></i> ${text.substring(0, 18)}...`;
+                newRecent.innerHTML = `<i class="fa-solid fa-gem" style="color: #ffd700; font-size: 0.7rem;"></i> ${text.substring(0, 18)}...`;
                 recentList.prepend(newRecent);
             }
 
-            // SHOW PULSING THINKING LOGO
+            // SHOW GOLD PULSING THINKING LOGO
             chatContainer.appendChild(aiLoadingRow);
             aiLoadingRow.classList.remove('hidden');
             chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -490,7 +509,7 @@ IMPORTANT RULES FOR RESPONDING:
                 aiLoadingRow.classList.add('hidden');
                 document.body.appendChild(aiLoadingRow);
 
-                // APPEND FINAL RESPONSE WITH M&D AVATAR
+                // APPEND FINAL RESPONSE WITH GOLD M&D AVATAR
                 const botRow = document.createElement('div');
                 botRow.className = 'message-row bot';
                 botRow.innerHTML = `
@@ -502,7 +521,7 @@ IMPORTANT RULES FOR RESPONDING:
             } catch (err) {
                 aiLoadingRow.classList.add('hidden');
                 document.body.appendChild(aiLoadingRow);
-                alert("Network Error. Please try again.");
+                alert("Network Error or API key error. Please check your credentials.");
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
