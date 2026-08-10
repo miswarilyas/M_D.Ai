@@ -468,7 +468,7 @@
                 </button>
                 <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
 
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or type 'create a BMW car pic'..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or type 'wallpaper bna do'..." onkeypress="handleKeyPress(event)">
                 
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
@@ -487,7 +487,8 @@
         const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
 Act like ChatGPT:
 - Match the response length to the user's query naturally.
-- Always match the user's language (Roman Urdu, Urdu, or English).`;
+- Always match the user's language (Roman Urdu, Urdu, or English).
+- NEVER generate ASCII text art for wallpapers or images. If the user asks for a wallpaper/image/photo, tell them to type 'generate image' or '/image' if it fails.`;
 
         let conversationHistory = [];
 
@@ -628,12 +629,14 @@ Act like ChatGPT:
             return `Here is your generated image:\n\n![Generated Image](${imageUrl})`;
         }
 
+        // Expanded detection for Urdu / English image requests
         function checkIsImageRequest(str) {
             const lower = str.toLowerCase();
             const keywords = [
                 '/image', 'generate image', 'create image', 'draw', 'picture of', 
                 'photo of', 'make a pic', 'create a pic', 'car pic', 'car image', 
-                'image of', 'generate a', 'create a', 'make an image', 'make a picture'
+                'image of', 'generate a', 'create a', 'make an image', 'make a picture',
+                'wallpaper', 'bna kr do', 'bna do', 'bnao', 'photo', 'tasveer', 'pic bna'
             ];
             
             return keywords.some(key => lower.includes(key));
@@ -693,7 +696,11 @@ Act like ChatGPT:
                                          .replace(/create a/i, '')
                                          .replace(/make a pic of/i, '')
                                          .replace(/make a picture of/i, '')
+                                         .replace(/bna kr do/i, '')
+                                         .replace(/bna do/i, '')
+                                         .replace(/bnao/i, '')
                                          .replace(/draw a/i, '')
+                                         .replace(/wallpaper/i, 'wallpaper design')
                                          .replace(/pic/i, '')
                                          .replace(/image/i, '').trim();
 
