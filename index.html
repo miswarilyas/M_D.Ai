@@ -487,7 +487,6 @@
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         let selectedBase64Image = "";
 
-        // CHATGPT LIKE BALANCED BEHAVIOR
         const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
 Act like ChatGPT:
 - Match the response length to the user's query naturally.
@@ -522,7 +521,13 @@ Act like ChatGPT:
                         const row = document.createElement('div');
                         if (msg.role === 'user') {
                             row.className = 'message-row user';
-                            let textHtml = typeof msg.content === 'string' ? msg.content : (msg.content[0]?.text || '');
+                            let textHtml = "";
+                            if (typeof msg.content === 'string') {
+                                textHtml = msg.content;
+                            } else if (Array.isArray(msg.content)) {
+                                const textPart = msg.content.find(p => p.type === 'text');
+                                textHtml = textPart ? textPart.text : '';
+                            }
                             row.innerHTML = `<div class="msg-bubble">${textHtml}</div>`;
                         } else {
                             row.className = 'message-row bot';
@@ -639,7 +644,7 @@ Act like ChatGPT:
 
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            let userHtml = `<div class="msg-bubble">${text}`;
+            let userHtml = `<div class="msg-bubble">${text || "Analyzing Image..."}`;
             if (selectedBase64Image) {
                 userHtml += `<br><img src="${selectedBase64Image}">`;
             }
@@ -653,18 +658,25 @@ Act like ChatGPT:
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            let userPayloadContent;
+            let messagesPayload = [];
+
             if (currentImg) {
-                userPayloadContent = [
-                    { type: "text", text: text || "Please analyze this image." },
-                    { type: "image_url", image_url: { url: currentImg } }
+                // For vision requests, send single-turn message structure for stability
+                messagesPayload = [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: text || "Describe and analyze this image in detail." },
+                            { type: "image_url", image_url: { url: currentImg } }
+                        ]
+                    }
                 ];
             } else {
-                userPayloadContent = text;
+                if (conversationHistory.length === 0) resetSystemPrompt();
+                conversationHistory.push({ role: "user", content: text });
+                messagesPayload = conversationHistory;
             }
-
-            if(conversationHistory.length === 0) resetSystemPrompt();
-            conversationHistory.push({ role: "user", content: userPayloadContent });
 
             if (conversationHistory.filter(m => m.role === 'user').length === 1) {
                 const recentList = document.getElementById('recentList');
@@ -683,7 +695,7 @@ Act like ChatGPT:
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const modelToUse = currentImg ? "llama-3.2-11b-vision-preview" : "llama-3.3-70b-versatile";
+                const modelToUse = currentImg ? "llama-3.2-90b-vision-preview" : "llama-3.3-70b-versatile";
 
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
@@ -693,16 +705,23 @@ Act like ChatGPT:
                     },
                     body: JSON.stringify({
                         model: modelToUse,
-                        messages: conversationHistory,
+                        messages: messagesPayload,
                         temperature: 0.7,
                         max_tokens: 2048
                     })
                 });
 
                 const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message || "API Error");
+                }
+
                 const rawReply = data.choices ? data.choices[0].message.content : "Sorry, could not process request.";
                 
-                conversationHistory.push({ role: "assistant", content: rawReply });
+                if (!currentImg) {
+                    conversationHistory.push({ role: "assistant", content: rawReply });
+                }
 
                 aiLoadingRow.classList.add('hidden');
                 document.body.appendChild(aiLoadingRow);
@@ -718,9 +737,17 @@ Act like ChatGPT:
                 saveToLocalStorage();
 
             } catch (err) {
+                console.error(err);
                 aiLoadingRow.classList.add('hidden');
                 document.body.appendChild(aiLoadingRow);
-                alert("Error connecting to AI service. Please try again.");
+                
+                const errorRow = document.createElement('div');
+                errorRow.className = 'message-row bot';
+                errorRow.innerHTML = `
+                    <div class="ai-avatar-circle">M&D</div>
+                    <div class="msg-bubble">Sorry, could not process request. Please try again or upload a clearer image.</div>
+                `;
+                chatContainer.appendChild(errorRow);
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
