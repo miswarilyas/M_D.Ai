@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
     <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio.">
-    <meta name="keywords" content="M&D.Ai, VIP AI Studio, Malik Miswar AI, Free AI Chatbot">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,10 +52,7 @@
             100% { transform: translate(-40px, -50px) scale(0.9); }
         }
 
-        .sidebar, .main-chat {
-            position: relative;
-            z-index: 1;
-        }
+        .sidebar, .main-chat { position: relative; z-index: 1; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -286,7 +283,7 @@
         }
         .bot .msg-bubble { background: transparent; color: #e4e4e7; padding: 0; flex: 1; }
 
-        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffd700; font-weight: 600; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffd700; font-weight: 600; }
         .msg-bubble p { margin-bottom: 10px; }
         .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
         .msg-bubble li { margin-bottom: 6px; }
@@ -553,32 +550,9 @@ Act like ChatGPT:
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        const max_size = 600;
-                        if (width > height) {
-                            if (width > max_size) {
-                                height *= max_size / width;
-                                width = max_size;
-                            }
-                        } else {
-                            if (height > max_size) {
-                                width *= max_size / height;
-                                height = max_size;
-                            }
-                        }
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        selectedBase64Image = canvas.toDataURL('image/jpeg', 0.6);
-                        document.getElementById('imgPreview').src = selectedBase64Image;
-                        document.getElementById('previewBox').style.display = 'block';
-                    };
-                    img.src = event.target.result;
+                    selectedBase64Image = event.target.result;
+                    document.getElementById('imgPreview').src = selectedBase64Image;
+                    document.getElementById('previewBox').style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
@@ -661,7 +635,7 @@ Act like ChatGPT:
 
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            let userHtml = `<div class="msg-bubble">${text || "Analyzing Image..."}`;
+            let userHtml = `<div class="msg-bubble">${text || "Analyzing Attached Image..."}`;
             if (selectedBase64Image) {
                 userHtml += `<br><img src="${selectedBase64Image}">`;
             }
@@ -695,24 +669,37 @@ Act like ChatGPT:
                 let rawReply = "";
 
                 if (currentImg) {
-                    const promptText = text || "Describe this image in detail and answer in Roman Urdu / English.";
-                    const response = await fetch("https://text.pollinations.ai/", {
+                    // Extract text via client-side OCR for guaranteed error-free response
+                    const ocrResult = await Tesseract.recognize(currentImg, 'eng');
+                    const extractedText = ocrResult.data.text.trim();
+
+                    let promptQuery = text ? `${text}\n\n[Extracted Text from Image]: ${extractedText}` : `Explain and solve this image/screenshot content:\n${extractedText}`;
+                    
+                    if (!extractedText && !text) {
+                        promptQuery = "User uploaded an image. Provide a general friendly response asking how you can help them with this file.";
+                    }
+
+                    conversationHistory.push({ role: "user", content: promptQuery });
+
+                    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {
+                            "Authorization": "Bearer " + GROQ_API_KEY,
+                            "Content-Type": "application/json"
+                        },
                         body: JSON.stringify({
-                            messages: [
-                                {
-                                    role: "user",
-                                    content: [
-                                        { type: "text", text: promptText },
-                                        { type: "image_url", image_url: { url: currentImg } }
-                                    ]
-                                }
-                            ]
+                            model: "llama-3.3-70b-versatile",
+                            messages: conversationHistory,
+                            temperature: 0.7,
+                            max_tokens: 1024
                         })
                     });
 
-                    rawReply = await response.text();
+                    const data = await response.json();
+                    if (data.error) throw new Error(data.error.message);
+                    rawReply = data.choices[0].message.content;
+                    conversationHistory.push({ role: "assistant", content: rawReply });
+
                 } else {
                     if (conversationHistory.length === 0) resetSystemPrompt();
                     conversationHistory.push({ role: "user", content: text });
@@ -759,7 +746,7 @@ Act like ChatGPT:
                 errorRow.className = 'message-row bot';
                 errorRow.innerHTML = `
                     <div class="ai-avatar-circle">M&D</div>
-                    <div class="msg-bubble">Processing Error: ${err.message || "Please try again."}</div>
+                    <div class="msg-bubble">Something went wrong. Please try again! Error: ${err.message || 'Unknown Error'}</div>
                 `;
                 chatContainer.appendChild(errorRow);
             }
