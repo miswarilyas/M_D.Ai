@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miswar's AI Assistant</title>
+    <title>Malik Miswar | AI Assistant</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -20,87 +20,20 @@
         }
 
         .header-box { text-align: center; margin-bottom: 20px; }
-        .header-box h1 { color: #38bdf8; margin: 0; font-size: 2rem; }
-        .header-box p { color: #94a3b8; margin-top: 5px; }
+        .header-box h1 { color: #38bdf8; margin: 0; font-size: 2.5rem; }
+        .header-box p { color: #94a3b8; margin-top: 8px; font-size: 1.1rem; }
 
-        .chat-container {
-            width: 100%;
-            max-width: 750px;
-            height: 550px;
+        .info-card {
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background: #0284c7;
-            padding: 16px 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .chat-body {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #0f172a;
-        }
-
-        .msg {
-            padding: 12px 18px;
             border-radius: 15px;
-            max-width: 80%;
-            font-size: 0.98rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-            white-space: pre-wrap;
+            padding: 30px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .bot-msg { 
-            background: #1e293b; 
-            border: 1px solid #334155;
-            align-self: flex-start; 
-            color: #f1f5f9;
-        }
-        .user-msg { 
-            background: #0284c7; 
-            align-self: flex-end; 
-            color: #ffffff;
-        }
-
-        .chat-input {
-            display: flex;
-            padding: 15px;
-            background: #1e293b;
-            border-top: 1px solid #334155;
-            gap: 10px;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 14px;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            background: #0f172a;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-        }
-        .chat-input button {
-            background: #38bdf8;
-            border: none;
-            padding: 0 25px;
-            border-radius: 10px;
-            color: #0f172a;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-        }
+        .info-card h2 { color: #38bdf8; margin-top: 0; }
+        .info-card p { color: #cbd5e1; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -110,58 +43,25 @@
         <p>Multilingual Universal AI Assistant</p>
     </div>
 
-    <div class="chat-container">
-        <div class="chat-header">🤖 Miswar's AI Assistant</div>
-        <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! Main AI Assistant hoon. Aap koi bhi sawal pooch sakte hain!</div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
-            <button onclick="sendMessage()">Send</button>
-        </div>
+    <div class="info-card">
+        <h2>Welcome to My Website!</h2>
+        <p>Neeche right corner par chat icon par click karein aur mere <strong>AI Assistant</strong> se baat karein!</p>
     </div>
 
-    <script>
-        async function sendMessage() {
-            let input = document.getElementById("userInput");
-            let text = input.value.trim();
-            if (text === "") return;
-
-            let chatBody = document.getElementById("chatBody");
-
-            let userDiv = document.createElement("div");
-            userDiv.className = "msg user-msg";
-            userDiv.innerText = text;
-            chatBody.appendChild(userDiv);
-
-            input.value = "";
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            let botDiv = document.createElement("div");
-            botDiv.className = "msg bot-msg";
-            botDiv.innerText = "Thinking... 🧠";
-            chatBody.appendChild(botDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            try {
-                let response = await fetch("https://text.pollinations.ai/" + encodeURIComponent(text) + "?model=openai");
-                let reply = await response.text();
-                
-                if (reply) {
-                    botDiv.innerText = reply;
-                } else {
-                    botDiv.innerText = "Error! Please try again.";
-                }
-            } catch (error) {
-                botDiv.innerText = "Connection Error!";
-            }
-
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function handleKey(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+    <script type="text/javascript">
+      (function(d, t) {
+          var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+          v.onload = function() {
+            window.voiceflow.chat.load({
+              verify: { projectId: '6a79599ac11516c4e48e1ae1' },
+              url: 'https://general-runtime.voiceflow.com',
+              voice: {
+                url: 'https://runtime-api.voiceflow.com'
+              }
+            });
+          }
+          v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
+      })(document, 'script');
     </script>
 
 </body>
