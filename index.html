@@ -258,9 +258,9 @@
         const keyPart2 = "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
         const GROQ_API_KEY = keyPart1 + keyPart2;
 
-        // ElevenLabs Key & ChatGPT Style Voice ID
+        // ElevenLabs Key & Default Free Voice ID (Aria)
         const ELEVENLABS_API_KEY = "sk_50680cbc26fe1b7f53e2eb0bdd04dfb5e7591eae59262974"; 
-        const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Natural Rachel Voice
+        const VOICE_ID = "9BWLtt2I4FCB1A1O9X3A"; // Free Tier Compatible Expressive Voice (Aria)
 
         let currentAudio = null;
 
@@ -280,8 +280,6 @@
         // Fixed ElevenLabs Ultra-Realistic Voice Player
         async function speakMsgElevenLabs(btnElement) {
             const msgText = btnElement.previousElementSibling.innerText;
-            
-            // Clean text from emojis
             const cleanText = msgText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '').trim();
 
             if (!cleanText) return;
@@ -304,7 +302,7 @@
                     },
                     body: JSON.stringify({
                         text: cleanText,
-                        model_id: "eleven_turbo_v2_5", // Fast & High-Quality Real AI Model
+                        model_id: "eleven_turbo_v2_5",
                         voice_settings: {
                             stability: 0.5,
                             similarity_boost: 0.8
@@ -319,7 +317,7 @@
                     currentAudio.play();
                 } else {
                     const errorMsg = await response.json();
-                    alert("ElevenLabs Error: " + (errorMsg.detail?.message || "Check API Key or Credits"));
+                    alert("ElevenLabs Error: " + (errorMsg.detail?.message || "Error generating voice."));
                 }
             } catch (err) {
                 console.error("ElevenLabs Fetch Error:", err);
