@@ -113,7 +113,7 @@
     <div class="chat-container">
         <div class="chat-header">🤖 Miswar's AI Assistant</div>
         <div class="chat-body" id="chatBody">
-            <div class="msg bot-msg">Hello! Main Google Gemini Powered AI hoon. Aap duniya ka koi bhi sawal kisi bhi language mein pooch sakte hain!</div>
+            <div class="msg bot-msg">Hello! Main AI Assistant hoon. Aap duniya ka koi bhi sawal kisi bhi language mein pooch sakte hain!</div>
         </div>
         <div class="chat-input">
             <input type="text" id="userInput" placeholder="Ask anything in English, Urdu, Hindi..." onkeypress="handleKey(event)">
@@ -122,9 +122,6 @@
     </div>
 
     <script>
-        // 🔴 PASTE YOUR API KEY HERE ACCURATELY 🔴
-        const GEMINI_API_KEY = "AQ.Ab8RN6J8PecTk-WBqKJU489_SdcgCjOyqRrGC_XnEg50KGDPjw"; 
-
         async function sendMessage() {
             let input = document.getElementById("userInput");
             let text = input.value.trim();
@@ -147,24 +144,16 @@
             chatBody.scrollTop = chatBody.scrollHeight;
 
             try {
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
-                    })
-                });
-
-                let data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    botDiv.innerText = data.candidates[0].content.parts[0].text;
-                } else if (data.error) {
-                    botDiv.innerText = "API Error: " + data.error.message;
+                let response = await fetch("https://text.pollinations.ai/" + encodeURIComponent(text));
+                let reply = await response.text();
+                
+                if (reply) {
+                    botDiv.innerText = reply;
                 } else {
-                    botDiv.innerText = "Response format issue. Please re-check API Key.";
+                    botDiv.innerText = "Error, please try again.";
                 }
             } catch (error) {
-                botDiv.innerText = "Network Error! Connection fail ho gaya.";
+                botDiv.innerText = "Connection Error!";
             }
 
             chatBody.scrollTop = chatBody.scrollHeight;
