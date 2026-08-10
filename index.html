@@ -9,25 +9,31 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* BLACK & WHITE MODERN THEME */
+        /* SLEEK GEMINI-STYLE ULTRA-DARK THEME */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #09090b;
+            color: #f4f4f5;
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
         /* LEFT SIDEBAR */
         .sidebar {
             width: 280px;
-            background: #0d0d0d;
+            background: #121215;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             padding: 16px;
-            border-right: 1px solid #222222;
+            border-right: 1px solid #27272a;
         }
 
         .sidebar-top {
@@ -37,9 +43,9 @@
         }
 
         .new-chat-btn {
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            color: #ffffff;
+            background: #18181b;
+            border: 1px solid #27272a;
+            color: #f4f4f5;
             padding: 12px 18px;
             border-radius: 24px;
             font-size: 0.9rem;
@@ -50,21 +56,21 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .new-chat-btn:hover { background: #2a2a2a; border-color: #555; }
+        .new-chat-btn:hover { background: #27272a; border-color: #3f3f46; }
 
         .recent-section h5 {
-            color: #888888;
-            font-size: 0.78rem;
+            color: #71717a;
+            font-size: 0.75rem;
             margin: 18px 0 10px 10px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
 
         .recent-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             max-height: 52vh;
             overflow-y: auto;
         }
@@ -73,7 +79,7 @@
             padding: 10px 14px;
             border-radius: 20px;
             font-size: 0.88rem;
-            color: #cccccc;
+            color: #a1a1aa;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -83,12 +89,12 @@
             text-overflow: ellipsis;
             transition: 0.2s;
         }
-        .recent-item:hover { background: #1a1a1a; color: #ffffff; }
+        .recent-item:hover { background: #18181b; color: #ffffff; }
 
-        /* USER ACCOUNT CARD AT BOTTOM */
+        /* USER ACCOUNT CARD */
         .user-profile-card {
-            background: #141414;
-            border: 1px solid #262626;
+            background: #18181b;
+            border: 1px solid #27272a;
             border-radius: 18px;
             padding: 12px;
             display: flex;
@@ -102,24 +108,24 @@
             gap: 12px;
         }
         .user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #ffffff;
-            color: #000000;
+            color: #09090b;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
         .user-info { flex: 1; overflow: hidden; }
         .user-info h4 { font-size: 0.88rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-info p { font-size: 0.72rem; color: #a3a3a3; }
+        .user-info p { font-size: 0.72rem; color: #22c55e; }
 
         .login-btn {
             background: #ffffff;
-            color: #000000;
+            color: #09090b;
             border: none;
             padding: 8px 12px;
             border-radius: 12px;
@@ -132,7 +138,7 @@
             gap: 6px;
             transition: 0.2s;
         }
-        .login-btn:hover { background: #e5e5e5; }
+        .login-btn:hover { background: #e4e4e7; }
 
         /* RIGHT MAIN CHAT AREA */
         .main-chat {
@@ -140,7 +146,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            background: #000000;
+            background: #09090b;
         }
 
         .top-navbar {
@@ -148,7 +154,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #111111;
+            border-bottom: 1px solid #18181b;
         }
         .app-logo {
             font-size: 1.25rem;
@@ -157,83 +163,92 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: -0.3px;
         }
-        .app-logo i { color: #ffffff; }
 
         .chat-container {
             flex: 1;
-            padding: 20px 18%;
+            padding: 24px 20%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 28px;
         }
 
         .welcome-screen {
             text-align: center;
-            margin-top: 12vh;
+            margin-top: 14vh;
         }
         .welcome-screen h1 {
             font-size: 2.8rem;
             color: #ffffff;
             font-weight: 600;
             margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
-        .welcome-screen p { color: #888888; font-size: 1.15rem; }
+        .welcome-screen p { color: #71717a; font-size: 1.1rem; }
 
         .message-row {
             display: flex;
-            gap: 15px;
+            gap: 16px;
             width: 100%;
+            animation: fadeIn 0.3s ease-in-out;
         }
         .message-row.user { justify-content: flex-end; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .msg-bubble {
             max-width: 85%;
             padding: 14px 20px;
             border-radius: 18px;
-            font-size: 0.98rem;
-            line-height: 1.6;
+            font-size: 0.96rem;
+            line-height: 1.65;
         }
         .user .msg-bubble {
-            background: #1f1f1f;
-            color: #ffffff;
-            border: 1px solid #333;
+            background: #18181b;
+            color: #f4f4f5;
+            border: 1px solid #27272a;
             border-bottom-right-radius: 4px;
         }
         .bot .msg-bubble {
             background: transparent;
-            color: #e5e5e5;
-            padding-left: 0;
-            width: 100%;
+            color: #e4e4e7;
+            padding: 0;
+            flex: 1;
         }
 
-        /* Markdown Styles for Answers */
-        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffffff; }
+        /* Markdown Styles */
+        .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 { margin: 14px 0 8px; color: #ffffff; font-weight: 600; }
         .msg-bubble p { margin-bottom: 10px; }
         .msg-bubble ul, .msg-bubble ol { margin: 10px 0 10px 20px; }
         .msg-bubble li { margin-bottom: 6px; }
         .msg-bubble pre {
-            background: #111111;
-            padding: 14px;
+            background: #121215;
+            padding: 16px;
             border-radius: 12px;
             overflow-x: auto;
-            border: 1px solid #222222;
+            border: 1px solid #27272a;
             margin: 12px 0;
         }
-        .msg-bubble code { font-family: monospace; color: #ffffff; background: #1a1a1a; padding: 2px 6px; border-radius: 4px; }
+        .msg-bubble code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #f4f4f5; background: #18181b; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
 
         /* FLOATING INPUT BAR */
-        .input-container-wrapper { padding: 20px 18% 30px; }
+        .input-container-wrapper { padding: 20px 20% 32px; }
         .input-bar {
-            background: #0f0f0f;
-            border: 1px solid #262626;
+            background: #121215;
+            border: 1px solid #27272a;
             border-radius: 30px;
             display: flex;
             align-items: center;
             padding: 8px 18px;
             gap: 10px;
+            transition: border-color 0.2s;
         }
+        .input-bar:focus-within { border-color: #3f3f46; }
         .input-bar input {
             flex: 1;
             background: transparent;
@@ -246,7 +261,7 @@
         .icon-btn {
             background: transparent;
             border: none;
-            color: #888888;
+            color: #71717a;
             width: 38px;
             height: 38px;
             border-radius: 50%;
@@ -257,57 +272,42 @@
             transition: 0.2s;
             font-size: 1.1rem;
         }
-        .icon-btn:hover { background: #222222; color: #ffffff; }
+        .icon-btn:hover { background: #18181b; color: #ffffff; }
         .mic-btn.listening { color: #ef4444; animation: pulse 1s infinite; }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
+            50% { transform: scale(1.12); }
             100% { transform: scale(1); }
         }
 
-        /* NEW CHAT LOADING ANIMATION (PREMIUM LOGO EFFECT) */
-        .ai-message-placeholder {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .ai-logo-circle {
-            width: 30px;
-            height: 30px;
+        /* GEMINI-STYLE AI LOGO & PULSE LOADING */
+        .ai-avatar-circle {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            border: 2px solid #ffffff;
+            background: #18181b;
+            border: 1px solid #3f3f46;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.75rem;
+            font-weight: 700;
+            font-size: 0.72rem;
             color: #ffffff;
-            position: relative;
-            background: #000000;
+            flex-shrink: 0;
+            letter-spacing: -0.5px;
         }
 
-        .loading-lines {
-            display: flex;
-            gap: 3px;
+        /* PULSE GLOW ANIMATION WHEN THINKING */
+        .ai-avatar-circle.thinking {
+            border-color: #ffffff;
+            animation: glowPulse 1.4s infinite ease-in-out;
         }
 
-        .loading-lines span {
-            width: 3px;
-            height: 10px;
-            background: #ffffff;
-            border-radius: 2px;
-            animation: line-grow 1s infinite ease-in-out;
-        }
-
-        .loading-lines span:nth-child(2) { animation-delay: 0.2s; }
-        .loading-lines span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes line-grow {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(2); }
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
         .hidden { display: none !important; }
@@ -354,15 +354,8 @@
             </div>
         </div>
 
-        <div id="aiLoadingMessage" class="hidden message-row bot">
-            <div class="ai-message-placeholder">
-                <div class="ai-logo-circle">M&D</div>
-                <div class="loading-lines">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
+        <div id="aiLoadingRow" class="hidden message-row bot">
+            <div class="ai-avatar-circle thinking">M&D</div>
         </div>
 
         <div class="input-container-wrapper">
@@ -381,7 +374,6 @@
     <script>
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
 
-        // FRIENDLY & INTELLIGENT CHAT MEMORY
         let conversationHistory = [
             { 
                 role: "system", 
@@ -406,7 +398,6 @@ IMPORTANT RULES FOR RESPONDING:
                 const cleanName = name.trim();
                 document.getElementById('userName').innerText = cleanName;
                 document.getElementById('avatarText').innerText = cleanName.substring(0, 2).toUpperCase();
-                
                 const welcomeTitle = document.getElementById('welcomeTitle');
                 if (welcomeTitle) welcomeTitle.innerText = `Hello, ${cleanName}`;
             }
@@ -443,7 +434,7 @@ IMPORTANT RULES FOR RESPONDING:
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const chatContainer = document.getElementById('chatContainer');
-            const aiLoadingMsg = document.getElementById('aiLoadingMessage');
+            const aiLoadingRow = document.getElementById('aiLoadingRow');
             const text = input.value.trim();
 
             if (!text) return;
@@ -471,9 +462,9 @@ IMPORTANT RULES FOR RESPONDING:
                 recentList.prepend(newRecent);
             }
 
-            // SHOW AI LOADING LOGO (CIRCLE & LINE EFFECT)
-            chatContainer.appendChild(aiLoadingMsg);
-            aiLoadingMsg.classList.remove('hidden');
+            // SHOW PULSING THINKING LOGO
+            chatContainer.appendChild(aiLoadingRow);
+            aiLoadingRow.classList.remove('hidden');
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
@@ -495,21 +486,22 @@ IMPORTANT RULES FOR RESPONDING:
                 
                 conversationHistory.push({ role: "assistant", content: rawReply });
 
-                // HIDE AI LOADING MESSAGE
-                aiLoadingMsg.classList.add('hidden');
-                document.body.appendChild(aiLoadingMsg); // Move back outside chat container
+                // HIDE THINKING LOGO
+                aiLoadingRow.classList.add('hidden');
+                document.body.appendChild(aiLoadingRow);
 
-                // Append Real AI Response (M&D.Ai Circle Logo shown once per response start)
+                // APPEND FINAL RESPONSE WITH M&D AVATAR
                 const botRow = document.createElement('div');
                 botRow.className = 'message-row bot';
-                
-                // M&D Logo integrated before Markdown reply start
-                botRow.innerHTML = `<div class="ai-logo-circle">M&D</div><div class="msg-bubble">${marked.parse(rawReply)}</div>`;
+                botRow.innerHTML = `
+                    <div class="ai-avatar-circle">M&D</div>
+                    <div class="msg-bubble">${marked.parse(rawReply)}</div>
+                `;
                 chatContainer.appendChild(botRow);
 
             } catch (err) {
-                aiLoadingMsg.classList.add('hidden');
-                document.body.appendChild(aiLoadingMsg);
+                aiLoadingRow.classList.add('hidden');
+                document.body.appendChild(aiLoadingRow);
                 alert("Network Error. Please try again.");
             }
 
