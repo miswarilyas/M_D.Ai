@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
-    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with Vision-Powered Photo Editing & Ultra-HD Generation.">
+    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with Gemini Vision Photo Editing & Ultra-HD Generation.">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -466,14 +466,14 @@
         <div class="top-navbar">
             <div class="app-logo">
                 <i class="fa-solid fa-gem" style="color: #ffd700;"></i>
-                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">VIP Studio</small></span>
+                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">Gemini Powered</small></span>
             </div>
         </div>
 
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1 id="welcomeTitle">Hello, <span>Malik Miswar</span></h1>
-                <p>Upload photos to edit with Vision AI, or generate Ultra-HD images directly!</p>
+                <p>Upload photos to edit using Gemini Vision AI or generate Ultra-HD images!</p>
             </div>
         </div>
 
@@ -505,18 +505,19 @@
     </div>
 
     <script>
-        const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
+        // Set your Gemini API key here
+        const GEMINI_API_KEY = "AQ.Ab8RN6I9wMbVfUwEyWIGytbzvXWfKXS_GRZ4JmBGz0cCqcwJzw";
+
         let selectedBase64Images = [];
 
-        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
-Act like ChatGPT:
+        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar using Google Gemini API.
 - Match user's language (Roman Urdu, Urdu, English).
 - NEVER generate ASCII text art for images or wallpapers.`;
 
         let conversationHistory = [];
 
         function resetSystemPrompt() {
-            conversationHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+            conversationHistory = [];
         }
 
         window.onload = function() {
@@ -525,36 +526,27 @@ Act like ChatGPT:
             
             if (savedHistory) {
                 try {
-                    const parsed = JSON.parse(savedHistory);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        conversationHistory = parsed;
-                        conversationHistory[0] = { role: "system", content: SYSTEM_PROMPT };
-                    }
-                    
+                    conversationHistory = JSON.parse(savedHistory) || [];
                     const chatContainer = document.getElementById('chatContainer');
                     const welcome = document.getElementById('welcomeScreen');
-                    if (welcome) welcome.remove();
+                    if (welcome && conversationHistory.length > 0) welcome.remove();
 
-                    for (let i = 1; i < conversationHistory.length; i++) {
-                        const msg = conversationHistory[i];
+                    for (let msg of conversationHistory) {
                         const row = document.createElement('div');
                         if (msg.role === 'user') {
                             row.className = 'message-row user';
-                            let textHtml = typeof msg.content === 'string' ? msg.content : '';
-                            row.innerHTML = `<div class="msg-bubble">${textHtml}</div>`;
+                            row.innerHTML = `<div class="msg-bubble">${msg.text}</div>`;
                         } else {
                             row.className = 'message-row bot';
                             row.innerHTML = `
                                 <div class="ai-avatar-circle">M&D</div>
-                                <div class="msg-bubble">${marked.parse(msg.content)}</div>
+                                <div class="msg-bubble">${marked.parse(msg.text)}</div>
                             `;
                         }
                         chatContainer.appendChild(row);
                     }
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 } catch(e) { console.log(e); }
-            } else {
-                resetSystemPrompt();
             }
 
             if (savedTitles) {
@@ -643,7 +635,7 @@ Act like ChatGPT:
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
-                    <p>Upload photos to edit with Vision AI, or generate Ultra-HD images directly!</p>
+                    <p>Upload photos to edit using Gemini Vision AI or generate Ultra-HD images!</p>
                 </div>`;
             removeAllImages();
         }
@@ -681,71 +673,75 @@ Act like ChatGPT:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        // Groq Vision AI Image Analysis for Accurate Photo Editing
-        async function analyzeImageWithVision(base64Image, userInstruction) {
-            try {
-                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + GROQ_API_KEY,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "llama-3.2-11b-vision-preview",
-                        messages: [
-                            {
-                                role: "user",
-                                content: [
-                                    { 
-                                        type: "text", 
-                                        text: `Analyze this person's photo and create an English text-to-image prompt to edit it as requested: "${userInstruction}".
-Describe the person's exact face, gender, skin color, hair color/style, age, pose, background, and then apply the edit instruction (${userInstruction}). Do not include conversational filler, return ONLY the image prompt.` 
-                                    },
-                                    {
-                                        type: "image_url",
-                                        image_url: { url: base64Image }
-                                    }
-                                ]
-                            }
-                        ],
-                        temperature: 0.5,
-                        max_tokens: 300
-                    })
-                });
+        // Gemini Vision API Call
+        async function callGeminiVisionAPI(base64Image, promptText) {
+            const pureBase64 = base64Image.split(',')[1];
+            const mimeType = base64Image.split(';')[0].split(':')[1];
 
-                const data = await response.json();
-                if (data.choices && data.choices[0]) {
-                    return data.choices[0].message.content.trim();
-                }
-            } catch (e) {
-                console.error("Vision Analysis Error:", e);
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: `Analyze this image in detail and create a realistic prompt for image generation based on user request: "${promptText}". Describe face features, hair, skin, pose, background and requested outfit/edits. Return ONLY the final image description prompt in English.` },
+                            { inline_data: { mime_type: mimeType, data: pureBase64 } }
+                        ]
+                    }]
+                })
+            });
+
+            const data = await response.json();
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                return data.candidates[0].content.parts[0].text.trim();
             }
-            return userInstruction;
+            return promptText;
         }
 
-        // Render Ultra-HD Flux Image
+        // Gemini Text API Call
+        async function callGeminiTextAPI(userText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: `${SYSTEM_PROMPT}\nUser: ${userText}` }]
+                    }]
+                })
+            });
+
+            const data = await response.json();
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                return data.candidates[0].content.parts[0].text.trim();
+            }
+            return "Aap ke sawaal ka jawab nahi mil sakaa.";
+        }
+
+        // Flux Ultra-HD Render Engine
         async function renderFluxImage(promptText) {
             const seed = Math.floor(Math.random() * 9999999);
-            const enhancedPrompt = `${promptText.trim()}, 8k resolution, photorealistic, cinematic lighting, ultra high detailed, realistic photography, octane render`;
-            const negativePrompt = "blurry, distorted face, low quality, bad anatomy, noisy, ugly";
+            const enhancedPrompt = `${promptText.trim()}, 8k resolution, photorealistic, ultra detailed, cinematic lighting`;
+            const negativePrompt = "blurry, low quality, bad anatomy, deformed face, extra limbs";
 
             const cleanPrompt = encodeURIComponent(enhancedPrompt);
             const cleanNegative = encodeURIComponent(negativePrompt);
             
             const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1280&height=1280&seed=${seed}&model=flux&nologo=true&enhance=true&negative=${cleanNegative}`;
-            return `Here is your Ultra-HD Edited Result:\n\n![Generated Image](${imageUrl})`;
+            return `Here is your Ultra-HD Gemini Vision Edited Image:\n\n![Edited Image](${imageUrl})`;
         }
 
         function checkIsImageRequest(str) {
             const lower = str.toLowerCase();
             const keywords = [
                 '/image', 'generate image', 'create image', 'draw', 'picture of', 
-                'photo of', 'make a pic', 'create a pic', 'car pic', 'car image', 
-                'image of', 'generate a', 'create a', 'make an image', 'make a picture',
+                'photo of', 'make a pic', 'create a pic', 'image of', 'generate a', 
                 'wallpaper', 'bna kr do', 'bna do', 'bnao', 'photo', 'tasveer', 'pic bna',
                 'edit', 'badal do', 'change kar do', 'pehna do', 'suit', 'dress'
             ];
-            
             return keywords.some(key => lower.includes(key));
         }
 
@@ -778,18 +774,6 @@ Describe the person's exact face, gender, skin color, hair color/style, age, pos
             input.value = '';
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            if (conversationHistory.filter(m => m.role === 'user').length === 0 || currentImgs.length > 0) {
-                const recentList = document.getElementById('recentList');
-                const newRecent = document.createElement('li');
-                newRecent.className = 'recent-item';
-                const labelText = text || "Photo Task";
-                newRecent.innerHTML = `
-                    <div class="recent-text"><i class="fa-solid fa-gem" style="color: #ffd700; font-size: 0.7rem;"></i> ${labelText.substring(0, 16)}...</div>
-                    <button class="chat-menu-btn" onclick="deleteSpecificChat(this)" title="Delete Chat"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                `;
-                recentList.prepend(newRecent);
-            }
-
             chatContainer.appendChild(aiLoadingRow);
             aiLoadingRow.classList.remove('hidden');
             chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -798,54 +782,25 @@ Describe the person's exact face, gender, skin color, hair color/style, age, pos
                 let rawReply = "";
                 const isImageReq = checkIsImageRequest(text);
 
-                // If user uploads an image to EDIT or ANALYZE
                 if (currentImgs.length > 0) {
-                    if (isImageReq || text.length > 0) {
-                        // Vision AI deeply analyzes face & creates matching prompt
-                        const detailedVisualPrompt = await analyzeImageWithVision(currentImgs[0], text || "edit this image smoothly");
-                        rawReply = await renderFluxImage(detailedVisualPrompt);
-                    } else {
-                        // Direct Chat / Analysis
-                        const visionResponse = await analyzeImageWithVision(currentImgs[0], "Describe this image in detail.");
-                        rawReply = visionResponse;
-                    }
+                    const detailedVisualPrompt = await callGeminiVisionAPI(currentImgs[0], text || "edit photo realistically");
+                    rawReply = await renderFluxImage(detailedVisualPrompt);
 
                 } else if (isImageReq) {
                     let cleanPrompt = text.replace(/\/image/i, '')
                                          .replace(/generate image of/i, '')
-                                         .replace(/create an image of/i, '')
                                          .replace(/bna kr do/i, '')
                                          .replace(/bna do/i, '')
                                          .replace(/bnao/i, '')
-                                         .replace(/wallpaper/i, 'wallpaper design')
                                          .trim();
-
-                    if (!cleanPrompt || cleanPrompt.length < 2) cleanPrompt = text;
-                    rawReply = await renderFluxImage(cleanPrompt);
+                    rawReply = await renderFluxImage(cleanPrompt || text);
 
                 } else {
-                    if (conversationHistory.length === 0) resetSystemPrompt();
-                    conversationHistory.push({ role: "user", content: text });
-
-                    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                        method: "POST",
-                        headers: {
-                            "Authorization": "Bearer " + GROQ_API_KEY,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            model: "llama-3.3-70b-versatile",
-                            messages: conversationHistory,
-                            temperature: 0.7,
-                            max_tokens: 1024
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.error) throw new Error(data.error.message);
-                    rawReply = data.choices[0].message.content;
-                    conversationHistory.push({ role: "assistant", content: rawReply });
+                    rawReply = await callGeminiTextAPI(text);
                 }
+
+                conversationHistory.push({ role: 'user', text: text || "Uploaded Photo" });
+                conversationHistory.push({ role: 'assistant', text: rawReply });
 
                 aiLoadingRow.classList.add('hidden');
                 document.body.appendChild(aiLoadingRow);
@@ -869,7 +824,7 @@ Describe the person's exact face, gender, skin color, hair color/style, age, pos
                 errorRow.className = 'message-row bot';
                 errorRow.innerHTML = `
                     <div class="ai-avatar-circle">M&D</div>
-                    <div class="msg-bubble">Error: ${err.message || "Execution failed."}</div>
+                    <div class="msg-bubble">Error: ${err.message || "Failed to process request."}</div>
                 `;
                 chatContainer.appendChild(errorRow);
             }
