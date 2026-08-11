@@ -142,8 +142,8 @@
             max-width: 85%; 
             padding: 12px 18px; 
             border-radius: 18px; 
-            font-size: 0.96rem; 
-            line-height: 1.65; 
+            font-size: 0.98rem; 
+            line-height: 1.6; 
             letter-spacing: 0.1px;
         }
         
@@ -157,30 +157,15 @@
         
         .bot .msg-bubble { 
             background: transparent; 
-            color: #24292f; 
+            color: #111827; 
             flex: 1; 
             padding-left: 0; 
         }
 
-        /* Clean Rich Markdown Formatting */
-        .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 {
-            margin-top: 16px;
-            margin-bottom: 8px;
-            color: #0f172a;
-            font-weight: 700;
-        }
-        .bot .msg-bubble p { margin-bottom: 12px; }
-        .bot .msg-bubble ul, .bot .msg-bubble ol { margin-left: 20px; margin-bottom: 12px; }
-        .bot .msg-bubble li { margin-bottom: 4px; }
-        .bot .msg-bubble blockquote {
-            border-left: 4px solid #1f1f1f;
-            padding-left: 12px;
-            color: #4b5563;
-            font-style: italic;
-            margin: 10px 0;
-        }
+        .bot .msg-bubble p { margin-bottom: 10px; }
+        .bot .msg-bubble p:last-child { margin-bottom: 0; }
 
-        /* High-Level Animated M&D Logo Avatar */
+        /* Animated M&D Logo Avatar */
         .ai-avatar-wrapper {
             position: relative;
             width: 38px;
@@ -360,14 +345,20 @@
     <script>
         const GROQ_API_KEY = "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";
         
+        /* Fixed & Direct Natural Chat System Prompt */
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', a world-class AI assistant and expert programmer created by Malik Miswar.
+You are 'M&D.Ai', a smart, friendly, and highly intelligent AI assistant created by Malik Miswar.
 
-CAPABILITIES:
-1. Universal Languages: Respond accurately in any language requested (English, Roman Urdu, Urdu Script, Hindi, Arabic, Spanish, French, Chinese, etc.).
-2. Master Software Engineering: Write efficient, clean, and bug-free code across all programming languages.
-3. Formatting: Use clear Markdown headings, lists, and code blocks for readable formatting.
-4. Creator Info: Always recognize Malik Miswar as your founder/creator if asked.
+CRITICAL RESPONSE RULES:
+1. Speak NATURALLY in a simple conversational tone (like ChatGPT or Gemini).
+2. NEVER use headings like "Urdu Response", "English Translation", or "Further Assistance".
+3. Reply ONLY in the exact language/script the user speaks in:
+   - If user speaks Roman Urdu (e.g. "Kya hall han"), reply ONLY in natural Roman Urdu (e.g., "Main bilkul theek hoon! Aap bataiye, aaj main aap ki kya madad kar sakta hoon? 😊").
+   - If user speaks English, reply in English.
+   - If user speaks Urdu script, reply in clean Urdu script.
+4. Do NOT translate your response into English or any other language unless explicitly requested.
+5. You are an expert programmer in all coding languages (Python, JS, HTML/CSS, C++, Java, etc.).
+6. Always recognize Malik Miswar as your founder and creator.
 `;
         let conversationHistory = [];
 
@@ -423,7 +414,8 @@ CAPABILITIES:
                     },
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
-                        messages: messagesPayload
+                        messages: messagesPayload,
+                        temperature: 0.6
                     })
                 });
 
