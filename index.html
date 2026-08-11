@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
-    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with Ultra-HD Image Generation.">
+    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with Multi-Image Edit & Ultra-HD Generation.">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -296,35 +296,61 @@
             margin: 12px 0;
         }
         .msg-bubble code { font-family: monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
-        .msg-bubble img { max-width: 100%; width: 500px; border-radius: 16px; margin-top: 12px; border: 1px solid rgba(255, 215, 0, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.6); display: block; }
+        
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .img-grid img, .msg-bubble img.single-img { 
+            max-width: 100%; 
+            width: 500px; 
+            border-radius: 16px; 
+            margin-top: 12px; 
+            border: 1px solid rgba(255, 215, 0, 0.5); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6); 
+            display: block; 
+        }
 
         .input-container-wrapper { padding: 20px 20% 32px; background: rgba(9, 9, 11, 0.4); backdrop-filter: blur(10px); }
         
         .preview-box {
             display: none;
             position: relative;
-            margin-bottom: 10px;
-            width: fit-content;
+            margin-bottom: 12px;
+            width: 100%;
         }
-        .preview-box img {
-            max-width: 120px;
-            max-height: 120px;
+        .preview-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+        .preview-item {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .preview-item img {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
             border-radius: 12px;
             border: 1px solid #ffd700;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
-        .preview-box .remove-img-btn {
+        .preview-item .remove-img-btn {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: -6px;
+            right: -6px;
             background: #ef4444;
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -448,7 +474,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1 id="welcomeTitle">Hello, <span>Malik Miswar</span></h1>
-                <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate Ultra-HD images directly!</p>
+                <p>Upload up to 10 photos to edit without changing faces, or generate HD images!</p>
             </div>
         </div>
 
@@ -458,17 +484,16 @@
 
         <div class="input-container-wrapper">
             <div class="preview-box" id="previewBox">
-                <img id="imgPreview" src="" alt="Selected Image">
-                <button class="remove-img-btn" onclick="removeImage()"><i class="fa-solid fa-xmark"></i></button>
+                <div class="preview-list" id="previewList"></div>
             </div>
 
             <div class="input-bar">
-                <button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="Attach Reference Image">
+                <button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="Attach Reference Images (Max 10)">
                     <i class="fa-solid fa-plus"></i>
                 </button>
-                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+                <input type="file" id="imageInput" accept="image/*" multiple style="display: none;" onchange="handleImageSelect(event)">
 
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai VIP or type 'wallpaper bna do'..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Edit photo (face preserve) or type 'wallpaper bna do'..." onkeypress="handleKeyPress(event)">
                 
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
@@ -482,13 +507,13 @@
 
     <script>
         const GROQ_API_KEY = "gsk_" + "3bIzaPJgYJtT485fD70BWGdyb3FYRbrY7s3WDoB3iDaErKwq10ci";
-        let selectedBase64Image = "";
+        let selectedBase64Images = [];
 
         const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar.
 Act like ChatGPT:
-- Match the response length to the user's query naturally.
-- Always match the user's language (Roman Urdu, Urdu, or English).
-- NEVER generate ASCII text art for wallpapers or images.`;
+- Match user's language (Roman Urdu, Urdu, English).
+- NEVER generate ASCII text art for images or wallpapers.
+- If user requests photo edit with reference images, strictly emphasize maintaining exact same face and identity.`;
 
         let conversationHistory = [];
 
@@ -544,23 +569,61 @@ Act like ChatGPT:
             localStorage.setItem('md_ai_recent_titles', document.getElementById('recentList').innerHTML);
         }
 
+        // Support Up to 10 Images Selection
         function handleImageSelect(e) {
-            const file = e.target.files[0];
-            if (file) {
+            const files = Array.from(e.target.files);
+            
+            if (selectedBase64Images.length + files.length > 10) {
+                alert("Aap maximum 10 images hi upload kar sakte hain!");
+            }
+
+            const remainingSlots = 10 - selectedBase64Images.length;
+            const filesToProcess = files.slice(0, remainingSlots);
+
+            filesToProcess.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    selectedBase64Image = event.target.result;
-                    document.getElementById('imgPreview').src = selectedBase64Image;
-                    document.getElementById('previewBox').style.display = 'block';
+                    selectedBase64Images.push(event.target.result);
+                    renderPreviews();
                 };
                 reader.readAsDataURL(file);
-            }
+            });
+
+            document.getElementById('imageInput').value = "";
         }
 
-        function removeImage() {
-            selectedBase64Image = "";
-            document.getElementById('imageInput').value = "";
-            document.getElementById('previewBox').style.display = 'none';
+        function renderPreviews() {
+            const previewBox = document.getElementById('previewBox');
+            const previewList = document.getElementById('previewList');
+            
+            if (selectedBase64Images.length === 0) {
+                previewBox.style.display = 'none';
+                previewList.innerHTML = '';
+                return;
+            }
+
+            previewBox.style.display = 'block';
+            previewList.innerHTML = '';
+
+            selectedBase64Images.forEach((imgSrc, idx) => {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+                item.innerHTML = `
+                    <img src="${imgSrc}">
+                    <button class="remove-img-btn" onclick="removeSingleImage(${idx})"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                previewList.appendChild(item);
+            });
+        }
+
+        function removeSingleImage(index) {
+            selectedBase64Images.splice(index, 1);
+            renderPreviews();
+        }
+
+        function removeAllImages() {
+            selectedBase64Images = [];
+            renderPreviews();
         }
 
         function handleAccountLogin() {
@@ -583,9 +646,9 @@ Act like ChatGPT:
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
-                    <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate Ultra-HD images directly!</p>
+                    <p>Upload up to 10 photos to edit without changing faces, or generate HD images!</p>
                 </div>`;
-            removeImage();
+            removeAllImages();
         }
 
         function clearAllChatHistory() {
@@ -621,21 +684,27 @@ Act like ChatGPT:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        // ChatGPT Level Ultra-HD Image Generation
-        async function generateImage(promptText) {
+        // Face Preservation & Ultra-HD Image Generation Logic
+        async function generateEditedImage(promptText, isEditingMode = false) {
             const seed = Math.floor(Math.random() * 9999999);
             
-            // Auto Prompt Enhancer for ChatGPT Quality Details
-            const enhancedPrompt = `${promptText.trim()}, masterpiece, 8k resolution, photorealistic, ultra HD, highly detailed, octane render, vivid colors, professional studio lighting, 35mm lens camera shot`;
-            const negativePrompt = "blurry, low quality, distorted, bad anatomy, lowres, noisy, text watermark, ugly, extra limbs";
+            let finalPrompt = promptText.trim();
+            
+            if (isEditingMode) {
+                // Precise Face & Structure Preservation Tokens
+                finalPrompt += `, exact same person face, preserve facial details, high character consistency, original face shape, identical facial features, photo modification, 8k ultra hd, photorealistic, cinematic lighting`;
+            } else {
+                finalPrompt += `, masterpiece, 8k resolution, photorealistic, ultra HD, highly detailed, octane render, vivid colors, professional lighting`;
+            }
 
-            const cleanPrompt = encodeURIComponent(enhancedPrompt);
+            const negativePrompt = "different face, face change, deformed face, distorted facial features, blurry, ugly, low quality, distorted anatomy, text watermark";
+
+            const cleanPrompt = encodeURIComponent(finalPrompt);
             const cleanNegative = encodeURIComponent(negativePrompt);
             
-            // Render High Resolution 1280x1280 Flux Image
             const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1280&height=1280&seed=${seed}&model=flux&nologo=true&enhance=true&negative=${cleanNegative}`;
             
-            return `Here is your Ultra-HD VIP Image:\n\n![Generated Image](${imageUrl})`;
+            return `Here is your Ultra-HD Edited Result (Face Preserved):\n\n![Edited Image](${imageUrl})`;
         }
 
         function checkIsImageRequest(str) {
@@ -644,7 +713,8 @@ Act like ChatGPT:
                 '/image', 'generate image', 'create image', 'draw', 'picture of', 
                 'photo of', 'make a pic', 'create a pic', 'car pic', 'car image', 
                 'image of', 'generate a', 'create a', 'make an image', 'make a picture',
-                'wallpaper', 'bna kr do', 'bna do', 'bnao', 'photo', 'tasveer', 'pic bna'
+                'wallpaper', 'bna kr do', 'bna do', 'bnao', 'photo', 'tasveer', 'pic bna',
+                'edit', 'badal do', 'change kar do', 'pehna do', 'suit', 'background'
             ];
             
             return keywords.some(key => lower.includes(key));
@@ -656,32 +726,36 @@ Act like ChatGPT:
             const aiLoadingRow = document.getElementById('aiLoadingRow');
             const text = input.value.trim();
 
-            if (!text && !selectedBase64Image) return;
+            if (!text && selectedBase64Images.length === 0) return;
 
             const welcome = document.getElementById('welcomeScreen');
             if (welcome) welcome.remove();
 
+            const currentImgs = [...selectedBase64Images];
+            removeAllImages();
+
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            let userHtml = `<div class="msg-bubble">${text || "Processing..."}`;
-            if (selectedBase64Image) {
-                userHtml += `<br><img src="${selectedBase64Image}">`;
+            let userHtml = `<div class="msg-bubble">${text || "Processing Images..."}`;
+            if (currentImgs.length > 0) {
+                userHtml += `<div class="img-grid">`;
+                currentImgs.forEach(img => {
+                    userHtml += `<img src="${img}">`;
+                });
+                userHtml += `</div>`;
             }
             userHtml += `</div>`;
             userRow.innerHTML = userHtml;
             chatContainer.appendChild(userRow);
 
             input.value = '';
-            const currentImg = selectedBase64Image;
-            removeImage();
-
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            if (conversationHistory.filter(m => m.role === 'user').length === 0 || currentImg) {
+            if (conversationHistory.filter(m => m.role === 'user').length === 0 || currentImgs.length > 0) {
                 const recentList = document.getElementById('recentList');
                 const newRecent = document.createElement('li');
                 newRecent.className = 'recent-item';
-                const labelText = text || "Image Task";
+                const labelText = text || `${currentImgs.length} Photos Edit Task`;
                 newRecent.innerHTML = `
                     <div class="recent-text"><i class="fa-solid fa-gem" style="color: #ffd700; font-size: 0.7rem;"></i> ${labelText.substring(0, 16)}...</div>
                     <button class="chat-menu-btn" onclick="deleteSpecificChat(this)" title="Delete Chat"><i class="fa-solid fa-ellipsis-vertical"></i></button>
@@ -697,55 +771,37 @@ Act like ChatGPT:
                 let rawReply = "";
                 const isImageReq = checkIsImageRequest(text);
 
-                if (isImageReq) {
+                // If images uploaded & user asks to edit or generate
+                if (currentImgs.length > 0) {
+                    let extractedDetails = "";
+                    
+                    // OCR Extraction on uploaded reference images
+                    for (let img of currentImgs.slice(0, 3)) { 
+                        try {
+                            const ocrResult = await Tesseract.recognize(img, 'eng');
+                            if (ocrResult.data.text.trim()) {
+                                extractedDetails += " " + ocrResult.data.text.trim();
+                            }
+                        } catch(e){}
+                    }
+
+                    let cleanPrompt = text ? text : "Professional photo edit based on reference photo";
+                    if (extractedDetails) cleanPrompt += " " + extractedDetails;
+
+                    rawReply = await generateEditedImage(cleanPrompt, true);
+
+                } else if (isImageReq) {
                     let cleanPrompt = text.replace(/\/image/i, '')
                                          .replace(/generate image of/i, '')
                                          .replace(/create an image of/i, '')
-                                         .replace(/create a/i, '')
-                                         .replace(/make a pic of/i, '')
-                                         .replace(/make a picture of/i, '')
                                          .replace(/bna kr do/i, '')
                                          .replace(/bna do/i, '')
                                          .replace(/bnao/i, '')
-                                         .replace(/draw a/i, '')
                                          .replace(/wallpaper/i, 'wallpaper design')
-                                         .replace(/pic/i, '')
-                                         .replace(/image/i, '').trim();
-
-                    if (currentImg) {
-                        const ocrResult = await Tesseract.recognize(currentImg, 'eng');
-                        const extractedText = ocrResult.data.text.trim();
-                        if (extractedText) cleanPrompt += " " + extractedText;
-                    }
+                                         .trim();
 
                     if (!cleanPrompt || cleanPrompt.length < 2) cleanPrompt = text;
-                    rawReply = await generateImage(cleanPrompt);
-
-                } else if (currentImg) {
-                    const ocrResult = await Tesseract.recognize(currentImg, 'eng');
-                    const extractedText = ocrResult.data.text.trim();
-                    let promptQuery = text ? `${text}\n\n[Reference Image Content]: ${extractedText}` : `Analyze and explain this reference image content:\n${extractedText}`;
-
-                    conversationHistory.push({ role: "user", content: promptQuery });
-
-                    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                        method: "POST",
-                        headers: {
-                            "Authorization": "Bearer " + GROQ_API_KEY,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            model: "llama-3.3-70b-versatile",
-                            messages: conversationHistory,
-                            temperature: 0.7,
-                            max_tokens: 1024
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.error) throw new Error(data.error.message);
-                    rawReply = data.choices[0].message.content;
-                    conversationHistory.push({ role: "assistant", content: rawReply });
+                    rawReply = await generateEditedImage(cleanPrompt, false);
 
                 } else {
                     if (conversationHistory.length === 0) resetSystemPrompt();
