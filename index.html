@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta name="google-site-verification" content="GcTCxUjAgdM7zGlZBCGO9RsRFxV-db5bqoDvH-NA09s" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,7 +82,9 @@
         .ai-avatar-circle.thinking { animation: goldGlowPulse 1.4s infinite ease-in-out; }
         @keyframes goldGlowPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
         .hidden { display: none !important; }
-    </style></head><body>
+    </style>
+</head>
+<body>
 
     <div class="bg-effects">
         <div class="bg-glow-ball ball-1"></div>
@@ -162,11 +166,10 @@
     </div>
 
     <script>
-        // Store API Key securely in localStorage
         function getGeminiKey() {
             let key = localStorage.getItem('md_gemini_key');
             if (!key || key.trim() === "") {
-                key = prompt("Apni New Google Gemini API Key Yahan Paste Karein:");
+                key = prompt("Apni Gemini API Key Enter Karein:");
                 if (key && key.trim()) {
                     localStorage.setItem('md_gemini_key', key.trim());
                 }
@@ -175,7 +178,7 @@
         }
 
         function changeApiKeyManual() {
-            const key = prompt("Nayi Google Gemini API Key Enter Karein:");
+            const key = prompt("Nayi Gemini API Key Paste Karein:");
             if (key && key.trim()) {
                 localStorage.setItem('md_gemini_key', key.trim());
                 alert("API Key Save Ho Gayi Hai!");
@@ -283,17 +286,26 @@
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        // Updated Direct Gemini API Call using gemini-2.5-flash
+        // Smart API Call: Handles both AIzaSy and AQ... (Auth token) Keys seamlessly!
         async function callGeminiTextAPI(userText) {
             const apiKey = getGeminiKey();
-            if (!apiKey) return "AQ.Ab8RN6Jv4du1lNSsaAm6b-YGh6F9i7lFl9iCz1zGvRjfSIBWBw.";
+            if (!apiKey) return "API Key set nahi hai! Top right se Set API Key click karein.";
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+            let headers = { "Content-Type": "application/json" };
+
+            // Handle Key Types automatically
+            if (apiKey.startsWith("AQ")) {
+                headers["Authorization"] = `Bearer ${apiKey}`;
+                headers["x-goog-api-key"] = apiKey;
+            } else {
+                url += `?key=${apiKey}`;
+            }
 
             try {
                 const response = await fetch(url, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: headers,
                     body: JSON.stringify({
                         contents: [{
                             parts: [{ text: `${SYSTEM_PROMPT}\nUser: ${userText}` }]
@@ -304,15 +316,15 @@
                 const data = await response.json();
                 
                 if (data.error) {
-                    return `**API Error:** ${data.error.message || "Key Issue"}. Please click top-right **Set API Key** button to update your API key.`;
+                    return `**API Response Error:** ${data.error.message || "Key verification failed."}`;
                 }
 
                 if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
                     return data.candidates[0].content.parts[0].text.trim();
                 }
-                return "Jawab hasil nahi ho sakaa, dobara try karein.";
+                return "Aap ke sawaal ka jawab nahi mil sakaa. Dubara try karein.";
             } catch (err) {
-                return "Network Error! Apni API key verify karein.";
+                return "Network Error! Connection verify karein.";
             }
         }
 
@@ -321,15 +333,23 @@
             const pureBase64 = base64Image.split(',')[1];
             const mimeType = base64Image.split(';')[0].split(':')[1];
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+            let headers = { "Content-Type": "application/json" };
+
+            if (apiKey.startsWith("AQ")) {
+                headers["Authorization"] = `Bearer ${apiKey}`;
+                headers["x-goog-api-key"] = apiKey;
+            } else {
+                url += `?key=${apiKey}`;
+            }
 
             const response = await fetch(url, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: headers,
                 body: JSON.stringify({
                     contents: [{
                         parts: [
-                            { text: `Analyze this photo and write a clear image generation prompt to edit it as requested: "${promptText}". Return ONLY the detailed prompt.` },
+                            { text: `Analyze photo and create detailed image prompt: "${promptText}". Return ONLY prompt.` },
                             { inline_data: { mime_type: mimeType, data: pureBase64 } }
                         ]
                     }]
@@ -425,4 +445,6 @@
         }
 
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
-    </script></body></html>
+    </script>
+</body>
+</html>
