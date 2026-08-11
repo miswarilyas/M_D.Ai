@@ -4,18 +4,21 @@
     <meta name="google-site-verification" content="GcTCxUjAgdM7zGlZBCGO9RsRFxV-db5bqoDvH-NA09s" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai - Universal Edition</title>
+    <title>M&D.Ai - Studio Edition</title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%231f1f1f' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #ffffff !important; 
             color: #1f1f1f; 
             height: 100vh; 
@@ -123,20 +126,59 @@
 
         .app-logo { font-size: 1.25rem; font-weight: 700; color: #1f1f1f; display: flex; align-items: center; gap: 10px; }
 
-        .chat-container { flex: 1; padding: 24px 20%; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        .chat-container { flex: 1; padding: 24px 18%; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         .welcome-screen { text-align: center; margin-top: 18vh; }
         .welcome-screen h1 { font-size: 2.3rem; color: #1f1f1f; font-weight: 600; margin-bottom: 10px; }
         .welcome-screen p { color: #666666; font-size: 1rem; }
 
         .message-row { display: flex; gap: 14px; width: 100%; animation: fadeIn 0.3s ease; }
         .message-row.user { justify-content: flex-end; }
-        .message-row.bot { justify-content: flex-start; }
+        .message-row.bot { justify-content: flex-start; align-items: flex-start; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .msg-bubble { max-width: 82%; padding: 14px 18px; border-radius: 18px; font-size: 0.98rem; line-height: 1.6; }
-        .user .msg-bubble { background: #f0f2f5; color: #1f1f1f; border-bottom-right-radius: 4px; border: 1px solid #e0e0e0; }
-        .bot .msg-bubble { background: transparent; color: #1f1f1f; flex: 1; padding-left: 0; }
+        /* High Level Text & Bubble Typography */
+        .msg-bubble { 
+            max-width: 85%; 
+            padding: 12px 18px; 
+            border-radius: 18px; 
+            font-size: 0.96rem; 
+            line-height: 1.65; 
+            letter-spacing: 0.1px;
+        }
+        
+        .user .msg-bubble { 
+            background: #f0f2f5; 
+            color: #1f1f1f; 
+            border-bottom-right-radius: 4px; 
+            border: 1px solid #e0e0e0; 
+            font-weight: 500;
+        }
+        
+        .bot .msg-bubble { 
+            background: transparent; 
+            color: #24292f; 
+            flex: 1; 
+            padding-left: 0; 
+        }
+
+        /* Clean Rich Markdown Formatting */
+        .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .bot .msg-bubble p { margin-bottom: 12px; }
+        .bot .msg-bubble ul, .bot .msg-bubble ol { margin-left: 20px; margin-bottom: 12px; }
+        .bot .msg-bubble li { margin-bottom: 4px; }
+        .bot .msg-bubble blockquote {
+            border-left: 4px solid #1f1f1f;
+            padding-left: 12px;
+            color: #4b5563;
+            font-style: italic;
+            margin: 10px 0;
+        }
 
         /* High-Level Animated M&D Logo Avatar */
         .ai-avatar-wrapper {
@@ -147,6 +189,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .ai-avatar-wrapper::before {
@@ -187,7 +230,6 @@
             100% { transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 16px rgba(0,0,0,0.35); }
         }
 
-        /* Active Thinking State */
         #aiLoadingRow .ai-avatar-wrapper::before {
             background: conic-gradient(from 0deg, #1f1f1f, #666666, #1f1f1f);
             animation: spinRing 0.8s linear infinite;
@@ -204,7 +246,7 @@
         }
 
         /* Input Container */
-        .input-container-wrapper { padding: 18px 20% 28px; background: #ffffff; }
+        .input-container-wrapper { padding: 18px 18% 28px; background: #ffffff; }
         .input-bar { 
             background: #f8f9fa; 
             border: 1px solid #d0d7de; 
@@ -238,14 +280,13 @@
 
         /* Code Block Styling */
         pre {
-            background: #1f1f1f;
-            color: #f8f9fa;
-            padding: 12px;
-            border-radius: 10px;
+            background: #1d1f21 !important;
+            padding: 14px;
+            border-radius: 12px;
             overflow-x: auto;
-            margin: 10px 0;
-            font-family: monospace;
+            margin: 12px 0;
         }
+        code { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size: 0.9rem; }
 
         .hidden { display: none !important; }
     </style>
@@ -289,7 +330,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Ask questions or write code in any language in the world! ✨</p>
+                <p>Ask questions, solve problems, or generate code in any language! ✨</p>
             </div>
         </div>
 
@@ -319,15 +360,14 @@
     <script>
         const GROQ_API_KEY = "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";
         
-        /* Universal System Prompt supporting all human & programming languages */
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', a highly intelligent, multi-lingual AI assistant and master software engineer created by Malik Miswar.
+You are 'M&D.Ai', a world-class AI assistant and expert programmer created by Malik Miswar.
 
-CAPABILITIES & RULES:
-1. HUMAN LANGUAGES: You can speak and understand ALL spoken languages in the world (English, Roman Urdu, Urdu script, Hindi, Spanish, Arabic, French, German, Chinese, Japanese, etc.). Always match the exact language and tone used by the user.
-2. PROGRAMMING LANGUAGES: You can write, debug, and explain code in ALL programming languages (Python, JavaScript, HTML/CSS, C++, C#, Java, PHP, Swift, Kotlin, Rust, SQL, Go, etc.).
-3. CREATOR INFO: If asked about your creator, answer that you were created and developed by Malik Miswar.
-4. Always provide accurate, clear, and helpful answers. Format code cleanly inside standard code blocks.
+CAPABILITIES:
+1. Universal Languages: Respond accurately in any language requested (English, Roman Urdu, Urdu Script, Hindi, Arabic, Spanish, French, Chinese, etc.).
+2. Master Software Engineering: Write efficient, clean, and bug-free code across all programming languages.
+3. Formatting: Use clear Markdown headings, lists, and code blocks for readable formatting.
+4. Creator Info: Always recognize Malik Miswar as your founder/creator if asked.
 `;
         let conversationHistory = [];
 
@@ -437,6 +477,7 @@ CAPABILITIES & RULES:
             `;
             chatContainer.appendChild(botRow);
 
+            Prism.highlightAll();
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
