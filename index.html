@@ -169,7 +169,7 @@
         function getGeminiKey() {
             let key = localStorage.getItem('md_gemini_key');
             if (!key || key.trim() === "") {
-                key = prompt("Apni Gemini API Key Enter Karein:");
+                key = prompt("Enter your Gemini API Key:");
                 if (key && key.trim()) {
                     localStorage.setItem('md_gemini_key', key.trim());
                 }
@@ -178,10 +178,10 @@
         }
 
         function changeApiKeyManual() {
-            const key = prompt("Nayi Gemini API Key Paste Karein:");
+            const key = prompt("Enter your fresh Gemini API Key:");
             if (key && key.trim()) {
                 localStorage.setItem('md_gemini_key', key.trim());
-                alert("API Key Save Ho Gayi Hai!");
+                alert("API Key Saved Successfully!");
             }
         }
 
@@ -286,15 +286,14 @@
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        // Smart API Call: Handles both AIzaSy and AQ... (Auth token) Keys seamlessly!
+        // Fixed Official Gemini 1.5 Flash Endpoint
         async function callGeminiTextAPI(userText) {
             const apiKey = getGeminiKey();
-            if (!apiKey) return "API Key set nahi hai! Top right se Set API Key click karein.";
+            if (!apiKey) return "API Key missing! Please set API key at top right.";
 
             let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
             let headers = { "Content-Type": "application/json" };
 
-            // Handle Key Types automatically
             if (apiKey.startsWith("AQ")) {
                 headers["Authorization"] = `Bearer ${apiKey}`;
                 headers["x-goog-api-key"] = apiKey;
@@ -316,15 +315,15 @@
                 const data = await response.json();
                 
                 if (data.error) {
-                    return `**API Response Error:** ${data.error.message || "Key verification failed."}`;
+                    return `**API Error:** ${data.error.message || "Invalid Key"}. Click **Set API Key** at the top right to update key.`;
                 }
 
                 if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
                     return data.candidates[0].content.parts[0].text.trim();
                 }
-                return "Aap ke sawaal ka jawab nahi mil sakaa. Dubara try karein.";
+                return "Jawab nahi mil sakaa. Please try again.";
             } catch (err) {
-                return "Network Error! Connection verify karein.";
+                return "Network Error! Check your internet or API key.";
             }
         }
 
