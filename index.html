@@ -4,9 +4,9 @@
     <meta name="google-site-verification" content="GcTCxUjAgdM7zGlZBCGO9RsRFxV-db5bqoDvH-NA09s" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai - Animated Studio</title>
+    <title>M&D.Ai - Universal Edition</title>
     
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%2310a37f' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%231f1f1f' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -110,7 +110,7 @@
         }
         .login-btn:hover { background: #333333; }
 
-        /* Main Window */
+        /* Main Chat Area */
         .main-chat { flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: #ffffff; }
         .top-navbar { 
             padding: 16px 28px; 
@@ -138,9 +138,7 @@
         .user .msg-bubble { background: #f0f2f5; color: #1f1f1f; border-bottom-right-radius: 4px; border: 1px solid #e0e0e0; }
         .bot .msg-bubble { background: transparent; color: #1f1f1f; flex: 1; padding-left: 0; }
 
-        /* -------------------------------------------------------------------------- */
-        /* HIGH-LEVEL ANIMATED M&D LOGO AVATAR DESIGN */
-        /* -------------------------------------------------------------------------- */
+        /* High-Level Animated M&D Logo Avatar */
         .ai-avatar-wrapper {
             position: relative;
             width: 38px;
@@ -151,7 +149,6 @@
             flex-shrink: 0;
         }
 
-        /* Rotating Glowing Border Ring */
         .ai-avatar-wrapper::before {
             content: '';
             position: absolute;
@@ -190,22 +187,21 @@
             100% { transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 16px rgba(0,0,0,0.35); }
         }
 
-        /* Fast Active Spinning Effect for Loading State */
+        /* Active Thinking State */
         #aiLoadingRow .ai-avatar-wrapper::before {
-            background: conic-gradient(from 0deg, #10a37f, #ffffff, #10a37f);
+            background: conic-gradient(from 0deg, #1f1f1f, #666666, #1f1f1f);
             animation: spinRing 0.8s linear infinite;
         }
         #aiLoadingRow .ai-avatar-circle {
             background: #000000;
-            color: #10a37f;
+            color: #ffffff;
             animation: pulseThinking 1s infinite alternate ease-in-out;
         }
 
         @keyframes pulseThinking {
             0% { transform: scale(0.95); }
-            100% { transform: scale(1.1); box-shadow: 0 0 12px rgba(16, 163, 127, 0.6); }
+            100% { transform: scale(1.1); box-shadow: 0 0 12px rgba(0, 0, 0, 0.4); }
         }
-        /* -------------------------------------------------------------------------- */
 
         /* Input Container */
         .input-container-wrapper { padding: 18px 20% 28px; background: #ffffff; }
@@ -239,6 +235,17 @@
         .icon-btn:hover { background: #333333; }
         .mic-btn.listening { background: #dc2626; color: #ffffff; animation: micPulse 1s infinite; }
         @keyframes micPulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+        /* Code Block Styling */
+        pre {
+            background: #1f1f1f;
+            color: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: monospace;
+        }
 
         .hidden { display: none !important; }
     </style>
@@ -282,7 +289,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Ask questions or chat effortlessly in English or Roman Urdu ✨</p>
+                <p>Ask questions or write code in any language in the world! ✨</p>
             </div>
         </div>
 
@@ -312,17 +319,15 @@
     <script>
         const GROQ_API_KEY = "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";
         
+        /* Universal System Prompt supporting all human & programming languages */
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', an advanced professional AI created by Malik Miswar.
+You are 'M&D.Ai', a highly intelligent, multi-lingual AI assistant and master software engineer created by Malik Miswar.
 
-RULES:
-1. IF USER SAYS SIMPLE ENGLISH GREETING (e.g. "Hi", "Hello", "Hii"):
-   - Reply in English: "Hello! How can I help you today? 😊"
-
-2. IF USER WRITES IN ROMAN URDU (e.g. "kya haal hai", "kaise ho"):
-   - Reply ONLY in Roman Urdu.
-
-3. NO MIXING & NO BRACKET TRANSLATIONS.
+CAPABILITIES & RULES:
+1. HUMAN LANGUAGES: You can speak and understand ALL spoken languages in the world (English, Roman Urdu, Urdu script, Hindi, Spanish, Arabic, French, German, Chinese, Japanese, etc.). Always match the exact language and tone used by the user.
+2. PROGRAMMING LANGUAGES: You can write, debug, and explain code in ALL programming languages (Python, JavaScript, HTML/CSS, C++, C#, Java, PHP, Swift, Kotlin, Rust, SQL, Go, etc.).
+3. CREATOR INFO: If asked about your creator, answer that you were created and developed by Malik Miswar.
+4. Always provide accurate, clear, and helpful answers. Format code cleanly inside standard code blocks.
 `;
         let conversationHistory = [];
 
