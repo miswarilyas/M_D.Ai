@@ -4,7 +4,7 @@
     <meta name="google-site-verification" content="GcTCxUjAgdM7zGlZBCGO9RsRFxV-db5bqoDvH-NA09s" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai - Black Gradient Edition</title>
+    <title>M&D.Ai - </title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%2310a37f' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,61 +16,34 @@
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: #000000; 
-            color: #ffffff; 
+            background-color: #131314 !important; 
+            color: #e3e3e3; 
             height: 100vh; 
             display: flex; 
             overflow: hidden; 
-            position: relative; 
-        }
-
-        /* Black & Dark Mesh Gradient Glow Effect */
-        .bg-glow-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.25;
-            animation: floatGlow 10s infinite alternate ease-in-out;
-        }
-        .orb-1 { width: 500px; height: 500px; background: #1c1c24; top: -10%; left: 30%; }
-        .orb-2 { width: 400px; height: 400px; background: #10a37f; bottom: -5%; right: 10%; opacity: 0.15; animation-delay: -3s; }
-        
-        @keyframes floatGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, -40px) scale(1.1); }
         }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #282a2c; border-radius: 10px; }
 
-        .sidebar, .main-chat { position: relative; z-index: 1; }
-
+        /* Left Sidebar - Gemini Clean Dark Style */
         .sidebar { 
             width: 260px; 
-            background: rgba(12, 12, 15, 0.85); 
-            backdrop-filter: blur(16px); 
+            background: #1e1f20; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between; 
             padding: 16px; 
-            border-right: 1px solid rgba(255, 255, 255, 0.08); 
+            border-right: 1px solid #282a2c; 
         }
         .sidebar-top { display: flex; flex-direction: column; gap: 12px; }
         .new-chat-btn { 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.12); 
-            color: #ffffff; 
+            background: #131314; 
+            border: 1px solid #282a2c; 
+            color: #e3e3e3; 
             padding: 12px 16px; 
-            border-radius: 12px; 
+            border-radius: 20px; 
             font-size: 0.9rem; 
             font-weight: 500; 
             display: flex; 
@@ -79,10 +52,10 @@
             cursor: pointer; 
             transition: 0.2s ease; 
         }
-        .new-chat-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: #10a37f; }
+        .new-chat-btn:hover { background: #282a2c; }
         .clear-all-btn { 
             background: transparent; 
-            border: 1px solid rgba(239, 68, 68, 0.4); 
+            border: 1px solid #ef4444; 
             color: #ef4444; 
             padding: 9px 12px; 
             border-radius: 10px; 
@@ -98,9 +71,9 @@
         .clear-all-btn:hover { background: rgba(239, 68, 68, 0.15); }
 
         .user-profile-card { 
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 14px; 
+            background: #131314; 
+            border: 1px solid #282a2c; 
+            border-radius: 16px; 
             padding: 12px; 
             display: flex; 
             flex-direction: column; 
@@ -111,54 +84,51 @@
             width: 36px; 
             height: 36px; 
             border-radius: 50%; 
-            background: #10a37f; 
-            color: #ffffff; 
+            background: #e3e3e3; 
+            color: #131314; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             font-weight: 700; 
             font-size: 0.85rem; 
-            box-shadow: 0 0 10px rgba(16, 163, 127, 0.4); 
         }
         .user-info h4 { font-size: 0.85rem; color: #ffffff; }
-        .user-info p { font-size: 0.7rem; color: #10a37f; }
+        .user-info p { font-size: 0.7rem; color: #a8c7fa; }
         .login-btn { 
-            background: #10a37f; 
+            background: #282a2c; 
             color: #ffffff; 
             border: none; 
-            padding: 8px; 
+            padding: 9px; 
             border-radius: 8px; 
             font-size: 0.8rem; 
             font-weight: 600; 
             cursor: pointer; 
             transition: 0.2s; 
         }
-        .login-btn:hover { background: #0d8a6c; }
+        .login-btn:hover { background: #3c4043; }
 
-        .main-chat { flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: transparent; }
+        /* Main Chat Canvas */
+        .main-chat { flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: #131314; }
         .top-navbar { 
             padding: 16px 28px; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(12px); 
+            background: #131314; 
         }
 
-        /* Animated Logo */
-        .app-logo { font-size: 1.25rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 10px; }
-        .animated-sparkle { color: #10a37f; animation: pulseGlow 2s infinite ease-in-out; }
+        .app-logo { font-size: 1.25rem; font-weight: 600; color: #e3e3e3; display: flex; align-items: center; gap: 10px; }
+        .animated-sparkle { color: #e3e3e3; animation: pulseGlow 2s infinite ease-in-out; }
         @keyframes pulseGlow {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px #10a37f); }
-            50% { transform: scale(1.3); filter: drop-shadow(0 0 12px #10a37f); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 2px #10a37f); }
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px #ffffff); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px #ffffff); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 2px #ffffff); }
         }
 
-        .chat-container { flex: 1; padding: 24px 22%; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        .chat-container { flex: 1; padding: 24px 20%; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
         .welcome-screen { text-align: center; margin-top: 18vh; }
-        .welcome-screen h1 { font-size: 2.3rem; color: #ffffff; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.5px; }
-        .welcome-screen p { color: #8e8e93; font-size: 1rem; }
+        .welcome-screen h1 { font-size: 2.3rem; color: #e3e3e3; font-weight: 500; margin-bottom: 10px; }
+        .welcome-screen p { color: #8e9196; font-size: 1rem; }
 
         .message-row { display: flex; gap: 14px; width: 100%; animation: fadeIn 0.3s ease; }
         .message-row.user { justify-content: flex-end; }
@@ -166,31 +136,32 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .msg-bubble { max-width: 82%; padding: 14px 18px; border-radius: 18px; font-size: 0.96rem; line-height: 1.6; }
-        .user .msg-bubble { background: rgba(255, 255, 255, 0.08); color: #ffffff; border-bottom-right-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.12); }
-        .bot .msg-bubble { background: rgba(20, 20, 25, 0.8); color: #ececec; border-bottom-left-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.08); flex: 1; backdrop-filter: blur(8px); }
+        .msg-bubble { max-width: 82%; padding: 14px 18px; border-radius: 18px; font-size: 0.98rem; line-height: 1.6; }
+        .user .msg-bubble { background: #282a2c; color: #ffffff; border-bottom-right-radius: 4px; }
+        .bot .msg-bubble { background: transparent; color: #e3e3e3; flex: 1; padding-left: 0; }
 
-        .input-container-wrapper { padding: 18px 22% 28px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(12px); border-top: 1px solid rgba(255, 255, 255, 0.08); }
+        /* Gemini Floating Pill Input Box (Black Theme replacing Blue) */
+        .input-container-wrapper { padding: 18px 20% 28px; background: #131314; }
         .input-bar { 
-            background: rgba(24, 24, 28, 0.9); 
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            border-radius: 28px; 
+            background: #1e1f20; 
+            border: 1px solid #282a2c; 
+            border-radius: 32px; 
             display: flex; 
             align-items: center; 
-            padding: 6px 16px; 
-            gap: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5); 
-            transition: all 0.2s ease; 
+            padding: 8px 18px; 
+            gap: 12px; 
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4); 
         }
-        .input-bar:focus-within { border-color: #10a37f; box-shadow: 0 0 15px rgba(16, 163, 127, 0.3); }
-        .input-bar input[type="text"] { flex: 1; background: transparent; border: none; outline: none; color: #ffffff; font-size: 0.98rem; padding: 8px; }
+        .input-bar:focus-within { border-color: #444746; }
+        .input-bar input[type="text"] { flex: 1; background: transparent; border: none; outline: none; color: #ffffff; font-size: 1rem; padding: 8px; }
 
+        /* Black Round Send/Mic Action Buttons */
         .icon-btn { 
-            background: transparent; 
+            background: #282a2c; 
             border: none; 
-            color: #8e8e93; 
-            width: 36px; 
-            height: 36px; 
+            color: #e3e3e3; 
+            width: 40px; 
+            height: 40px; 
             border-radius: 50%; 
             cursor: pointer; 
             display: flex; 
@@ -199,16 +170,15 @@
             transition: 0.2s; 
             font-size: 1rem; 
         }
-        .icon-btn:hover { background: rgba(255, 255, 255, 0.1); color: #10a37f; }
+        .icon-btn:hover { background: #3c4043; color: #ffffff; }
         .mic-btn.listening { color: #ef4444; animation: micPulse 1s infinite; }
         @keyframes micPulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        /* Animated Avatar Icon */
         .ai-avatar-circle { 
-            width: 34px; 
-            height: 34px; 
+            width: 32px; 
+            height: 32px; 
             border-radius: 50%; 
-            background: #10a37f; 
+            background: #282a2c; 
             color: #ffffff; 
             display: flex; 
             align-items: center; 
@@ -216,20 +186,12 @@
             font-weight: 700; 
             font-size: 0.75rem; 
             flex-shrink: 0; 
-            box-shadow: 0 0 10px rgba(16, 163, 127, 0.4); 
-            animation: avatarGlow 3s infinite alternate; 
         }
-        @keyframes avatarGlow { 0% { box-shadow: 0 0 5px rgba(16, 163, 127, 0.3); } 100% { box-shadow: 0 0 18px rgba(16, 163, 127, 0.8); } }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-
-    <div class="bg-glow-container">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-    </div>
 
     <div class="sidebar">
         <div class="sidebar-top">
@@ -246,7 +208,7 @@
                 <div class="user-avatar" id="avatarText">MM</div>
                 <div class="user-info">
                     <h4 id="userName">Malik Miswar</h4>
-                    <p id="userStatus">● VIP Active</p>
+                    <p id="userStatus">● Active</p>
                 </div>
             </div>
             <button class="login-btn" onclick="handleAccountLogin()">
@@ -258,8 +220,8 @@
     <div class="main-chat">
         <div class="top-navbar">
             <div class="app-logo">
-                <i class="fa-solid fa-wand-magic-sparkles animated-sparkle"></i>
-                <span>M&D.Ai <small style="font-size: 0.65rem; color: #10a37f; margin-left: 4px;">PRO</small></span>
+                <i class="fa-solid fa-sparkles animated-sparkle"></i>
+                <span>M&D.Ai</span>
             </div>
         </div>
 
@@ -273,7 +235,7 @@
         <div id="aiLoadingRow" class="hidden message-row bot">
             <div class="ai-avatar-circle">M&D</div>
             <div class="msg-bubble" style="display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-circle-notch fa-spin" style="color: #10a37f;"></i> Thinking...
+                <i class="fa-solid fa-circle-notch fa-spin" style="color: #e3e3e3;"></i> Thinking...
             </div>
         </div>
 
