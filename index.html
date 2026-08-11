@@ -4,8 +4,8 @@
     <meta name="google-site-verification" content="GcTCxUjAgdM7zGlZBCGO9RsRFxV-db5bqoDvH-NA09s" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
-    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with Gemini Vision Photo Editing & Ultra-HD Generation.">
+    <title>M&D.Ai - VIP Groq AI Studio by Malik Miswar</title>
+    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio powered by Groq Llama 3 & Pollinations.">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -63,14 +63,8 @@
         .msg-bubble li { margin-bottom: 6px; }
         .msg-bubble pre { background: rgba(18, 18, 21, 0.9); padding: 16px; border-radius: 12px; overflow-x: auto; border: 1px solid rgba(255, 255, 255, 0.1); margin: 12px 0; }
         .msg-bubble code { font-family: monospace; color: #ffd700; background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
-        .img-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
-        .img-grid img, .msg-bubble img { max-width: 100%; width: 500px; border-radius: 16px; margin-top: 12px; border: 1px solid rgba(255, 215, 0, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.6); display: block; }
+        .msg-bubble img { max-width: 100%; width: 500px; border-radius: 16px; margin-top: 12px; border: 1px solid rgba(255, 215, 0, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.6); display: block; }
         .input-container-wrapper { padding: 20px 20% 32px; background: rgba(9, 9, 11, 0.4); backdrop-filter: blur(10px); }
-        .preview-box { display: none; position: relative; margin-bottom: 12px; width: 100%; }
-        .preview-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
-        .preview-item { position: relative; flex-shrink: 0; }
-        .preview-item img { width: 75px; height: 75px; object-fit: cover; border-radius: 12px; border: 1px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-        .preview-item .remove-img-btn { position: absolute; top: -6px; right: -6px; background: #ef4444; color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
         .input-bar { background: rgba(18, 18, 21, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; display: flex; align-items: center; padding: 8px 18px; gap: 10px; transition: all 0.2s; }
         .input-bar:focus-within { border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         .input-bar input[type="text"] { flex: 1; background: transparent; border: none; outline: none; color: #ffffff; font-size: 0.98rem; padding: 8px; }
@@ -123,18 +117,15 @@
     <div class="main-chat">
         <div class="top-navbar">
             <div class="app-logo">
-                <i class="fa-solid fa-gem" style="color: #ffd700;"></i>
-                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">Gemini Powered</small></span>
+                <i class="fa-solid fa-bolt" style="color: #ffd700;"></i>
+                <span class="logo-text">M&D.Ai <small style="color: #ffd700; font-size: 0.6rem; font-weight: 600;">Groq Superfast</small></span>
             </div>
-            <button class="login-btn" onclick="changeApiKeyManual()" style="padding: 6px 12px; font-size: 0.75rem;">
-                <i class="fa-solid fa-key"></i> Set API Key
-            </button>
         </div>
 
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1 id="welcomeTitle">Hello, <span>Malik Miswar</span></h1>
-                <p>Upload photos to edit using Gemini Vision AI or generate Ultra-HD images!</p>
+                <p>Ask anything or type 'wallpaper bna do' / 'generate image' to create Ultra-HD AI art!</p>
             </div>
         </div>
 
@@ -143,17 +134,8 @@
         </div>
 
         <div class="input-container-wrapper">
-            <div class="preview-box" id="previewBox">
-                <div class="preview-list" id="previewList"></div>
-            </div>
-
             <div class="input-bar">
-                <button class="icon-btn" onclick="document.getElementById('imageInput').click()" title="Attach Reference Images (Up to 10)">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <input type="file" id="imageInput" accept="image/*" multiple style="display: none;" onchange="handleImageSelect(event)">
-
-                <input type="text" id="userInput" placeholder="Ask M&D.Ai, edit photo or type 'wallpaper bna do'..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="userInput" placeholder="Ask M&D.Ai, or type 'wallpaper bna do'..." onkeypress="handleKeyPress(event)">
                 
                 <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
@@ -166,31 +148,12 @@
     </div>
 
     <script>
-        function getGeminiKey() {
-            let key = localStorage.getItem('md_gemini_key');
-            if (!key || key.trim() === "") {
-                key = prompt("Enter your Gemini API Key:");
-                if (key && key.trim()) {
-                    localStorage.setItem('md_gemini_key', key.trim());
-                }
-            }
-            return key ? key.trim() : "";
-        }
-
-        function changeApiKeyManual() {
-            const key = prompt("Enter your fresh Gemini API Key:");
-            if (key && key.trim()) {
-                localStorage.setItem('md_gemini_key', key.trim());
-                alert("API Key Saved Successfully!");
-            }
-        }
-
-        let selectedBase64Images = [];
-        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar using Google Gemini API. Match user's language (Roman Urdu, Urdu, English). Do NOT generate ASCII text art.`;
+        // Aap ki Groq Key Direct Fixed hai
+        const GROQ_API_KEY = "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";
+        const SYSTEM_PROMPT = `You are 'M&D.Ai VIP', created by Malik Miswar. You run on ultra-fast Groq Llama 3 AI. Match user's language (Roman Urdu, Urdu, English). Be helpful, smart, polite and friendly.`;
         let conversationHistory = [];
 
         window.onload = function() {
-            getGeminiKey();
             const savedHistory = localStorage.getItem('md_ai_chat_history');
             if (savedHistory) {
                 try {
@@ -218,41 +181,6 @@
         function saveToLocalStorage() {
             localStorage.setItem('md_ai_chat_history', JSON.stringify(conversationHistory));
         }
-
-        function handleImageSelect(e) {
-            const files = Array.from(e.target.files);
-            const remainingSlots = 10 - selectedBase64Images.length;
-            files.slice(0, remainingSlots).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    selectedBase64Images.push(event.target.result);
-                    renderPreviews();
-                };
-                reader.readAsDataURL(file);
-            });
-            document.getElementById('imageInput').value = "";
-        }
-
-        function renderPreviews() {
-            const previewBox = document.getElementById('previewBox');
-            const previewList = document.getElementById('previewList');
-            if (selectedBase64Images.length === 0) {
-                previewBox.style.display = 'none';
-                previewList.innerHTML = '';
-                return;
-            }
-            previewBox.style.display = 'block';
-            previewList.innerHTML = '';
-            selectedBase64Images.forEach((imgSrc, idx) => {
-                const item = document.createElement('div');
-                item.className = 'preview-item';
-                item.innerHTML = `<img src="${imgSrc}"><button class="remove-img-btn" onclick="removeSingleImage(${idx})"><i class="fa-solid fa-xmark"></i></button>`;
-                previewList.appendChild(item);
-            });
-        }
-
-        function removeSingleImage(index) { selectedBase64Images.splice(index, 1); renderPreviews(); }
-        function removeAllImages() { selectedBase64Images = []; renderPreviews(); }
 
         function handleAccountLogin() {
             const name = prompt("Enter Name:", "Malik Miswar");
@@ -286,80 +214,36 @@
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        // Fixed Official Gemini 1.5 Flash Endpoint
-        async function callGeminiTextAPI(userText) {
-            const apiKey = getGeminiKey();
-            if (!apiKey) return "API Key missing! Please set API key at top right.";
-
-            let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
-            let headers = { "Content-Type": "application/json" };
-
-            if (apiKey.startsWith("AQ")) {
-                headers["Authorization"] = `Bearer ${apiKey}`;
-                headers["x-goog-api-key"] = apiKey;
-            } else {
-                url += `?key=${apiKey}`;
-            }
-
+        async function callGroqAPI(userText) {
             try {
-                const response = await fetch(url, {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
-                    headers: headers,
+                    headers: {
+                        "Authorization": `Bearer ${GROQ_API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: `${SYSTEM_PROMPT}\nUser: ${userText}` }]
-                        }]
+                        model: "llama-3.3-70b-versatile",
+                        messages: [
+                            { role: "system", content: SYSTEM_PROMPT },
+                            { role: "user", content: userText }
+                        ]
                     })
                 });
 
                 const data = await response.json();
-                
+
                 if (data.error) {
-                    return `**API Error:** ${data.error.message || "Invalid Key"}. Click **Set API Key** at the top right to update key.`;
+                    return `**Groq API Error:** ${data.error.message || "Something went wrong"}`;
                 }
 
-                if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                    return data.candidates[0].content.parts[0].text.trim();
+                if (data.choices && data.choices[0]?.message?.content) {
+                    return data.choices[0].message.content.trim();
                 }
-                return "Jawab nahi mil sakaa. Please try again.";
+                return "Jawab nahi mil sakaa. Dubara try karein.";
             } catch (err) {
-                return "Network Error! Check your internet or API key.";
+                return "Network Error! Connection check karein.";
             }
-        }
-
-        async function callGeminiVisionAPI(base64Image, promptText) {
-            const apiKey = getGeminiKey();
-            const pureBase64 = base64Image.split(',')[1];
-            const mimeType = base64Image.split(';')[0].split(':')[1];
-
-            let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
-            let headers = { "Content-Type": "application/json" };
-
-            if (apiKey.startsWith("AQ")) {
-                headers["Authorization"] = `Bearer ${apiKey}`;
-                headers["x-goog-api-key"] = apiKey;
-            } else {
-                url += `?key=${apiKey}`;
-            }
-
-            const response = await fetch(url, {
-                method: "POST",
-                headers: headers,
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { text: `Analyze photo and create detailed image prompt: "${promptText}". Return ONLY prompt.` },
-                            { inline_data: { mime_type: mimeType, data: pureBase64 } }
-                        ]
-                    }]
-                })
-            });
-
-            const data = await response.json();
-            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                return data.candidates[0].content.parts[0].text.trim();
-            }
-            return promptText;
         }
 
         async function renderFluxImage(promptText) {
@@ -370,7 +254,7 @@
         }
 
         function checkIsImageRequest(str) {
-            const keywords = ['/image', 'generate image', 'create image', 'draw', 'wallpaper', 'bna do', 'photo', 'pic', 'tasveer', 'edit'];
+            const keywords = ['/image', 'generate image', 'create image', 'draw', 'wallpaper', 'bna do', 'photo', 'pic', 'tasveer', 'image of'];
             return keywords.some(k => str.toLowerCase().includes(k));
         }
 
@@ -380,24 +264,14 @@
             const aiLoadingRow = document.getElementById('aiLoadingRow');
             const text = input.value.trim();
 
-            if (!text && selectedBase64Images.length === 0) return;
+            if (!text) return;
 
             const welcome = document.getElementById('welcomeScreen');
             if (welcome) welcome.remove();
 
-            const currentImgs = [...selectedBase64Images];
-            removeAllImages();
-
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            let userHtml = `<div class="msg-bubble">${text || "Processing..."}`;
-            if (currentImgs.length > 0) {
-                userHtml += `<div class="img-grid">`;
-                currentImgs.forEach(img => { userHtml += `<img src="${img}">`; });
-                userHtml += `</div>`;
-            }
-            userHtml += `</div>`;
-            userRow.innerHTML = userHtml;
+            userRow.innerHTML = `<div class="msg-bubble">${text}</div>`;
             chatContainer.appendChild(userRow);
 
             input.value = '';
@@ -410,16 +284,13 @@
                 let rawReply = "";
                 const isImageReq = checkIsImageRequest(text);
 
-                if (currentImgs.length > 0) {
-                    const detailedPrompt = await callGeminiVisionAPI(currentImgs[0], text || "edit photo");
-                    rawReply = await renderFluxImage(detailedPrompt);
-                } else if (isImageReq) {
+                if (isImageReq) {
                     rawReply = await renderFluxImage(text);
                 } else {
-                    rawReply = await callGeminiTextAPI(text);
+                    rawReply = await callGroqAPI(text);
                 }
 
-                conversationHistory.push({ role: 'user', text: text || "Uploaded Photo" });
+                conversationHistory.push({ role: 'user', text: text });
                 conversationHistory.push({ role: 'assistant', text: rawReply });
 
                 aiLoadingRow.classList.add('hidden');
