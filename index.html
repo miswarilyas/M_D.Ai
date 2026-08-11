@@ -137,13 +137,13 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* High Level Text & Bubble Typography */
+        /* High Level Text & Bubble Typography with Proper Line Spacing */
         .msg-bubble { 
             max-width: 85%; 
             padding: 12px 18px; 
             border-radius: 18px; 
-            font-size: 0.98rem; 
-            line-height: 1.6; 
+            font-size: 1rem; 
+            line-height: 1.7; 
             letter-spacing: 0.1px;
         }
         
@@ -162,9 +162,25 @@
             padding-left: 0; 
         }
 
-        .bot .msg-bubble p { margin-bottom: 10px; }
-        .bot .msg-bubble p:last-child { margin-bottom: 0; }
-        .bot .msg-bubble ul, .bot .msg-bubble ol { margin-left: 20px; margin-bottom: 10px; }
+        /* Line & Paragraph Spacing Fix */
+        .bot .msg-bubble p { 
+            margin-bottom: 14px; 
+        }
+        .bot .msg-bubble p:last-child { 
+            margin-bottom: 0; 
+        }
+        .bot .msg-bubble ul, .bot .msg-bubble ol { 
+            margin-left: 22px; 
+            margin-bottom: 14px; 
+        }
+        .bot .msg-bubble li { 
+            margin-bottom: 8px; 
+        }
+        .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 { 
+            margin-top: 16px; 
+            margin-bottom: 10px; 
+            font-weight: 700;
+        }
 
         /* Animated M&D Logo Avatar */
         .ai-avatar-wrapper {
@@ -270,7 +286,7 @@
             padding: 14px;
             border-radius: 12px;
             overflow-x: auto;
-            margin: 12px 0;
+            margin: 14px 0;
         }
         code { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size: 0.9rem; }
 
@@ -346,7 +362,11 @@
     <script>
         const GROQ_API_KEY = "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";
         
-        /* Balanced System Prompt: Friendly Greetings + Comprehensive Detailed Explanations */
+        // Configure marked to convert single linebreaks into <br> for clean spacing
+        if (window.marked) {
+            marked.setOptions({ breaks: true });
+        }
+
         const SYSTEM_PROMPT = `
 You are 'M&D.Ai', a highly intelligent, elegant, and helpful AI created by Malik Miswar.
 
@@ -354,8 +374,8 @@ CORE RESPONSE RULES:
 1. GREETINGS: For casual hellos ("hi", "hello", "hey"), keep responses short, natural, and friendly (e.g. "Hello! How can I help you today? 😊").
 2. INFORMATIONAL QUESTIONS: Whenever the user asks about a person, topic, place, or concept (e.g., "Quaid-e-Azam kon thy", "Who is...", "Tell me about...", "Explain..."):
    - Provide a FULL, COMPREHENSIVE, and DETAILED explanation.
-   - Use bullet points, clear structural formatting, and classy modern emojis (✨, 🏛️, 📜, 🌟, 💡) to make it attractive and easy to read.
-   - Cover background, key achievements, historical significance, or key details completely so the user gets all information in one place.
+   - Use double line breaks between paragraphs and bullet points so the text stays clean and easy to read.
+   - Use classy modern emojis (✨, 🏛️, 📜, 🌟, 💡).
 3. LANGUAGE MATCHING: Respond strictly in the same language/script used by the user:
    - If Roman Urdu -> Answer in rich Roman Urdu.
    - If English -> Answer in clear English.
