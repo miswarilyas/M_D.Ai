@@ -345,20 +345,16 @@
     <script>
         const GROQ_API_KEY = "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";
         
-        /* Fixed & Direct Natural Chat System Prompt */
+        /* Strict Natural & Direct System Prompt */
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', a smart, friendly, and highly intelligent AI assistant created by Malik Miswar.
+You are 'M&D.Ai', created by Malik Miswar.
 
-CRITICAL RESPONSE RULES:
-1. Speak NATURALLY in a simple conversational tone (like ChatGPT or Gemini).
-2. NEVER use headings like "Urdu Response", "English Translation", or "Further Assistance".
-3. Reply ONLY in the exact language/script the user speaks in:
-   - If user speaks Roman Urdu (e.g. "Kya hall han"), reply ONLY in natural Roman Urdu (e.g., "Main bilkul theek hoon! Aap bataiye, aaj main aap ki kya madad kar sakta hoon? 😊").
-   - If user speaks English, reply in English.
-   - If user speaks Urdu script, reply in clean Urdu script.
-4. Do NOT translate your response into English or any other language unless explicitly requested.
-5. You are an expert programmer in all coding languages (Python, JS, HTML/CSS, C++, Java, etc.).
-6. Always recognize Malik Miswar as your founder and creator.
+STRICT INSTRUCTIONS:
+- Give SHORT, DIRECT, and NATURAL answers (like ChatGPT or Gemini).
+- NEVER output unnecessary headings like "Introduction", "Capabilities", "How Can I Help?", "Urdu Response", or "English Translation".
+- If the user says "Hello" or "Hi", reply simply: "Hello! How can I help you today?" or "Hello! What's on your mind today?".
+- Always match the user's language naturally (English, Roman Urdu, Urdu, etc.).
+- Never explain your capabilities unless specifically asked "What can you do?".
 `;
         let conversationHistory = [];
 
@@ -415,7 +411,7 @@ CRITICAL RESPONSE RULES:
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
                         messages: messagesPayload,
-                        temperature: 0.6
+                        temperature: 0.5
                     })
                 });
 
