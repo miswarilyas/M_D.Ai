@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M&D.Ai - VIP AI Studio by Malik Miswar</title>
-    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with HD Image Generation.">
+    <meta name="description" content="M&D.Ai is your personal premium VIP AI assistant studio with Ultra-HD Image Generation.">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23ffd700' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -448,7 +448,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1 id="welcomeTitle">Hello, <span>Malik Miswar</span></h1>
-                <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate HD images directly!</p>
+                <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate Ultra-HD images directly!</p>
             </div>
         </div>
 
@@ -488,7 +488,7 @@
 Act like ChatGPT:
 - Match the response length to the user's query naturally.
 - Always match the user's language (Roman Urdu, Urdu, or English).
-- NEVER generate ASCII text art for wallpapers or images. If the user asks for a wallpaper/image/photo, tell them to type 'generate image' or '/image' if it fails.`;
+- NEVER generate ASCII text art for wallpapers or images.`;
 
         let conversationHistory = [];
 
@@ -583,7 +583,7 @@ Act like ChatGPT:
             document.getElementById('chatContainer').innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
                     <h1 id="welcomeTitle">Hello, <span>${currentName}</span></h1>
-                    <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate HD images directly!</p>
+                    <p>Welcome to M&D.Ai VIP Studio. Ask anything or generate Ultra-HD images directly!</p>
                 </div>`;
             removeImage();
         }
@@ -621,15 +621,23 @@ Act like ChatGPT:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
+        // ChatGPT Level Ultra-HD Image Generation
         async function generateImage(promptText) {
-            const seed = Math.floor(Math.random() * 999999);
-            const cleanPrompt = encodeURIComponent(promptText.trim() + ", 8k resolution, photorealistic, highly detailed, professional quality");
-            const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1024&height=1024&seed=${seed}&model=flux&nologo=true`;
+            const seed = Math.floor(Math.random() * 9999999);
             
-            return `Here is your generated image:\n\n![Generated Image](${imageUrl})`;
+            // Auto Prompt Enhancer for ChatGPT Quality Details
+            const enhancedPrompt = `${promptText.trim()}, masterpiece, 8k resolution, photorealistic, ultra HD, highly detailed, octane render, vivid colors, professional studio lighting, 35mm lens camera shot`;
+            const negativePrompt = "blurry, low quality, distorted, bad anatomy, lowres, noisy, text watermark, ugly, extra limbs";
+
+            const cleanPrompt = encodeURIComponent(enhancedPrompt);
+            const cleanNegative = encodeURIComponent(negativePrompt);
+            
+            // Render High Resolution 1280x1280 Flux Image
+            const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=1280&height=1280&seed=${seed}&model=flux&nologo=true&enhance=true&negative=${cleanNegative}`;
+            
+            return `Here is your Ultra-HD VIP Image:\n\n![Generated Image](${imageUrl})`;
         }
 
-        // Expanded detection for Urdu / English image requests
         function checkIsImageRequest(str) {
             const lower = str.toLowerCase();
             const keywords = [
