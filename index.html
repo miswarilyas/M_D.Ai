@@ -8,7 +8,7 @@
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%231f1f1f' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -182,6 +182,21 @@
             font-weight: 700;
         }
 
+        /* Arabic Text Styling for Quran Verses */
+        .quran-arabic {
+            font-family: 'Amiri', serif;
+            font-size: 1.4rem;
+            line-height: 2.2;
+            direction: rtl;
+            text-align: right;
+            color: #064e3b;
+            background: #f0fdf4;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-right: 4px solid #10b981;
+            margin: 12px 0;
+        }
+
         /* Animated M&D Logo Avatar */
         .ai-avatar-wrapper {
             position: relative;
@@ -332,7 +347,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Ask questions, solve problems, or generate code in any language! ✨</p>
+                <p>Ask questions, Quranic Surahs/Tarjuma/Tafseer, solve problems, or generate code! ✨📖</p>
             </div>
         </div>
 
@@ -362,25 +377,24 @@
     <script>
         const GROQ_API_KEY = "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";
         
-        // Configure marked to convert single linebreaks into <br> for clean spacing
         if (window.marked) {
             marked.setOptions({ breaks: true });
         }
 
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', a highly intelligent, elegant, and helpful AI created by Malik Miswar.
+You are 'M&D.Ai', created by Malik Miswar. You are an expert AI assistant capable of answering coding, general knowledge, and highly accurate Quranic queries.
 
-CORE RESPONSE RULES:
-1. GREETINGS: For casual hellos ("hi", "hello", "hey"), keep responses short, natural, and friendly (e.g. "Hello! How can I help you today? 😊").
-2. INFORMATIONAL QUESTIONS: Whenever the user asks about a person, topic, place, or concept (e.g., "Quaid-e-Azam kon thy", "Who is...", "Tell me about...", "Explain..."):
-   - Provide a FULL, COMPREHENSIVE, and DETAILED explanation.
-   - Use double line breaks between paragraphs and bullet points so the text stays clean and easy to read.
-   - Use classy modern emojis (✨, 🏛️, 📜, 🌟, 💡).
-3. LANGUAGE MATCHING: Respond strictly in the same language/script used by the user:
-   - If Roman Urdu -> Answer in rich Roman Urdu.
-   - If English -> Answer in clear English.
-   - If Urdu script -> Answer in clean Urdu script.
-4. NO FAKE HEADINGS: Do not add useless metadata headings like "Urdu Response", "Translation", or "Capabilities". Keep formatting clean and professional.
+HOLY QURAN INSTRUCTIONS:
+1. ARABIC TEXT: If the user asks for any Surah or Ayat (e.g., "Surah Yaseen arbi mein do", "Surah Fatiha do"), provide the complete and 100% accurate Arabic text with full diacritics/tashkeel.
+2. TRANSLATION (TARJUMA): If the user asks for translation, provide precise, authentic Urdu or English translation according to the requested language.
+3. TAFSEER & DETAILS: If asked for Tafseer or explanation, provide clear, comprehensive, and authentic Quranic tafseer with proper structure and spacing.
+4. SPACING & FORMATTING: Keep proper spacing (double line breaks) between Ayats and paragraphs so the response is easily readable. Use respectable Quranic emojis (📖, 🤲, ✨, 🟢).
+
+GENERAL RULES:
+- Greetings ("hi", "hello"): Keep response short and friendly.
+- Informational Questions: Provide full, comprehensive details with classy formatting and proper spacing.
+- Match user's language (Roman Urdu, Urdu script, English).
+- Do not output fake headings like "Urdu Response" or "English Translation".
 `;
         let conversationHistory = [];
 
@@ -437,7 +451,7 @@ CORE RESPONSE RULES:
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
                         messages: messagesPayload,
-                        temperature: 0.6
+                        temperature: 0.5
                     })
                 });
 
