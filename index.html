@@ -361,7 +361,6 @@
         
         if (window.marked) marked.setOptions({ breaks: true });
 
-        // List of Quranic Surahs for Auto-Detection
         const surahMap = {
             "fatiha": 1, "baqarah": 2, "imran": 3, "nisa": 4, "maidah": 5, "anam": 6, "araf": 7, "anfal": 8, "taubah": 9, "yunus": 10,
             "hud": 11, "yusuf": 12, "rad": 13, "ibrahim": 14, "hijr": 15, "nahl": 16, "isra": 17, "kahf": 18, "maryam": 19, "taha": 20,
@@ -379,11 +378,12 @@
         };
 
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', built by Malik Miswar. You are a world-class AI assistant.
-QURANIC INSTRUCTIONS:
-- When user asks for Quranic explanation (Tafseer) or Translation (Tarjuma), respond with 100% accurate, authentic, respectful text with clear line breaks.
-- Match user's language (Urdu, English, Roman Urdu).
-- Format all responses with clean paragraphs and lists.
+You are 'M&D.Ai', built by Malik Miswar. You are a helpful, smart AI assistant.
+
+IMPORTANT RULES:
+1. GREETINGS (like "Hello", "Hi", "Hey", "Assalam o Alaikum"): Keep response VERY SHORT & NATURAL like "Hello! How can I help you today? 😊" or "Hello! Assalam-o-Alaikum!". Do not give long introductions on simple greetings!
+2. INFORMATIONAL QUESTIONS ("Who was", "Explain", "Detailed"): Give a proper, well-structured, detailed response with bullet points and bold headers.
+3. Match user language: If user writes in Roman Urdu, English, or Urdu, reply naturally in that style.
 `;
 
         let conversationHistory = [];
@@ -419,7 +419,6 @@ QURANIC INSTRUCTIONS:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        // Fetch Complete Arabic Surah from Official AlQuran API
         async function fetchQuranSurah(surahNum) {
             try {
                 const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
@@ -497,7 +496,6 @@ QURANIC INSTRUCTIONS:
             let finalReply = "";
             const lowerText = text.toLowerCase();
 
-            // Detect if user asked for full Surah in Arabic
             let matchedSurahNum = null;
             for (let name in surahMap) {
                 if (lowerText.includes(name)) {
