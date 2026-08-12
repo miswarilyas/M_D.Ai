@@ -8,7 +8,7 @@
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%231f1f1f' d='M379.8 268.7c24.9-19.3 24.9-56 0-75.3-33.7-26.1-98.3-71.8-123.8-89.4-4.2-2.9-9.9-2.9-14.1 0-25.5 17.6-90.1 63.3-123.8 89.4-24.9 19.3-24.9 56 0 75.3 33.7 26.1 98.3 71.8 123.8 89.4 4.2 2.9 9.9 2.9 14.1 0 25.5-17.6 90.1-63.3 123.8-89.4zM256 32l-192 128 192 192 192-192L256 32z'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -137,7 +137,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* High Level Text & Bubble Typography with Proper Line Spacing */
         .msg-bubble { 
             max-width: 85%; 
             padding: 12px 18px; 
@@ -162,42 +161,54 @@
             padding-left: 0; 
         }
 
-        /* Line & Paragraph Spacing Fix */
-        .bot .msg-bubble p { 
-            margin-bottom: 14px; 
-        }
-        .bot .msg-bubble p:last-child { 
-            margin-bottom: 0; 
-        }
-        .bot .msg-bubble ul, .bot .msg-bubble ol { 
-            margin-left: 22px; 
-            margin-bottom: 14px; 
-        }
-        .bot .msg-bubble li { 
-            margin-bottom: 8px; 
-        }
-        .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 { 
-            margin-top: 16px; 
-            margin-bottom: 10px; 
-            font-weight: 700;
-        }
+        .bot .msg-bubble p { margin-bottom: 14px; }
+        .bot .msg-bubble p:last-child { margin-bottom: 0; }
+        .bot .msg-bubble ul, .bot .msg-bubble ol { margin-left: 22px; margin-bottom: 14px; }
+        .bot .msg-bubble li { margin-bottom: 8px; }
+        .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 { margin-top: 16px; margin-bottom: 10px; font-weight: 700; }
 
-        /* Arabic Text Styling for Quran Verses */
+        /* Quran Verses Block Styling */
+        .quran-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+        }
+        .quran-header {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #a7f3d0;
+            padding-bottom: 10px;
+        }
         .quran-arabic {
             font-family: 'Amiri', serif;
-            font-size: 1.4rem;
-            line-height: 2.2;
+            font-size: 1.65rem;
+            line-height: 2.5;
             direction: rtl;
-            text-align: right;
+            text-align: justify;
             color: #064e3b;
-            background: #f0fdf4;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border-right: 4px solid #10b981;
-            margin: 12px 0;
+            font-weight: 700;
+        }
+        .verse-num {
+            display: inline-block;
+            font-size: 1rem;
+            color: #059669;
+            background: #d1fae5;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            margin: 0 6px;
+            font-family: 'Inter', sans-serif;
         }
 
-        /* Animated M&D Logo Avatar */
+        /* Avatar Styling */
         .ai-avatar-wrapper {
             position: relative;
             width: 38px;
@@ -219,10 +230,7 @@
             z-index: 1;
         }
 
-        @keyframes spinRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .ai-avatar-circle { 
             position: relative;
@@ -238,31 +246,13 @@
             font-size: 0.72rem; 
             letter-spacing: 0.5px;
             z-index: 2;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
-            animation: floatLogo 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatLogo {
-            0% { transform: translateY(0px) scale(1); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-            100% { transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 16px rgba(0,0,0,0.35); }
         }
 
         #aiLoadingRow .ai-avatar-wrapper::before {
             background: conic-gradient(from 0deg, #1f1f1f, #666666, #1f1f1f);
             animation: spinRing 0.8s linear infinite;
         }
-        #aiLoadingRow .ai-avatar-circle {
-            background: #000000;
-            color: #ffffff;
-            animation: pulseThinking 1s infinite alternate ease-in-out;
-        }
 
-        @keyframes pulseThinking {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.1); box-shadow: 0 0 12px rgba(0, 0, 0, 0.4); }
-        }
-
-        /* Input Container */
         .input-container-wrapper { padding: 18px 18% 28px; background: #ffffff; }
         .input-bar { 
             background: #f8f9fa; 
@@ -295,16 +285,8 @@
         .mic-btn.listening { background: #dc2626; color: #ffffff; animation: micPulse 1s infinite; }
         @keyframes micPulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        /* Code Block Styling */
-        pre {
-            background: #1d1f21 !important;
-            padding: 14px;
-            border-radius: 12px;
-            overflow-x: auto;
-            margin: 14px 0;
-        }
+        pre { background: #1d1f21 !important; padding: 14px; border-radius: 12px; overflow-x: auto; margin: 14px 0; }
         code { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size: 0.9rem; }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -347,7 +329,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Ask questions, Quranic Surahs/Tarjuma/Tafseer, solve problems, or generate code! ✨📖</p>
+                <p>Ask questions, Quranic Surahs, Tarjuma, Tafseer, or Coding! ✨📖</p>
             </div>
         </div>
 
@@ -356,7 +338,7 @@
                 <div class="ai-avatar-circle">M&D</div>
             </div>
             <div class="msg-bubble" style="display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-sparkles fa-spin" style="color: #1f1f1f;"></i> Thinking...
+                <i class="fa-solid fa-sparkles fa-spin" style="color: #1f1f1f;"></i> Fetching Response...
             </div>
         </div>
 
@@ -377,25 +359,33 @@
     <script>
         const GROQ_API_KEY = "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";
         
-        if (window.marked) {
-            marked.setOptions({ breaks: true });
-        }
+        if (window.marked) marked.setOptions({ breaks: true });
+
+        // List of Quranic Surahs for Auto-Detection
+        const surahMap = {
+            "fatiha": 1, "baqarah": 2, "imran": 3, "nisa": 4, "maidah": 5, "anam": 6, "araf": 7, "anfal": 8, "taubah": 9, "yunus": 10,
+            "hud": 11, "yusuf": 12, "rad": 13, "ibrahim": 14, "hijr": 15, "nahl": 16, "isra": 17, "kahf": 18, "maryam": 19, "taha": 20,
+            "yanbiya": 21, "hajj": 22, "muminun": 23, "nur": 24, "furqan": 25, "shuara": 26, "naml": 27, "qasas": 28, "ankabut": 29,
+            "rum": 30, "luqman": 31, "sajdah": 32, "ahzab": 33, "saba": 34, "fatir": 35, "yaseen": 36, "yasin": 36, "saffat": 37,
+            "sad": 38, "zumar": 39, "ghafir": 40, "fussilat": 41, "shura": 42, "zukhruf": 43, "dukhan": 44, "jathiyah": 45, "ahqaf": 46,
+            "muhammad": 47, "fath": 48, "hujurat": 49, "qaf": 50, "dhariyat": 51, "tur": 52, "najm": 53, "qamar": 54, "rahman": 55,
+            "rehman": 55, "waqiah": 56, "hadid": 57, "mujadila": 58, "hashr": 59, "mumtahanah": 60, "saff": 61, "jumuah": 62,
+            "munafiqun": 63, "taghabun": 64, "talaq": 65, "tahrim": 66, "mulk": 67, "qalam": 68, "haqqah": 69, "maarij": 70, "nuh": 71,
+            "jinn": 72, "muzzammil": 73, "muddathir": 74, "qiyamah": 75, "insan": 76, "mursalat": 77, "naba": 78, "naziat": 79,
+            "abasa": 80, "takwir": 81, "infitar": 82, "mutaffifin": 83, "inshiqaq": 84, "buruj": 85, "tariq": 86, "ala": 87, "ghashiyah": 88,
+            "fajr": 89, "balad": 90, "shams": 91, "layl": 92, "duha": 93, "sharh": 94, "tin": 95, "alaq": 96, "qadr": 97, "bayyinah": 98,
+            "zilzal": 99, "adiyat": 100, "qariah": 101, "takathur": 102, "asr": 103, "humazah": 104, "fil": 105, "quraish": 106,
+            "maun": 107, "kawthar": 108, "kafirun": 109, "nasr": 110, "masad": 111, "ikhlas": 112, "falaq": 113, "nas": 114
+        };
 
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', created by Malik Miswar. You are an expert AI assistant capable of answering coding, general knowledge, and highly accurate Quranic queries.
-
-HOLY QURAN INSTRUCTIONS:
-1. ARABIC TEXT: If the user asks for any Surah or Ayat (e.g., "Surah Yaseen arbi mein do", "Surah Fatiha do"), provide the complete and 100% accurate Arabic text with full diacritics/tashkeel.
-2. TRANSLATION (TARJUMA): If the user asks for translation, provide precise, authentic Urdu or English translation according to the requested language.
-3. TAFSEER & DETAILS: If asked for Tafseer or explanation, provide clear, comprehensive, and authentic Quranic tafseer with proper structure and spacing.
-4. SPACING & FORMATTING: Keep proper spacing (double line breaks) between Ayats and paragraphs so the response is easily readable. Use respectable Quranic emojis (📖, 🤲, ✨, 🟢).
-
-GENERAL RULES:
-- Greetings ("hi", "hello"): Keep response short and friendly.
-- Informational Questions: Provide full, comprehensive details with classy formatting and proper spacing.
-- Match user's language (Roman Urdu, Urdu script, English).
-- Do not output fake headings like "Urdu Response" or "English Translation".
+You are 'M&D.Ai', built by Malik Miswar. You are a world-class AI assistant.
+QURANIC INSTRUCTIONS:
+- When user asks for Quranic explanation (Tafseer) or Translation (Tarjuma), respond with 100% accurate, authentic, respectful text with clear line breaks.
+- Match user's language (Urdu, English, Roman Urdu).
+- Format all responses with clean paragraphs and lists.
 `;
+
         let conversationHistory = [];
 
         function handleAccountLogin() {
@@ -407,7 +397,6 @@ GENERAL RULES:
         }
 
         function startNewChat() {
-            localStorage.removeItem('md_ai_chat_history');
             conversationHistory = [];
             location.reload();
         }
@@ -416,7 +405,7 @@ GENERAL RULES:
 
         function startVoiceInput() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return alert("Speech Recognition not supported in this browser.");
+            if (!SpeechRecognition) return alert("Speech Recognition not supported in browser.");
             const recognition = new SpeechRecognition();
             const micBtn = document.getElementById('micBtn');
             micBtn.classList.add('listening');
@@ -430,15 +419,36 @@ GENERAL RULES:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
+        // Fetch Complete Arabic Surah from Official AlQuran API
+        async function fetchQuranSurah(surahNum) {
+            try {
+                const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
+                const data = await res.json();
+                if (data.code === 200) {
+                    const surah = data.data;
+                    let arabicHtml = `<div class="quran-box">`;
+                    arabicHtml += `<div class="quran-header">📖 سورة ${surah.name} (${surah.englishName})</div>`;
+                    arabicHtml += `<div class="quran-arabic">`;
+                    
+                    surah.ayahs.forEach(ayah => {
+                        arabicHtml += `${ayah.text} <span class="verse-num">۝${ayah.numberInSurah}</span> `;
+                    });
+                    
+                    arabicHtml += `</div></div>`;
+                    return { success: true, html: arabicHtml };
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            return { success: false };
+        }
+
         async function callGroqAPI(userText) {
             try {
                 let messagesPayload = [{ role: "system", content: SYSTEM_PROMPT }];
                 const recentHistory = conversationHistory.slice(-6);
                 for (let h of recentHistory) {
-                    messagesPayload.push({
-                        role: h.role === 'user' ? 'user' : 'assistant',
-                        content: h.text
-                    });
+                    messagesPayload.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text });
                 }
                 messagesPayload.push({ role: "user", content: userText });
 
@@ -456,12 +466,9 @@ GENERAL RULES:
                 });
 
                 const data = await response.json();
-                if (data.choices && data.choices[0]?.message?.content) {
-                    return data.choices[0].message.content.trim();
-                }
-                return "Jawab nahi mil sakaa.";
+                return data.choices?.[0]?.message?.content?.trim() || "Aapke sawal ka jawab nahi mil sakaa.";
             } catch (err) {
-                return "Network Error!";
+                return "Network error, dobara koshish karein.";
             }
         }
 
@@ -487,10 +494,31 @@ GENERAL RULES:
             chatContainer.appendChild(aiLoadingRow);
             aiLoadingRow.classList.remove('hidden');
 
-            const rawReply = await callGroqAPI(text);
+            let finalReply = "";
+            const lowerText = text.toLowerCase();
+
+            // Detect if user asked for full Surah in Arabic
+            let matchedSurahNum = null;
+            for (let name in surahMap) {
+                if (lowerText.includes(name)) {
+                    matchedSurahNum = surahMap[name];
+                    break;
+                }
+            }
+
+            if (matchedSurahNum && (lowerText.includes("surah") || lowerText.includes("sura") || lowerText.includes("quran"))) {
+                const quranResult = await fetchQuranSurah(matchedSurahNum);
+                if (quranResult.success) {
+                    finalReply = quranResult.html;
+                } else {
+                    finalReply = await callGroqAPI(text);
+                }
+            } else {
+                finalReply = marked.parse(await callGroqAPI(text));
+            }
 
             conversationHistory.push({ role: 'user', text: text });
-            conversationHistory.push({ role: 'assistant', text: rawReply });
+            conversationHistory.push({ role: 'assistant', text: finalReply });
 
             aiLoadingRow.classList.add('hidden');
             document.body.appendChild(aiLoadingRow);
@@ -501,7 +529,7 @@ GENERAL RULES:
                 <div class="ai-avatar-wrapper">
                     <div class="ai-avatar-circle">M&D</div>
                 </div>
-                <div class="msg-bubble">${marked.parse(rawReply)}</div>
+                <div class="msg-bubble">${finalReply}</div>
             `;
             chatContainer.appendChild(botRow);
 
