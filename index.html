@@ -167,6 +167,58 @@
         .bot .msg-bubble li { margin-bottom: 8px; }
         .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 { margin-top: 16px; margin-bottom: 10px; font-weight: 700; }
 
+        /* SVG Live Rendering Frame */
+        .svg-preview-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .svg-preview-card svg {
+            max-width: 120px;
+            max-height: 120px;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Image Preview Box inside Input Bar */
+        .attached-image-preview {
+            display: none;
+            position: relative;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: #f0f2f5;
+            border-radius: 12px;
+            width: fit-content;
+        }
+        .attached-image-preview img {
+            max-height: 70px;
+            border-radius: 8px;
+            display: block;
+        }
+        .remove-img-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         /* Quran Verses Block Styling */
         .quran-box {
             background: #f0fdf4;
@@ -259,11 +311,12 @@
             border: 1px solid #d0d7de; 
             border-radius: 32px; 
             display: flex; 
-            align-items: center; 
+            flex-direction: column;
             padding: 8px 18px; 
-            gap: 12px; 
+            gap: 4px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
         }
+        .input-row { display: flex; align-items: center; gap: 12px; width: 100%; }
         .input-bar:focus-within { border-color: #1f1f1f; }
         .input-bar input[type="text"] { flex: 1; background: transparent; border: none; outline: none; color: #1f1f1f; font-size: 1rem; padding: 8px; }
 
@@ -280,8 +333,11 @@
             justify-content: center; 
             transition: 0.2s; 
             font-size: 1rem; 
+            flex-shrink: 0;
         }
         .icon-btn:hover { background: #333333; }
+        .attach-btn { background: #e5e7eb; color: #374151; }
+        .attach-btn:hover { background: #d1d5db; color: #111827; }
         .mic-btn.listening { background: #dc2626; color: #ffffff; animation: micPulse 1s infinite; }
         @keyframes micPulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
@@ -344,20 +400,34 @@
 
         <div class="input-container-wrapper">
             <div class="input-bar">
-                <input type="text" id="userInput" placeholder="Message M&D.Ai..." onkeypress="handleKeyPress(event)">
-                
-                <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-                <button class="icon-btn" onclick="sendMessage()" title="Send Message">
-                    <i class="fa-solid fa-arrow-up"></i>
-                </button>
+                <div class="attached-image-preview" id="imagePreviewContainer">
+                    <img id="imagePreview" src="" alt="Uploaded image">
+                    <button class="remove-img-btn" onclick="removeAttachedImage()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="input-row">
+                    <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+                    
+                    <button class="icon-btn attach-btn" onclick="document.getElementById('imageFileInput').click()" title="Attach Image">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </button>
+
+                    <input type="text" id="userInput" placeholder="Message M&D.Ai..." onkeypress="handleKeyPress(event)">
+                    
+                    <button class="icon-btn mic-btn" id="micBtn" onclick="startVoiceInput()" title="Voice Input">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <button class="icon-btn" onclick="sendMessage()" title="Send Message">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const GROQ_API_KEY = "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";
+        let attachedImageBase64 = null;
         
         if (window.marked) marked.setOptions({ breaks: true });
 
@@ -382,10 +452,11 @@ You are 'M&D.Ai', built by Malik Miswar. You are a helpful AI assistant.
 
 IMPORTANT RULES:
 1. GREETINGS ("Hello", "Hi", "Hey", "Assalam o Alaikum"): Reply SHORT & NATURAL like "Hello! How can I help you today? 😊".
-2. SVG ICONS & GRAPHICS: If the user requests an SVG or Icon (e.g., "SVG bana do", "icon code do", "Live stroke SVG"):
-   - ALWAYS generate RAW SVG code in a markdown code block (\`\`\`xml).
+2. SVG ICONS & GRAPHICS: If the user requests an SVG or Icon (e.g., "Book Icon", "SVG bana do", "icon code do", "Live stroke SVG"):
+   - ALWAYS generate RAW SVG code in a markdown xml code block (\`\`\`xml ... \`\`\`).
    - Use LIVE STROKES with fill="none", stroke="#1f1f1f", stroke-width="2" or higher, stroke-linecap="round", and stroke-linejoin="round".
-   - DO NOT EXPAND paths into fills so that it remains fully editable (Live Stroke with anchor points) in Adobe Illustrator.
+   - Include clear viewBox and valid XML attributes.
+   - DO NOT EXPAND paths into fills so that it remains fully editable in Adobe Illustrator.
 3. QURANIC QUESTIONS: For Tafseer or Tarjuma, provide authentic, beautifully formatted responses with clean spacing.
 4. Match user language (English, Roman Urdu, Urdu).
 `;
@@ -406,6 +477,26 @@ IMPORTANT RULES:
         }
 
         function clearAllChatHistory() { if (confirm("Delete all history?")) startNewChat(); }
+
+        /* Image Attachment Logic */
+        function handleImageSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    attachedImageBase64 = evt.target.result;
+                    document.getElementById('imagePreview').src = attachedImageBase64;
+                    document.getElementById('imagePreviewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeAttachedImage() {
+            attachedImageBase64 = null;
+            document.getElementById('imageFileInput').value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+        }
 
         function startVoiceInput() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -475,28 +566,54 @@ IMPORTANT RULES:
             }
         }
 
+        /* SVG Extraction & Live Rendering Function */
+        function processSVGInResponse(htmlContent, rawResponseText) {
+            const svgRegex = /<svg[\s\S]*?<\/svg>/i;
+            const match = rawResponseText.match(svgRegex);
+            
+            if (match) {
+                const svgCode = match[0];
+                const previewCard = `
+                    <div class="svg-preview-card">
+                        ${svgCode}
+                    </div>
+                `;
+                return previewCard + htmlContent;
+            }
+            return htmlContent;
+        }
+
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const chatContainer = document.getElementById('chatContainer');
             const aiLoadingRow = document.getElementById('aiLoadingRow');
             const text = input.value.trim();
 
-            if (!text) return;
+            if (!text && !attachedImageBase64) return;
 
             const welcome = document.getElementById('welcomeScreen');
             if (welcome) welcome.remove();
 
+            let userMsgContent = text;
+            if (attachedImageBase64) {
+                userMsgContent = `<img src="${attachedImageBase64}" style="max-width: 200px; border-radius: 8px; display: block; margin-bottom: 8px;">` + (text || "");
+            }
+
             const userRow = document.createElement('div');
             userRow.className = 'message-row user';
-            userRow.innerHTML = `<div class="msg-bubble">${text}</div>`;
+            userRow.innerHTML = `<div class="msg-bubble">${userMsgContent}</div>`;
             chatContainer.appendChild(userRow);
 
             input.value = '';
+            const currentImg = attachedImageBase64;
+            removeAttachedImage();
+
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             chatContainer.appendChild(aiLoadingRow);
             aiLoadingRow.classList.remove('hidden');
 
+            let rawAiResponse = "";
             let finalReply = "";
             const lowerText = text.toLowerCase();
 
@@ -513,14 +630,22 @@ IMPORTANT RULES:
                 if (quranResult.success) {
                     finalReply = quranResult.html;
                 } else {
-                    finalReply = await callGroqAPI(text);
+                    rawAiResponse = await callGroqAPI(text);
+                    finalReply = marked.parse(rawAiResponse);
+                    finalReply = processSVGInResponse(finalReply, rawAiResponse);
                 }
             } else {
-                finalReply = marked.parse(await callGroqAPI(text));
+                let promptText = text;
+                if (currentImg) {
+                    promptText += " [User attached an image]";
+                }
+                rawAiResponse = await callGroqAPI(promptText);
+                finalReply = marked.parse(rawAiResponse);
+                finalReply = processSVGInResponse(finalReply, rawAiResponse);
             }
 
             conversationHistory.push({ role: 'user', text: text });
-            conversationHistory.push({ role: 'assistant', text: finalReply });
+            conversationHistory.push({ role: 'assistant', text: rawAiResponse || finalReply });
 
             aiLoadingRow.classList.add('hidden');
             document.body.appendChild(aiLoadingRow);
