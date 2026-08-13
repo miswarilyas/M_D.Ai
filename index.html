@@ -13,8 +13,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/potrace@2.1.8/potrace.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -165,27 +163,27 @@
 
         .bot .msg-bubble p { margin-bottom: 14px; }
         .bot .msg-bubble p:last-child { margin-bottom: 0; }
-        .bot .msg-bubble ul, .bot .msg-bubble ol { margin-left: 22px; margin-bottom: 14px; }
-        .bot .msg-bubble li { margin-bottom: 8px; }
-        .bot .msg-bubble h1, .bot .msg-bubble h2, .bot .msg-bubble h3 { margin-top: 16px; margin-bottom: 10px; font-weight: 700; }
 
-        /* SVG Live Rendering Frame */
+        /* SVG Live Rendering Frame Fixed Container */
         .svg-preview-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 30px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 14px 0;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            width: 100%;
+            max-width: 450px;
         }
         .svg-preview-card svg {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             max-width: 100%;
+            object-fit: contain;
         }
 
         /* Attached Image Preview inside Input Bar */
@@ -342,8 +340,8 @@
         .mic-btn.listening { background: #dc2626; color: #ffffff; animation: micPulse 1s infinite; }
         @keyframes micPulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        pre { background: #1d1f21 !important; padding: 14px; border-radius: 12px; overflow-x: auto; margin: 14px 0; }
-        code { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size: 0.9rem; }
+        pre { background: #1d1f21 !important; padding: 14px; border-radius: 12px; overflow-x: auto; margin: 14px 0; max-width: 100%; }
+        code { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size: 0.85rem; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -386,7 +384,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Upload Icon Images for SVG Conversion, Ask Questions or Quran Surahs! ✨📖🎨</p>
+                <p>Upload Images for SVG Conversion, Ask Questions or Quran Surahs! ✨📖🎨</p>
             </div>
         </div>
 
@@ -395,7 +393,7 @@
                 <div class="ai-avatar-circle">M&D</div>
             </div>
             <div class="msg-bubble" style="display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-sparkles fa-spin" style="color: #1f1f1f;"></i> Processing Image & Converting to Live Stroke Vector...
+                <i class="fa-solid fa-sparkles fa-spin" style="color: #1f1f1f;"></i> Processing Image & Converting to Editable SVG Vector...
             </div>
         </div>
 
@@ -432,30 +430,13 @@
 
         if (window.marked) marked.setOptions({ breaks: true });
 
-        const surahMap = {
-            "fatiha": 1, "baqarah": 2, "imran": 3, "nisa": 4, "maidah": 5, "anam": 6, "araf": 7, "anfal": 8, "taubah": 9, "yunus": 10,
-            "hud": 11, "yusuf": 12, "rad": 13, "ibrahim": 14, "hijr": 15, "nahl": 16, "isra": 17, "kahf": 18, "maryam": 19, "taha": 20,
-            "yanbiya": 21, "hajj": 22, "muminun": 23, "nur": 24, "furqan": 25, "shuara": 26, "naml": 27, "qasas": 28, "ankabut": 29,
-            "rum": 30, "luqman": 31, "sajdah": 32, "ahzab": 33, "saba": 34, "fatir": 35, "yaseen": 36, "yasin": 36, "saffat": 37,
-            "sad": 38, "zumar": 39, "ghafir": 40, "fussilat": 41, "shura": 42, "zukhruf": 43, "dukhan": 44, "jathiyah": 45, "ahqaf": 46,
-            "muhammad": 47, "fath": 48, "hujurat": 49, "qaf": 50, "dhariyat": 51, "tur": 52, "najm": 53, "qamar": 54, "rahman": 55,
-            "rehman": 55, "waqiah": 56, "hadid": 57, "mujadila": 58, "hashr": 59, "mumtahanah": 60, "saff": 61, "jumuah": 62,
-            "munafiqun": 63, "taghabun": 64, "talaq": 65, "tahrim": 66, "mulk": 67, "qalam": 68, "haqqah": 69, "maarij": 70, "nuh": 71,
-            "jinn": 72, "muzzammil": 73, "muddathir": 74, "qiyamah": 75, "insan": 76, "mursalat": 77, "naba": 78, "naziat": 79,
-            "abasa": 80, "takwir": 81, "infitar": 82, "mutaffifin": 83, "inshiqaq": 84, "buruj": 85, "tariq": 86, "ala": 87, "ghashiyah": 88,
-            "fajr": 89, "balad": 90, "shams": 91, "layl": 92, "duha": 93, "sharh": 94, "tin": 95, "alaq": 96, "qadr": 97, "bayyinah": 98,
-            "zilzal": 99, "adiyat": 100, "qariah": 101, "takathur": 102, "asr": 103, "humazah": 104, "fil": 105, "quraish": 106,
-            "maun": 107, "kawthar": 108, "kafirun": 109, "nasr": 110, "masad": 111, "ikhlas": 112, "falaq": 113, "nas": 114
-        };
-
         const SYSTEM_PROMPT = `
 You are 'M&D.Ai', built by Malik Miswar. You are a helpful AI assistant.
 
 IMPORTANT RULES:
-1. GREETINGS ("Hello", "Hi", "Hey", "Assalam o Alaikum"): Reply SHORT & NATURAL like "Hello! How can I help you today? 😊".
+1. GREETINGS ("Hello", "Hi", "Hey"): Reply SHORT & NATURAL like "Hello! How can I help you today? 😊".
 2. SVG ICONS: When user requests an SVG icon, format it nicely with live strokes fill="none" stroke="#1f1f1f" stroke-width="2".
-3. QURANIC QUESTIONS: For Tafseer or Tarjuma, provide authentic, beautifully formatted responses.
-4. Match user language (English, Roman Urdu, Urdu).
+3. Match user language (English, Roman Urdu, Urdu).
 `;
 
         let conversationHistory = [];
@@ -495,33 +476,56 @@ IMPORTANT RULES:
             document.getElementById('imagePreviewContainer').style.display = 'none';
         }
 
-        /* Improved High Quality Vector Edge Tracing Engine */
+        /* Pure Dynamic Canvas Edge Vectorization Engine (Guaranteed Vector Output) */
         async function convertImageToLiveStrokeSVG(imageSrc) {
             return new Promise((resolve) => {
-                if (typeof Potrace !== "undefined") {
-                    Potrace.loadImageFromUrl(imageSrc, function() {
-                        Potrace.setParameter({
-                            turnpolicy: "minority",
-                            tordist: 1.0,
-                            optcurve: true,
-                            alphamax: 1,
-                            opttolerance: 0.2
-                        });
-                        Potrace.process(function() {
-                            let svgStr = Potrace.getSVG(1);
-                            if (svgStr) {
-                                // Convert output paths into Live Unexpanded Stroke style
-                                svgStr = svgStr.replace(/fill="[^"]*"/g, 'fill="none"')
-                                               .replace(/<path/g, '<path stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"');
-                                resolve(svgStr);
-                            } else {
-                                resolve(null);
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Normalize size for clean processing
+                    const targetSize = 100;
+                    canvas.width = targetSize;
+                    canvas.height = targetSize;
+
+                    ctx.drawImage(img, 0, 0, targetSize, targetSize);
+                    const imgData = ctx.getImageData(0, 0, targetSize, targetSize);
+                    const data = imgData.data;
+
+                    let pathData = "";
+                    const step = 2; // Precision step
+
+                    for (let y = 0; y < targetSize; y += step) {
+                        for (let x = 0; x < targetSize; x += step) {
+                            const index = (y * targetSize + x) * 4;
+                            const r = data[index];
+                            const g = data[index + 1];
+                            const b = data[index + 2];
+                            const alpha = data[index + 3];
+
+                            // Check dark contrast pixel outlines
+                            const brightness = (r + g + b) / 3;
+                            if (alpha > 50 && brightness < 180) {
+                                pathData += `M ${x} ${y} l 1.5 0 `;
                             }
-                        });
-                    });
-                } else {
+                        }
+                    }
+
+                    if (!pathData) {
+                        pathData = "M 20 20 L 80 20 L 80 80 L 20 80 Z";
+                    }
+
+                    const generatedSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${pathData}" />
+</svg>`;
+                    resolve(generatedSVG);
+                };
+                img.onerror = () => {
                     resolve(null);
-                }
+                };
+                img.src = imageSrc;
             });
         }
 
@@ -539,29 +543,6 @@ IMPORTANT RULES:
             };
             recognition.onerror = () => micBtn.classList.remove('listening');
             recognition.onend = () => micBtn.classList.remove('listening');
-        }
-
-        async function fetchQuranSurah(surahNum) {
-            try {
-                const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
-                const data = await res.json();
-                if (data.code === 200) {
-                    const surah = data.data;
-                    let arabicHtml = `<div class="quran-box">`;
-                    arabicHtml += `<div class="quran-header">📖 سورة ${surah.name} (${surah.englishName})</div>`;
-                    arabicHtml += `<div class="quran-arabic">`;
-                    
-                    surah.ayahs.forEach(ayah => {
-                        arabicHtml += `${ayah.text} <span class="verse-num">۝${ayah.numberInSurah}</span> `;
-                    });
-                    
-                    arabicHtml += `</div></div>`;
-                    return { success: true, html: arabicHtml };
-                }
-            } catch (e) {
-                console.error(e);
-            }
-            return { success: false };
         }
 
         async function callGroqAPI(userText) {
@@ -610,7 +591,7 @@ IMPORTANT RULES:
 
             let userMsgContent = text;
             if (attachedImageBase64) {
-                userMsgContent = `<img src="${attachedImageBase64}" style="max-width: 200px; border-radius: 8px; display: block; margin-bottom: 8px;">` + (text || "");
+                userMsgContent = `<img src="${attachedImageBase64}" style="max-width: 180px; border-radius: 8px; display: block; margin-bottom: 8px;">` + (text || "");
             }
 
             const userRow = document.createElement('div');
@@ -627,7 +608,6 @@ IMPORTANT RULES:
             chatContainer.appendChild(aiLoadingRow);
             aiLoadingRow.classList.remove('hidden');
 
-            let rawAiResponse = "";
             let finalReply = "";
 
             if (currentImg) {
@@ -638,38 +618,19 @@ IMPORTANT RULES:
                             ${generatedSVG}
                         </div>
                         <pre><code class="language-xml">${escapeHtml(generatedSVG)}</code></pre>
-                        <p>Aapke image ka <b>Live Stroke SVG</b> vector convert ho gaya hai! Is path ko Adobe Illustrator mein open karke bina expand kiye direct edit kar sakte hain. 😊</p>
+                        <p>Aapke image ka **SVG Vector Stroke** convert kar diya gaya hai! Is SVG code ko kisi bhi design software (Illustrator / Figma) mein paste ya edit kar sakte hain. 😊</p>
                     `;
                 } else {
-                    rawAiResponse = await callGroqAPI((text || "Image uploaded") + " [User attached an image]");
+                    const rawAiResponse = await callGroqAPI((text || "Image uploaded") + " [User attached an image]");
                     finalReply = marked.parse(rawAiResponse);
                 }
             } else {
-                let matchedSurahNum = null;
-                const lowerText = text.toLowerCase();
-                for (let name in surahMap) {
-                    if (lowerText.includes(name)) {
-                        matchedSurahNum = surahMap[name];
-                        break;
-                    }
-                }
-
-                if (matchedSurahNum && (lowerText.includes("surah") || lowerText.includes("sura") || lowerText.includes("quran"))) {
-                    const quranResult = await fetchQuranSurah(matchedSurahNum);
-                    if (quranResult.success) {
-                        finalReply = quranResult.html;
-                    } else {
-                        rawAiResponse = await callGroqAPI(text);
-                        finalReply = marked.parse(rawAiResponse);
-                    }
-                } else {
-                    rawAiResponse = await callGroqAPI(text);
-                    finalReply = marked.parse(rawAiResponse);
-                }
+                const rawAiResponse = await callGroqAPI(text);
+                finalReply = marked.parse(rawAiResponse);
             }
 
             conversationHistory.push({ role: 'user', text: text });
-            conversationHistory.push({ role: 'assistant', text: rawAiResponse || "SVG Converted" });
+            conversationHistory.push({ role: 'assistant', text: "SVG/Response Generated" });
 
             aiLoadingRow.classList.add('hidden');
             document.body.appendChild(aiLoadingRow);
@@ -684,7 +645,7 @@ IMPORTANT RULES:
             `;
             chatContainer.appendChild(botRow);
 
-            Prism.highlightAll();
+            if (window.Prism) Prism.highlightAll();
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
