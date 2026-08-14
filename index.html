@@ -162,7 +162,6 @@
         .bot .msg-bubble p { margin-bottom: 14px; }
         .bot .msg-bubble p:last-child { margin-bottom: 0; }
 
-        /* Real-time Animated Thinking Box */
         .thinking-box {
             display: flex;
             align-items: center;
@@ -174,10 +173,6 @@
             padding: 10px 16px;
             border-radius: 12px;
             width: fit-content;
-        }
-
-        .thinking-box i {
-            color: #1f1f1f;
         }
 
         .svg-preview-card {
@@ -270,11 +265,6 @@
             z-index: 2;
         }
 
-        #aiLoadingRow .ai-avatar-wrapper::before {
-            background: conic-gradient(from 0deg, #1f1f1f, #666666, #1f1f1f);
-            animation: spinRing 0.8s linear infinite;
-        }
-
         .input-container-wrapper { padding: 18px 18% 28px; background: #ffffff; }
         .input-bar { 
             background: #f8f9fa; 
@@ -357,17 +347,6 @@
                 <h1>What can I help with today?</h1>
                 <p>Ask detailed questions, or upload images for SVG Vector conversion! ✨📖🎨</p>
             </div>
-
-            <div id="aiLoadingRow" class="hidden message-row bot">
-                <div class="ai-avatar-wrapper">
-                    <div class="ai-avatar-circle">M&D</div>
-                </div>
-                <div class="msg-bubble">
-                    <div class="thinking-box" id="loadingText">
-                        <i class="fa-solid fa-brain fa-spin"></i> <span>Thinking... 🧠</span>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="input-container-wrapper">
@@ -405,12 +384,10 @@
 
         const SYSTEM_PROMPT = `
 You are 'M&D.Ai', an expert AI built by Malik Miswar.
-
 CRITICAL INSTRUCTIONS:
-1. ALWAYS provide comprehensive, detailed, well-structured, and full explanations.
-2. Never shorten or refuse to answer any query.
-3. Use rich formatting with bullet points and bold text where relevant.
-4. Respond in the language used by the user (English, Roman Urdu, Urdu).
+1. Provide rich, complete, detailed, and accurate responses for every query.
+2. Structure information using markdown headings, lists, and bold text.
+3. Keep the conversation engaging and helpful.
 `;
 
         let conversationHistory = [];
@@ -461,22 +438,18 @@ CRITICAL INSTRUCTIONS:
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        
                         canvas.width = 64;
                         canvas.height = 64;
-
                         ctx.drawImage(img, 0, 0, 64, 64);
                         const imgData = ctx.getImageData(0, 0, 64, 64);
                         const data = imgData.data;
 
                         let pathData = "";
-
                         for (let y = 4; y < 60; y += 3) {
                             for (let x = 4; x < 60; x += 3) {
                                 const index = (y * 64 + x) * 4;
                                 const alpha = data[index + 3];
                                 const avgColor = (data[index] + data[index + 1] + data[index + 2]) / 3;
-
                                 if (alpha > 40 && avgColor < 180) {
                                     pathData += `M${(x/64*24).toFixed(1)},${(y/64*24).toFixed(1)} h1.5 `;
                                 }
@@ -553,7 +526,7 @@ CRITICAL INSTRUCTIONS:
                 if (data.choices && data.choices[0] && data.choices[0].message) {
                     return data.choices[0].message.content.trim();
                 }
-                return "Mein aapke sawal ka poora aur detailed jawab dene ke liye tayar hoon! Kripya dobara poochein.";
+                return "Hello! How can I assist you today? Feel free to ask any question!";
             } catch (err) {
                 return "Network connection issue, please try again.";
             }
@@ -567,8 +540,6 @@ CRITICAL INSTRUCTIONS:
             try {
                 const input = document.getElementById('userInput');
                 const chatContainer = document.getElementById('chatContainer');
-                const aiLoadingRow = document.getElementById('aiLoadingRow');
-                const loadingText = document.getElementById('loadingText');
                 const text = input.value.trim();
 
                 if (!text && !attachedImageBase64) return;
@@ -590,20 +561,30 @@ CRITICAL INSTRUCTIONS:
                 const currentImg = attachedImageBase64;
                 removeAttachedImage();
 
-                if (currentImg) {
-                    loadingText.innerHTML = `<i class="fa-solid fa-sparkles fa-spin"></i> <span>Analyzing Image & Vectorizing... 🎨</span>`;
-                } else {
-                    loadingText.innerHTML = `<i class="fa-solid fa-brain fa-spin"></i> <span>Thinking... 🧠</span>`;
-                }
-
-                // Append loading row at the bottom of container
-                chatContainer.appendChild(aiLoadingRow);
-                aiLoadingRow.classList.remove('hidden');
+                // Dynamically Create Thinking Row
+                const loadingRow = document.createElement('div');
+                loadingRow.className = 'message-row bot';
+                loadingRow.innerHTML = `
+                    <div class="ai-avatar-wrapper">
+                        <div class="ai-avatar-circle">M&D</div>
+                    </div>
+                    <div class="msg-bubble">
+                        <div class="thinking-box">
+                            <i class="fa-solid fa-brain fa-spin"></i> 
+                            <span>${currentImg ? 'Analyzing Image & Vectorizing... 🎨' : 'Thinking... 🧠'}</span>
+                        </div>
+                    </div>
+                `;
+                chatContainer.appendChild(loadingRow);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 let finalReply = "";
 
-                if (currentImg) {
+                // Quick match for greetings to avoid API fallback delays
+                const cleanText = text.toLowerCase().trim();
+                if (!currentImg && (cleanText === 'hi' || cleanText === 'hii' || cleanText === 'hello' || cleanText === 'hey')) {
+                    finalReply = "<p>Hello! 👋 Welcome! Main aapki kya madad kar sakta hoon aaj?</p>";
+                } else if (currentImg) {
                     const generatedSVG = await convertImageToLiveStrokeSVG(currentImg);
                     finalReply = `
                         <div class="svg-preview-card">
@@ -620,7 +601,8 @@ CRITICAL INSTRUCTIONS:
                 conversationHistory.push({ role: 'user', text: text });
                 conversationHistory.push({ role: 'assistant', text: "Response Generated" });
 
-                aiLoadingRow.classList.add('hidden');
+                // Replace Thinking Box with Response
+                loadingRow.remove();
 
                 const botRow = document.createElement('div');
                 botRow.className = 'message-row bot';
