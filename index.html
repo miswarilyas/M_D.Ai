@@ -162,15 +162,18 @@
         .bot .msg-bubble p { margin-bottom: 14px; }
         .bot .msg-bubble p:last-child { margin-bottom: 0; }
 
-        /* Thinking State Bar */
+        /* Real-time Animated Thinking Box */
         .thinking-box {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #6b7280;
+            color: #4b5563;
             font-size: 0.95rem;
-            font-weight: 500;
-            font-style: italic;
+            font-weight: 600;
+            background: #f3f4f6;
+            padding: 10px 16px;
+            border-radius: 12px;
+            width: fit-content;
         }
 
         .thinking-box i {
@@ -354,15 +357,15 @@
                 <h1>What can I help with today?</h1>
                 <p>Ask detailed questions, or upload images for SVG Vector conversion! ✨📖🎨</p>
             </div>
-        </div>
 
-        <div id="aiLoadingRow" class="hidden message-row bot">
-            <div class="ai-avatar-wrapper">
-                <div class="ai-avatar-circle">M&D</div>
-            </div>
-            <div class="msg-bubble">
-                <div class="thinking-box" id="loadingText">
-                    <i class="fa-solid fa-brain fa-spin"></i> <span>Thinking... 🧠</span>
+            <div id="aiLoadingRow" class="hidden message-row bot">
+                <div class="ai-avatar-wrapper">
+                    <div class="ai-avatar-circle">M&D</div>
+                </div>
+                <div class="msg-bubble">
+                    <div class="thinking-box" id="loadingText">
+                        <i class="fa-solid fa-brain fa-spin"></i> <span>Thinking... 🧠</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -401,13 +404,13 @@
         if (window.marked) marked.setOptions({ breaks: true });
 
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', an advanced AI assistant created by Malik Miswar.
+You are 'M&D.Ai', an expert AI built by Malik Miswar.
 
-CRITICAL INSTRUCTIONS FOR RESPONSES:
-1. ALWAYS PROVIDE COMPREHENSIVE, DETAILED, AND WELL-EXPLAINED ANSWERS.
-2. Never shorten or truncate responses unless the user specifically asks for a "short", "one-line", or "summary" response.
-3. For explanations, step-by-step guides, code, or general questions, give fully detailed and structured answers using headings, bullet points, and code blocks where helpful.
-4. Match user language smoothly (English, Roman Urdu, Urdu).
+CRITICAL INSTRUCTIONS:
+1. ALWAYS provide comprehensive, detailed, well-structured, and full explanations.
+2. Never shorten or refuse to answer any query.
+3. Use rich formatting with bullet points and bold text where relevant.
+4. Respond in the language used by the user (English, Roman Urdu, Urdu).
 `;
 
         let conversationHistory = [];
@@ -541,15 +544,18 @@ CRITICAL INSTRUCTIONS FOR RESPONSES:
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
                         messages: messagesPayload,
-                        temperature: 0.6,
+                        temperature: 0.7,
                         max_tokens: 4096
                     })
                 });
 
                 const data = await response.json();
-                return data.choices?.[0]?.message?.content?.trim() || "Aapke sawal ka poora jawab nahi mil sakaa.";
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    return data.choices[0].message.content.trim();
+                }
+                return "Mein aapke sawal ka poora aur detailed jawab dene ke liye tayar hoon! Kripya dobara poochein.";
             } catch (err) {
-                return "Network error, dobara koshish karein.";
+                return "Network connection issue, please try again.";
             }
         }
 
@@ -584,16 +590,16 @@ CRITICAL INSTRUCTIONS FOR RESPONSES:
                 const currentImg = attachedImageBase64;
                 removeAttachedImage();
 
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
                 if (currentImg) {
                     loadingText.innerHTML = `<i class="fa-solid fa-sparkles fa-spin"></i> <span>Analyzing Image & Vectorizing... 🎨</span>`;
                 } else {
                     loadingText.innerHTML = `<i class="fa-solid fa-brain fa-spin"></i> <span>Thinking... 🧠</span>`;
                 }
 
+                // Append loading row at the bottom of container
                 chatContainer.appendChild(aiLoadingRow);
                 aiLoadingRow.classList.remove('hidden');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 let finalReply = "";
 
@@ -604,7 +610,7 @@ CRITICAL INSTRUCTIONS FOR RESPONSES:
                             ${generatedSVG}
                         </div>
                         <pre><code class="language-xml">${escapeHtml(generatedSVG)}</code></pre>
-                        <p>Aapke image ka **Live Stroke SVG Vector** ready hai! Is code ko copy kar ke design tools (Figma/Illustrator) mein paste karke use kar sakte hain. 😊</p>
+                        <p>Aapke image ka **Live Stroke SVG Vector** ready hai! Is code ko copy kar ke design tools mein paste kar sakte hain. 😊</p>
                     `;
                 } else {
                     const rawAiResponse = await callGroqAPI(text);
@@ -612,7 +618,7 @@ CRITICAL INSTRUCTIONS FOR RESPONSES:
                 }
 
                 conversationHistory.push({ role: 'user', text: text });
-                conversationHistory.push({ role: 'assistant', text: "Detailed Response Generated" });
+                conversationHistory.push({ role: 'assistant', text: "Response Generated" });
 
                 aiLoadingRow.classList.add('hidden');
 
@@ -629,7 +635,7 @@ CRITICAL INSTRUCTIONS FOR RESPONSES:
                 if (window.Prism) Prism.highlightAll();
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             } catch (err) {
-                console.error("Runtime Error Prevented:", err);
+                console.error("Runtime Error Handled:", err);
             }
         }
 
