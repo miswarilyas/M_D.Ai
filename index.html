@@ -345,7 +345,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Ask detailed questions, or upload images for SVG Vector conversion! ✨📖🎨</p>
+                <p>Powered by DeepSeek R1 via OpenRouter! Ask anything or upload images for SVG vectorization ✨📖🎨</p>
             </div>
         </div>
 
@@ -377,7 +377,7 @@
     </div>
 
     <script>
-        const GROQ_API_KEY = "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";
+        const OPENROUTER_API_KEY = "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";
         let attachedImageBase64 = null;
 
         if (window.marked) marked.setOptions({ breaks: true });
@@ -500,7 +500,7 @@ CRITICAL INSTRUCTIONS:
             recognition.onend = () => micBtn.classList.remove('listening');
         }
 
-        async function callGroqAPI(userText) {
+        async function callOpenRouterAPI(userText) {
             try {
                 let messagesPayload = [{ role: "system", content: SYSTEM_PROMPT }];
                 const recentHistory = conversationHistory.slice(-6);
@@ -509,23 +509,27 @@ CRITICAL INSTRUCTIONS:
                 }
                 messagesPayload.push({ role: "user", content: userText });
 
-                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${GROQ_API_KEY}`,
-                        "Content-Type": "application/json"
+                        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.href,
+                        "X-Title": "M&D.Ai"
                     },
                     body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile",
+                        model: "deepseek/deepseek-r1:free",
                         messages: messagesPayload,
-                        temperature: 0.7,
-                        max_tokens: 4096
+                        temperature: 0.7
                     })
                 });
 
                 const data = await response.json();
                 if (data.choices && data.choices[0] && data.choices[0].message) {
-                    return data.choices[0].message.content.trim();
+                    let content = data.choices[0].message.content.trim();
+                    // Clean DeepSeek R1 <think> tags if present
+                    content = content.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+                    return content;
                 }
                 return "Main bilkul theek hoon! Aap batayein aaj main aapki kya madad kar sakta hoon?";
             } catch (err) {
@@ -572,7 +576,7 @@ CRITICAL INSTRUCTIONS:
                     <div class="msg-bubble">
                         <div class="thinking-box">
                             <i class="fa-solid fa-brain fa-spin"></i> 
-                            <span>${currentImg ? 'Analyzing Image & Vectorizing... 🎨' : 'Thinking... 🧠'}</span>
+                            <span>${currentImg ? 'Analyzing Image & Vectorizing... 🎨' : 'DeepSeek R1 Thinking... 🧠'}</span>
                         </div>
                     </div>
                 `;
@@ -597,7 +601,7 @@ CRITICAL INSTRUCTIONS:
                         <p>Your Live Stroke SVG Vector is ready! 😊</p>
                     `;
                 } else {
-                    const rawAiResponse = await callGroqAPI(text);
+                    const rawAiResponse = await callOpenRouterAPI(text);
                     finalReply = marked.parse(rawAiResponse);
                 }
 
