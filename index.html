@@ -345,7 +345,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Powered by DeepSeek R1 via OpenRouter! Ask anything or upload images for SVG vectorization ✨📖🎨</p>
+                <p>Powered by DeepSeek R1 via OpenRouter! Ask anything in any language ✨📖🎨</p>
             </div>
         </div>
 
@@ -382,13 +382,15 @@
 
         if (window.marked) marked.setOptions({ breaks: true });
 
+        // Multilingual & Auto-Language Detection Prompt
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', an expert AI built by Malik Miswar.
-CRITICAL INSTRUCTIONS:
-1. Always respond in the EXACT same language and style used by the user.
-   - If the user messages in Roman Urdu (e.g., "Kya haal ha", "Kaise ho"), respond naturally in warm Roman Urdu (e.g., "Main bilkul theek hoon! Aap batayein, aaj main aapki kya madad kar sakta hoon?").
-   - If the user messages in English, respond in English.
-2. Provide rich, structured, accurate, and polite responses.
+You are 'M&D.Ai', an intelligent AI assistant created by Malik Miswar.
+CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
+1. ALWAYS detect the user's language automatically and reply in the EXACT SAME LANGUAGE and dialect.
+2. If user talks in Roman Urdu (e.g. "kuch ni bro", "kya chal raha hai", "kaise ho"), respond in natural, friendly Roman Urdu (e.g. "Koi baat nahi bro! Kuch poochhna ho toh batana.").
+3. If user speaks in English, reply in English.
+4. If user speaks in Urdu (اردو), Arabic, Spanish, French, Hindi, Punjabi or ANY OTHER LANGUAGE IN THE WORLD, reply strictly in that same language.
+5. Never repeat fixed canned messages. Be conversational, helpful, concise, and smart.
 `;
 
         let conversationHistory = [];
@@ -529,11 +531,12 @@ CRITICAL INSTRUCTIONS:
                     let content = data.choices[0].message.content.trim();
                     // Clean DeepSeek R1 <think> tags if present
                     content = content.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-                    return content;
+                    if (content.length > 0) return content;
                 }
-                return "Main bilkul theek hoon! Aap batayein aaj main aapki kya madad kar sakta hoon?";
+                return "Maazrat, main abhi response process nahi kar saka. Dubara try karein!";
             } catch (err) {
-                return "Network connection error. Please try again.";
+                console.error("API Call Error:", err);
+                return "Connection error. Please try again in a moment.";
             }
         }
 
@@ -584,14 +587,8 @@ CRITICAL INSTRUCTIONS:
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 let finalReply = "";
-                const cleanText = text.toLowerCase().trim();
 
-                // Smart Quick Matches
-                if (!currentImg && (cleanText === 'hi' || cleanText === 'hii' || cleanText === 'hello' || cleanText === 'hey')) {
-                    finalReply = "<p>Hello! 👋 Welcome to M&D.Ai! How can I assist you today?</p>";
-                } else if (!currentImg && (cleanText === 'kya haal ha' || cleanText === 'kya haal hai' || cleanText === 'kaise ho' || cleanText === 'kaise ho?')) {
-                    finalReply = "<p>Main bilkul theek hoon! 😊 Aap batayein, aaj main aapki kya madad kar sakta hoon?</p>";
-                } else if (currentImg) {
+                if (currentImg) {
                     const generatedSVG = await convertImageToLiveStrokeSVG(currentImg);
                     finalReply = `
                         <div class="svg-preview-card">
@@ -601,12 +598,13 @@ CRITICAL INSTRUCTIONS:
                         <p>Your Live Stroke SVG Vector is ready! 😊</p>
                     `;
                 } else {
+                    // Send directly to DeepSeek R1 API with full auto-language detection
                     const rawAiResponse = await callOpenRouterAPI(text);
                     finalReply = marked.parse(rawAiResponse);
                 }
 
                 conversationHistory.push({ role: 'user', text: text });
-                conversationHistory.push({ role: 'assistant', text: "Response Generated" });
+                conversationHistory.push({ role: 'assistant', text: finalReply });
 
                 // Replace Thinking Box with Response
                 loadingRow.remove();
