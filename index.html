@@ -345,7 +345,7 @@
         <div class="chat-container" id="chatContainer">
             <div class="welcome-screen" id="welcomeScreen">
                 <h1>What can I help with today?</h1>
-                <p>Powered by DeepSeek R1 via OpenRouter! Ask anything in any language ✨📖🎨</p>
+                <p>Powered by Llama 3.3 70B! Ask anything in any language ✨📖🎨</p>
             </div>
         </div>
 
@@ -382,15 +382,14 @@
 
         if (window.marked) marked.setOptions({ breaks: true });
 
-        // Multilingual & Auto-Language Detection Prompt
         const SYSTEM_PROMPT = `
-You are 'M&D.Ai', an intelligent AI assistant created by Malik Miswar.
-CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
-1. ALWAYS detect the user's language automatically and reply in the EXACT SAME LANGUAGE and dialect.
-2. If user talks in Roman Urdu (e.g. "kuch ni bro", "kya chal raha hai", "kaise ho"), respond in natural, friendly Roman Urdu (e.g. "Koi baat nahi bro! Kuch poochhna ho toh batana.").
-3. If user speaks in English, reply in English.
-4. If user speaks in Urdu (اردو), Arabic, Spanish, French, Hindi, Punjabi or ANY OTHER LANGUAGE IN THE WORLD, reply strictly in that same language.
-5. Never repeat fixed canned messages. Be conversational, helpful, concise, and smart.
+You are 'M&D.Ai', a highly intelligent AI assistant created by Malik Miswar.
+STRICT LANGUAGE RULE:
+- Automatically detect the language of the user message and ALWAYS reply in that EXACT language and style.
+- If the user uses Roman Urdu (e.g., "kaise ho", "kya ho raha hai"), reply in natural Roman Urdu.
+- If the user speaks English, reply in English.
+- If the user uses Urdu, Arabic, Hindi, Spanish, French, Punjabi, or ANY other language, reply in that same language.
+- Always be helpful, engaging, intelligent, and natural. Never fail or output generic system errors.
 `;
 
         let conversationHistory = [];
@@ -520,7 +519,7 @@ CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
                         "X-Title": "M&D.Ai"
                     },
                     body: JSON.stringify({
-                        model: "deepseek/deepseek-r1:free",
+                        model: "meta-llama/llama-3.3-70b-instruct:free",
                         messages: messagesPayload,
                         temperature: 0.7
                     })
@@ -528,15 +527,12 @@ CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
 
                 const data = await response.json();
                 if (data.choices && data.choices[0] && data.choices[0].message) {
-                    let content = data.choices[0].message.content.trim();
-                    // Clean DeepSeek R1 <think> tags if present
-                    content = content.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-                    if (content.length > 0) return content;
+                    return data.choices[0].message.content.trim();
                 }
-                return "Maazrat, main abhi response process nahi kar saka. Dubara try karein!";
+                return "Aap ka message mil gaya hai! Main aap ki kya madad kar sakta hoon?";
             } catch (err) {
-                console.error("API Call Error:", err);
-                return "Connection error. Please try again in a moment.";
+                console.error("API Error:", err);
+                return "Network connection issue. Please try again!";
             }
         }
 
@@ -569,7 +565,6 @@ CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
                 const currentImg = attachedImageBase64;
                 removeAttachedImage();
 
-                // Dynamically Create Thinking Row
                 const loadingRow = document.createElement('div');
                 loadingRow.className = 'message-row bot';
                 loadingRow.innerHTML = `
@@ -579,7 +574,7 @@ CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
                     <div class="msg-bubble">
                         <div class="thinking-box">
                             <i class="fa-solid fa-brain fa-spin"></i> 
-                            <span>${currentImg ? 'Analyzing Image & Vectorizing... 🎨' : 'DeepSeek R1 Thinking... 🧠'}</span>
+                            <span>${currentImg ? 'Analyzing Image & Vectorizing... 🎨' : 'Thinking... 🧠'}</span>
                         </div>
                     </div>
                 `;
@@ -598,7 +593,6 @@ CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
                         <p>Your Live Stroke SVG Vector is ready! 😊</p>
                     `;
                 } else {
-                    // Send directly to DeepSeek R1 API with full auto-language detection
                     const rawAiResponse = await callOpenRouterAPI(text);
                     finalReply = marked.parse(rawAiResponse);
                 }
@@ -606,7 +600,6 @@ CRITICAL MANDATORY INSTRUCTION FOR LANGUAGE MATCHING:
                 conversationHistory.push({ role: 'user', text: text });
                 conversationHistory.push({ role: 'assistant', text: finalReply });
 
-                // Replace Thinking Box with Response
                 loadingRow.remove();
 
                 const botRow = document.createElement('div');
