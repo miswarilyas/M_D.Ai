@@ -385,9 +385,10 @@
         const SYSTEM_PROMPT = `
 You are 'M&D.Ai', an expert AI built by Malik Miswar.
 CRITICAL INSTRUCTIONS:
-1. Provide rich, complete, detailed, and accurate responses for every query.
-2. Structure information using markdown headings, lists, and bold text.
-3. Keep the conversation engaging and helpful.
+1. Always respond in the EXACT same language and style used by the user.
+   - If the user messages in Roman Urdu (e.g., "Kya haal ha", "Kaise ho"), respond naturally in warm Roman Urdu (e.g., "Main bilkul theek hoon! Aap batayein, aaj main aapki kya madad kar sakta hoon?").
+   - If the user messages in English, respond in English.
+2. Provide rich, structured, accurate, and polite responses.
 `;
 
         let conversationHistory = [];
@@ -526,9 +527,9 @@ CRITICAL INSTRUCTIONS:
                 if (data.choices && data.choices[0] && data.choices[0].message) {
                     return data.choices[0].message.content.trim();
                 }
-                return "Hello! How can I assist you today? Feel free to ask any question!";
+                return "Main bilkul theek hoon! Aap batayein aaj main aapki kya madad kar sakta hoon?";
             } catch (err) {
-                return "Network connection issue, please try again.";
+                return "Network connection error. Please try again.";
             }
         }
 
@@ -579,11 +580,13 @@ CRITICAL INSTRUCTIONS:
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 let finalReply = "";
-
-                // Quick match for greetings in English
                 const cleanText = text.toLowerCase().trim();
+
+                // Smart Quick Matches
                 if (!currentImg && (cleanText === 'hi' || cleanText === 'hii' || cleanText === 'hello' || cleanText === 'hey')) {
                     finalReply = "<p>Hello! 👋 Welcome to M&D.Ai! How can I assist you today?</p>";
+                } else if (!currentImg && (cleanText === 'kya haal ha' || cleanText === 'kya haal hai' || cleanText === 'kaise ho' || cleanText === 'kaise ho?')) {
+                    finalReply = "<p>Main bilkul theek hoon! 😊 Aap batayein, aaj main aapki kya madad kar sakta hoon?</p>";
                 } else if (currentImg) {
                     const generatedSVG = await convertImageToLiveStrokeSVG(currentImg);
                     finalReply = `
@@ -591,7 +594,7 @@ CRITICAL INSTRUCTIONS:
                             ${generatedSVG}
                         </div>
                         <pre><code class="language-xml">${escapeHtml(generatedSVG)}</code></pre>
-                        <p>Your Live Stroke SVG Vector is ready! You can copy this code and use it in your design projects. 😊</p>
+                        <p>Your Live Stroke SVG Vector is ready! 😊</p>
                     `;
                 } else {
                     const rawAiResponse = await callGroqAPI(text);
